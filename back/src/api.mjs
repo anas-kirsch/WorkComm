@@ -9,8 +9,10 @@ import bcrypt from "bcrypt";
 import { getAndSaveProfilPicture } from "./models/getAndSaveProfilPicture.mjs";
 import parseFormData from '@trojs/formdata-parser';
 import fileUpload from "express-fileupload";
-import { User_images } from "./database.mjs";
+import { profilPicture } from "./database.mjs";
 import { get } from "http";
+import {getProfilPictureFromDataB} from "./models/getAndSaveProfilPicture.mjs"
+
 
 /**
  * 
@@ -96,7 +98,7 @@ export function runServer(sequelize) {
 
                     if (insertNewUser) {
 
-                        // const verifyIfPictureAlreadyExist = await User_images.findOne({where : {UserId : insertNewUser.id }});
+                        // const verifyIfPictureAlreadyExist = await profilPicture.findOne({where : {UserId : insertNewUser.id }});
 
 
 
@@ -177,12 +179,22 @@ export function runServer(sequelize) {
 
                         // fournir user , donc ces donnee , username, mail, pp, bio, language, id
                         //fournir le jwt 
+                        const profilPicture = await getProfilPictureFromDataB(getUserConnect.dataValues.id,);
+
+                        if(profilPicture){
+                            console.log(profilPicture)
+                        }
+                        if(!profilPicture){
+                            // console.log("impossible de recupérer la pp de l'utilisateur. ")
+                        }
+                        
                         const user = {
                             id : getUserConnect.dataValues.id,
                             username: getUserConnect.dataValues.username,
                             mail : getUserConnect.dataValues.mail,
                             language: getUserConnect.dataValues.language,
                             bio : getUserConnect.dataValues.bio,
+                            imagePath: profilPicture,
                             
                         }
                         console.log(user)
@@ -382,12 +394,13 @@ export function runServer(sequelize) {
                 for (const request of requests) {
                     const requestId = request.dataValues.UserId
                     console.log(requestId)
-
+                    
                     const findDataUsers = await User.findByPk(requestId);
                     // console.log(findDataUsers)
                     const user = {
                         id: findDataUsers.dataValues.id,
                         username: findDataUsers.dataValues.username,
+
                         // pp : findDataUsers.dataValues.pp
                     }
 
