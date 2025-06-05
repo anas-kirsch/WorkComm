@@ -3,10 +3,6 @@ import { DataTypes, ENUM, Model, Sequelize } from "sequelize";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 dotenv.config();
-// enum statusAmitié{
-//     pending,
-//     accepted
-// }
 
 /**
  * defini les données d'authentification pour se connecter à la bdd supabase

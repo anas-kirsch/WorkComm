@@ -3,7 +3,11 @@ import { profilPicture } from '../database.mjs';
 import { sequelize } from "../database.mjs";
 import { error } from 'console';
 import fileUpload from 'express-fileupload';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
+const __filename = fileURLToPath(import.meta.url); // Chemin complet du fichier courant
+const __dirname = path.dirname(__filename);
 /**
  * Cette fonction prend en paramètre une image envoyée par le client lors de la création de son compte ou s'il souhaite la modifier.
  * @param {import('express-fileupload').UploadedFile} picture - L'image envoyée par le client
@@ -23,12 +27,14 @@ export async function getAndSaveProfilPicture(picture, userId) {
         const completeFileName = `${fileName}_${Date.now()}.${extensionFile}`;
         // J'utilise la fonction mv() pour uploader le fichier
         // dans le dossier /public du répértoire courant
-        const savePicture = await picture.mv(`../public/images/${completeFileName}`);
-        const pathPicture = `/public/images/${completeFileName}`;
+        console.log(__dirname)
+        const pathPicture = `${__dirname}/../../public/images/${completeFileName}`;
+        console.log(pathPicture)
+        const savePicture = await picture.mv(pathPicture);
 
         const savePicturePathToBdd = await profilPicture.upsert({
             UserId: userId,
-            imagePath: `http://localhost:4800${pathPicture}`
+            imagePath: `http://localhost:4800/images/${completeFileName}`
         })
         return savePicturePathToBdd
     } catch (error) {

@@ -11,7 +11,11 @@ import parseFormData from '@trojs/formdata-parser';
 import fileUpload from "express-fileupload";
 import { profilPicture } from "./database.mjs";
 import { get } from "http";
-import {getProfilPictureFromDataB} from "./models/getAndSaveProfilPicture.mjs"
+import { getProfilPictureFromDataB } from "./models/getAndSaveProfilPicture.mjs"
+import jwt from "jsonwebtoken"
+import { getClientTokenAndVerifAccess } from "./models/getClientTokenAndVerifAccess.mjs";
+
+const secret = process.env.SECRET_KEY ?? "secret-key";
 
 
 /**
@@ -21,10 +25,12 @@ import {getProfilPictureFromDataB} from "./models/getAndSaveProfilPicture.mjs"
 export function runServer(sequelize) {
     const app = express();
     const port = 4800;
+    app.use(express.static("../public"));
 
     app.use(express.json());
     app.use(fileUpload());
-    app.use(express.static("public/images"))
+
+
     /**
      * Cette route est la home page du site OK
      */
@@ -96,28 +102,22 @@ export function runServer(sequelize) {
 
                     // getAndSaveProfilPicture(param);
 
+
                     if (insertNewUser) {
-
-                        // const verifyIfPictureAlreadyExist = await profilPicture.findOne({where : {UserId : insertNewUser.id }});
-
-
 
                         console.log(request.files);
                         const picture = request.files.picture;
                         if (picture == undefined) {
                             response.status(400).json({ msg: "No image sent by the client" })
                             return;
-                        } 
-                           const savePP =  await getAndSaveProfilPicture(request.files.picture,insertNewUser.id)
+                        }
+                        await getAndSaveProfilPicture(request.files.picture, insertNewUser.id)
 
-                            if (!savePP) {
-                                response.status(500).response("erreur, Impossible d'enregistrer la photo de profil")
-                            }
-
+                        // const verifyIfP ictureAlreadyExist = await profilPicture.findOne({where : {UserId : insertNewUser.id }});
                         response.status(200).json({
                             message: 'votre user a bien été créer',
                             user: {
-                                userId : insertNewUser.id,
+                                userId: insertNewUser.id,
                                 username: insertNewUser.username,
                                 mail: insertNewUser.mail
                             }
@@ -127,8 +127,6 @@ export function runServer(sequelize) {
                     }
 
                 }
-
-
             }
 
         } catch (error) {
@@ -169,7 +167,7 @@ export function runServer(sequelize) {
                     return response.status(400).json({ error: "Utilisateur introuvable." });
 
                 } else {
-                    console.log("myUser:",getUserConnect.dataValues)
+                    console.log("myUser:", getUserConnect.dataValues)
 
                     const compareMdp = await bcrypt.compare(UserData.password, getUserConnect.dataValues.password)
                     // console.log("test comparaison",compareMdp)
@@ -179,23 +177,33 @@ export function runServer(sequelize) {
 
                         // fournir user , donc ces donnee , username, mail, pp, bio, language, id
                         //fournir le jwt 
-                        const profilPicture = await getProfilPictureFromDataB(getUserConnect.dataValues.id,);
+                        const profilPicture = await getProfilPictureFromDataB(getUserConnect.dataValues.id);
 
-                        if(profilPicture){
+                        if (profilPicture) {
                             console.log(profilPicture)
                         }
-                        if(!profilPicture){
+                        if (!profilPicture) {
                             // console.log("impossible de recupérer la pp de l'utilisateur. ")
                         }
-                        
+
+                        //envoyer un jwt au client qui s'est connecté
+
+                        const payload = { id: getUserConnect.dataValues.id, role: getUserConnect.dataValues.role }
+                        const newToken = jwt.sign(payload, secret, {
+                            expiresIn: "30 days"
+                        })
+
+
+
                         const user = {
-                            id : getUserConnect.dataValues.id,
+                            id: getUserConnect.dataValues.id,
                             username: getUserConnect.dataValues.username,
-                            mail : getUserConnect.dataValues.mail,
+                            mail: getUserConnect.dataValues.mail,
                             language: getUserConnect.dataValues.language,
-                            bio : getUserConnect.dataValues.bio,
+                            bio: getUserConnect.dataValues.bio,
                             imagePath: profilPicture,
-                            
+                            token: newToken
+
                         }
                         console.log(user)
                         response.status(200).json({
@@ -205,7 +213,7 @@ export function runServer(sequelize) {
 
                     } else {
                         console.log("connection refusée", compareMdp)
-
+                        return response.status(400).json("erreur dans le mot de passe")
                     }
                 }
 
@@ -291,7 +299,7 @@ export function runServer(sequelize) {
     /**
      * cette route doit permettre a un utilisateur de supprimer son compte  OK
      */
-    app.delete('/delete/user/:userId', async (request, response) => {
+    app.delete('/delete/user/:userId',getClientTokenAndVerifAccess, async (request, response) => {
 
         try {
 
@@ -331,7 +339,7 @@ export function runServer(sequelize) {
     /**
      * Cette route permet d'envoyer une demande d'ami parmis les utilisateurs afficher dans la barre de recherche OK
      */
-    app.post('/send-friend-requests', async (request, response) => {
+    app.post('/send-friend-requests',getClientTokenAndVerifAccess, async (request, response) => {
         // recupere un objet du front {userid(demandeur):1, friendid(receveur):2}
         // le front fetch lien,{methode:post, body: {objet: {userid(demandeur):1, friendid(receveur):2} }}
 
@@ -380,7 +388,7 @@ export function runServer(sequelize) {
     /**
      * Récupérer les demandes d'amis reçues OK
      */
-    app.get('/friend-requests/:userId', async (request, response) => {
+    app.get('/friend-requests/:userId',getClientTokenAndVerifAccess, async (request, response) => {
         try {
             const { userId } = request.params;//ici c'est mon userId 
             // console.log(userId)
@@ -393,15 +401,17 @@ export function runServer(sequelize) {
                 const dataUsers = [];
                 for (const request of requests) {
                     const requestId = request.dataValues.UserId
-                    console.log(requestId)
-                    
+                    // console.log("-----------------------------------------------------",request)
+
                     const findDataUsers = await User.findByPk(requestId);
                     // console.log(findDataUsers)
+                    const profilPicture = await getProfilPictureFromDataB(requestId);
+
                     const user = {
                         id: findDataUsers.dataValues.id,
                         username: findDataUsers.dataValues.username,
+                        imagePath: profilPicture,
 
-                        // pp : findDataUsers.dataValues.pp
                     }
 
                     dataUsers.push(user)
@@ -422,7 +432,7 @@ export function runServer(sequelize) {
     /**
      * cette route permet a l'utilisateur deja connecte de recevoir d'accepter ou refuser OK
      */
-    app.post('/confirm-friend-requests', async (request, response) => {
+    app.post('/confirm-friend-requests',getClientTokenAndVerifAccess, async (request, response) => {
         try {
             const { userId, friendId, reponse } = request.body;
             console.log({
@@ -478,7 +488,7 @@ export function runServer(sequelize) {
     /**
      * Cette route permet de supprimer un ami , detruit la relation presente dans la table Friends dans les deux sens OK
      */
-    app.delete('/delete-friend', async (request, response) => {
+    app.delete('/delete-friend',getClientTokenAndVerifAccess, async (request, response) => {
 
         try {
             const { userId, friendId } = request.body;
@@ -517,7 +527,7 @@ export function runServer(sequelize) {
     /**
      * cette route permet de recuperer mes amis , donc dont le status est bien accepted  OK
      */
-    app.get('/myfriend/:userId', async (request, response) => {
+    app.get('/myfriend/:userId',getClientTokenAndVerifAccess, async (request, response) => {
 
         try {
             const { userId } = request.params;//ici c'est mon user
@@ -540,12 +550,14 @@ export function runServer(sequelize) {
 
             for (const userFriend of allFriends) {
                 const userfriendid = userFriend.dataValues.friendId;
+                const profilPicture = await getProfilPictureFromDataB(userfriendid);
 
 
                 const findDataUsers = await User.findByPk(userfriendid);
                 const user = {
                     id: findDataUsers.dataValues.id,
                     username: findDataUsers.dataValues.username,
+                    imagePath: profilPicture,
                     // pp : findDataUsers.dataValues.pp
                 };
                 // console.log(user);
@@ -681,3 +693,4 @@ export function runServer(sequelize) {
 //         }
 
 //     })
+
