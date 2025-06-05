@@ -59,11 +59,11 @@ Dans un environnement de travail de plus en plus décentralisé, la collaboratio
 
 ```bash
 # Back-end
-cd backend
+cd back
 npm install
 npm run dev
 
 # Front-end
-cd frontend
+cd front
 npm install
 ng serve
