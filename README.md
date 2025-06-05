@@ -37,7 +37,6 @@ Dans un environnement de travail de plus en plus décentralisé, la collaboratio
 
 - **Angular** (TypeScript)
 - **HTML5 / CSS3** - structure et style.
-- **RxJS** - gestion des flux de données réactifs.
 - **Angular Forms** - gestion des formulaires utilisateurs.
 - **HttpClient** - communication avec l'API.
 - **Socket.IO Client** - réception des messages en temps réel.
@@ -51,10 +50,8 @@ Dans un environnement de travail de plus en plus décentralisé, la collaboratio
 - 📄 Ajout d’un **éditeur de notes collaboratives** (type Notion léger).
 - 📎 Système de **partage et téléchargement de documents**.
 - 🔔 Système de **notifications en temps réel** (nouveaux messages, ajouts…).
-- 📅 Intégration d’un **calendrier d’équipe partagé**.
 - 🎨 **Personnalisation du thème** de l’application (mode sombre, clair, etc.).
 - 📊 Statistiques d’utilisation et **tableau de bord** pour les admins.
-- 🧪 Écriture de **tests automatisés** (unitaires et end-to-end).
 
 ---
 
