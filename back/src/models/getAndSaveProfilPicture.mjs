@@ -24,18 +24,18 @@ export async function getAndSaveProfilPicture(picture, userId) {
             // Enregistre le chemin par défaut vers default.jpg
             const saveDefaultPicturePathToBdd = await profilPicture.upsert({
                 UserId: userId,
-                imagePath: `http://localhost:4800/images/default.jpg`
+                imagePath: `http://localhost:4900/images/default.jpg`
             });
             return saveDefaultPicturePathToBdd;
 
         } else {
 
-            console.log("testttttt 9000:", picture.size);
+            // console.log("testttttt 9000:", picture.size);
 
-            if (picture.size > 2 * 1024 * 1024) {
-                throw new Error("L'image dépasse la taille maximale autorisée de 2 Mo.");
+            // if (picture.size > 2 * 1024 * 1024) {
+            //     throw new Error("L'image dépasse la taille maximale autorisée de 2 Mo.");
 
-            }
+            // }
             const extensionFile = picture.name.split(".").pop()?.toLowerCase();
             const fileName = picture.name
                 .split(".")[0]
@@ -47,7 +47,8 @@ export async function getAndSaveProfilPicture(picture, userId) {
             // console.log("extension ---> : ", extensionFile);
 
             if (!['jpg', 'jpeg', 'png', 'gif'].includes(extensionFile)) {
-                console.error("Le format de l'image n'est pas supporté. Veuillez utiliser jpg, jpeg, png ou gif.");
+                // console.error("Le format de l'image n'est pas supporté. Veuillez utiliser jpg, jpeg, png ou gif.");
+                throw new Error("Le format de l'image n'est pas supporté. Veuillez utiliser jpg, jpeg, png ou gif.");
                 return;
             }
 
@@ -60,7 +61,7 @@ export async function getAndSaveProfilPicture(picture, userId) {
 
             const savePicturePathToBdd = await profilPicture.upsert({
                 UserId: userId,
-                imagePath: `http://localhost:4800/images/${completeFileName}`
+                imagePath: `http://localhost:4900/images/${completeFileName}`
             })
             return savePicturePathToBdd
         }

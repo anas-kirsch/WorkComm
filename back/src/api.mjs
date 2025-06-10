@@ -14,6 +14,8 @@ import { get } from "http";
 import { getProfilPictureFromDataB } from "./models/getAndSaveProfilPicture.mjs"
 import jwt from "jsonwebtoken"
 import { getClientTokenAndVerifAccess } from "./models/getClientTokenAndVerifAccess.mjs";
+import fs from "fs/promises"; 
+
 
 const secret = process.env.SECRET_KEY ?? "secret-key";
 
@@ -24,7 +26,9 @@ const secret = process.env.SECRET_KEY ?? "secret-key";
  */
 export function runServer(sequelize) {
     const app = express();
-    const port = 4800;
+    const port = 4900;
+    app.use(cors());
+
     app.use(express.static("../public"));
 
     app.use(express.json());
@@ -58,21 +62,17 @@ export function runServer(sequelize) {
     app.post('/register', async (request, response) => {
         try {
             console.log("route : register")
-
-
             const myNewUser = request.body;
-            console.log("1", myNewUser);
-
+            // console.log("1", myNewUser);
+            if (!myNewUser) {
+                return response.status(400).json({ error: "Données manquantes." });
+            }
             const ifUserExist = await User.findOne({ where: { username: myNewUser.username } });
 
             if (ifUserExist) {
 
                 console.log(`l'user ${myNewUser.username} existe deja, essayez un autre nom d'utilisateur. `)
                 return response.status(400).json(`l'user ${myNewUser.username} existe deja !`)
-            }
-
-            if (!myNewUser) {
-                return response.status(400).json({ error: "Données manquantes." });
             }
 
             if (myNewUser) {
@@ -102,43 +102,56 @@ export function runServer(sequelize) {
                     });
                     console.log('3:', insertNewUser)
 
-                    // getAndSaveProfilPicture(param);
-
                     if (insertNewUser) {
 
-                        // console.log("testtttt file",request.files);
+                        console.log("test file", request.files);
 
+                        if (request.files || request.files == null) {
 
-                        let picture = "null";
+                            if (request.files && request.files.picture.size > 2 * 1024 * 1024) {
+                                const getUserToDestroy = await User.findOne({ where: { id: insertNewUser.id } })
+                                const deleteUserBecauseError = getUserToDestroy.destroy();
+                                return response.status(400).json({
+                                    message: "erreur la photo est trop grande"
+                                });
 
-                        if (request.files) {
-                            picture = request.files.picture;
+                            }
+
+                            let picture = "null";
+
+                            if (request.files) {
+                                picture = request.files.picture;
+                            }
+
+                            const addPic = await getAndSaveProfilPicture(picture, insertNewUser.id)
+
+                            if (addPic) {
+                                response.status(200).json({
+                                    message: 'votre user a bien été créer',
+                                    user: {
+                                        userId: insertNewUser.id,
+                                        username: insertNewUser.username,
+                                        mail: insertNewUser.mail
+                                    }
+
+                                })
+                            }
+                            else {
+                                const getUserToDestroy = await User.findOne({ where: { id: insertNewUser.id } })
+                                const deleteUserBecauseError = getUserToDestroy.destroy();
+                                return response.status(400).json({ error: "Erreur lors de l'ajout de la photo de profil." });
+                            }
                         }
 
-                        const addPic = await getAndSaveProfilPicture(picture, insertNewUser.id)
-
-                        if (addPic) {
-                            response.status(200).json({
-                                message: 'votre user a bien été créer',
-                                user: {
-                                    userId: insertNewUser.id,
-                                    username: insertNewUser.username,
-                                    mail: insertNewUser.mail
-                                }
-
-                            })
-
-                        }
-                        else{
-                            return response.status(400).json({ error: "Erreur lors de l'ajout de la photo de profil." });
-                        }
                     }
-
                 }
             }
 
         } catch (error) {
             if (error.message.includes("taille maximale autorisée")) {
+                response.status(400).json({ error: error.message });
+            }
+            else if (error.message.includes("Le format de l'image n'est pas supporté")) {
                 response.status(400).json({ error: error.message });
             } else {
 
@@ -327,12 +340,23 @@ export function runServer(sequelize) {
             const getHisFriends = await Friends.findAll({
                 where: { [Op.or]: { UserId: userId, friendId: userId } }
             })
-            // console.log(getHisFriends)
+
 
             if (getUserToDelete && getPicUser) {
                 await getUserToDelete.destroy();
                 await getPicUser.destroy();
-                // response.status(200).json("Votre utilisateur a bien été supprimé")
+
+                const imagePath = getPicUser.imagePath;
+                const pathFile = "/images" + imagePath.split("/images").pop();
+                console.log(pathFile);
+
+                try {
+                    await fs.unlink(`../public${pathFile}`);
+                    console.log("Fichier supprimé :", pathFile);
+                } catch (err) {
+                    console.error("Erreur lors de la suppression du fichier :", err);
+                }
+
 
                 if (getUserToDelete && getHisFriends.length > 0) {
                     for (const friend of getHisFriends) {
