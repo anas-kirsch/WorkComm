@@ -104,7 +104,7 @@ export const profilPicture = sequelize.define("profilPicture", {
     imagePath: {
         type: DataTypes.STRING,
         allowNull: true,
-        defaultValue: "../public/images/default.png"
+        // defaultValue: "../public/images/default.jpg"
     }
 }, {
     indexes: [

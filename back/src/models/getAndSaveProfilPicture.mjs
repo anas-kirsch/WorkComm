@@ -6,6 +6,7 @@ import fileUpload from 'express-fileupload';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+
 const __filename = fileURLToPath(import.meta.url); // Chemin complet du fichier courant
 const __dirname = path.dirname(__filename);
 /**
@@ -17,26 +18,52 @@ export async function getAndSaveProfilPicture(picture, userId) {
 
     try {
 
-        const extensionFile = picture.name.split(".").pop();
-        const fileName = picture.name
-            .split(".")[0]
-            .toLowerCase()
-            .replace(/[ ,]+/g, '-')        // espaces et virgules en tirets
-            .replace(/[^a-z0-9-_]/g, ''); // retire autres caractères spéciaux
+        if (picture == "null") {
+            console.log("l'utilisateur n'a pas ajouter de photo de profil", picture)
 
-        const completeFileName = `${fileName}_${Date.now()}.${extensionFile}`;
-        // J'utilise la fonction mv() pour uploader le fichier
-        // dans le dossier /public du répértoire courant
-        console.log(__dirname)
-        const pathPicture = `${__dirname}/../../public/images/${completeFileName}`;
-        console.log(pathPicture)
-        const savePicture = await picture.mv(pathPicture);
+            // Enregistre le chemin par défaut vers default.jpg
+            const saveDefaultPicturePathToBdd = await profilPicture.upsert({
+                UserId: userId,
+                imagePath: `http://localhost:4800/images/default.jpg`
+            });
+            return saveDefaultPicturePathToBdd;
 
-        const savePicturePathToBdd = await profilPicture.upsert({
-            UserId: userId,
-            imagePath: `http://localhost:4800/images/${completeFileName}`
-        })
-        return savePicturePathToBdd
+        } else {
+
+            console.log("testttttt 9000:", picture.size);
+
+            if (picture.size > 2 * 1024 * 1024) {
+                throw new Error("L'image dépasse la taille maximale autorisée de 2 Mo.");
+
+            }
+            const extensionFile = picture.name.split(".").pop()?.toLowerCase();
+            const fileName = picture.name
+                .split(".")[0]
+                .toLowerCase()
+                .replace(/[ ,]+/g, '-')        // espaces et virgules en tirets
+                .replace(/[^a-z0-9-_]/g, ''); // retire autres caractères spéciaux
+
+            const completeFileName = `${fileName}_${Date.now()}.${extensionFile}`;
+            // console.log("extension ---> : ", extensionFile);
+
+            if (!['jpg', 'jpeg', 'png', 'gif'].includes(extensionFile)) {
+                console.error("Le format de l'image n'est pas supporté. Veuillez utiliser jpg, jpeg, png ou gif.");
+                return;
+            }
+
+            // J'utilise la fonction mv() pour uploader le fichier
+            // dans le dossier /public du répértoire courant
+            console.log(__dirname)
+            const pathPicture = `${__dirname}/../../public/images/${completeFileName}`;
+            console.log(pathPicture)
+            const savePicture = await picture.mv(pathPicture);
+
+            const savePicturePathToBdd = await profilPicture.upsert({
+                UserId: userId,
+                imagePath: `http://localhost:4800/images/${completeFileName}`
+            })
+            return savePicturePathToBdd
+        }
     } catch (error) {
         console.error(error);
     }

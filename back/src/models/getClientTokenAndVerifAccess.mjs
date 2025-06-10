@@ -17,7 +17,7 @@ export async function getClientTokenAndVerifAccess(request, response, next) {
         //Coté client le token est envoyé dans le header authorization
         const authHeader = request.headers.authorization;
         
-        // console.log("saluuuuuuuuuuuuuuuuuuuuuuut",authHeader)
+        console.log("saluuuuuuuuuuuuuuuuuuuuuuut",authHeader)
         // Je récupère uniquement le token du header pas le mot Bearer
         const token = authHeader.split(" ")[1];
         console.log(token)

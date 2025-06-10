@@ -28,8 +28,10 @@ export function runServer(sequelize) {
     app.use(express.static("../public"));
 
     app.use(express.json());
+    // app.use(fileUpload({
+    //     limits: { fileSize: 2 * 1024 * 1024 },
+    // }));
     app.use(fileUpload());
-
 
     /**
      * Cette route est la home page du site OK
@@ -102,38 +104,49 @@ export function runServer(sequelize) {
 
                     // getAndSaveProfilPicture(param);
 
-
                     if (insertNewUser) {
 
-                        console.log(request.files);
-                        const picture = request.files.picture;
-                        if (picture == undefined) {
-                            response.status(400).json({ msg: "No image sent by the client" })
-                            return;
+                        // console.log("testtttt file",request.files);
+
+
+                        let picture = "null";
+
+                        if (request.files) {
+                            picture = request.files.picture;
                         }
-                        await getAndSaveProfilPicture(request.files.picture, insertNewUser.id)
 
-                        // const verifyIfP ictureAlreadyExist = await profilPicture.findOne({where : {UserId : insertNewUser.id }});
-                        response.status(200).json({
-                            message: 'votre user a bien été créer',
-                            user: {
-                                userId: insertNewUser.id,
-                                username: insertNewUser.username,
-                                mail: insertNewUser.mail
-                            }
+                        const addPic = await getAndSaveProfilPicture(picture, insertNewUser.id)
 
-                        })
+                        if (addPic) {
+                            response.status(200).json({
+                                message: 'votre user a bien été créer',
+                                user: {
+                                    userId: insertNewUser.id,
+                                    username: insertNewUser.username,
+                                    mail: insertNewUser.mail
+                                }
 
+                            })
+
+                        }
+                        else{
+                            return response.status(400).json({ error: "Erreur lors de l'ajout de la photo de profil." });
+                        }
                     }
 
                 }
             }
 
         } catch (error) {
-            console.error(error); // pour le voir dans la console
-            response.status(500).json({ error: "Erreur serveur lors de l'inscription." });
+            if (error.message.includes("taille maximale autorisée")) {
+                response.status(400).json({ error: error.message });
+            } else {
 
+                console.error(error); // pour le voir dans la console
+                response.status(500).json({ error: "Erreur serveur lors de l'inscription." });
+            }
         }
+
 
     })
 
@@ -299,31 +312,40 @@ export function runServer(sequelize) {
     /**
      * cette route doit permettre a un utilisateur de supprimer son compte  OK
      */
-    app.delete('/delete/user/:userId',getClientTokenAndVerifAccess, async (request, response) => {
+    app.delete('/delete/user/:userId', getClientTokenAndVerifAccess, async (request, response) => {
 
         try {
 
             const { userId } = request.params;
 
             const getUserToDelete = await User.findByPk(userId);
-            console.log(getUserToDelete);
+            // console.log(getUserToDelete);
+
+            const getPicUser = await profilPicture.findOne({ where: { UserId: userId } });
+            console.log("----------------------------->", getPicUser)
 
             const getHisFriends = await Friends.findAll({
                 where: { [Op.or]: { UserId: userId, friendId: userId } }
             })
-            console.log(getHisFriends)
+            // console.log(getHisFriends)
 
-            if (getUserToDelete) {
+            if (getUserToDelete && getPicUser) {
                 await getUserToDelete.destroy();
-            }
+                await getPicUser.destroy();
+                // response.status(200).json("Votre utilisateur a bien été supprimé")
 
-            if (getUserToDelete && getHisFriends.length > 0) {
-                for (const friend of getHisFriends) {
-                    await friend.destroy();
+                if (getUserToDelete && getHisFriends.length > 0) {
+                    for (const friend of getHisFriends) {
+                        await friend.destroy();
+                    }
+                    response.status(200).json("Votre utilisateur a bien été supprimé")
+
+                } else {
+                    response.status(200).json("Votre utilisateur a bien été supprimé")
+
                 }
-                response.status(200).json("Votre utilisateur a bien été supprimé")
-
             }
+
 
 
         } catch (error) {
@@ -339,7 +361,7 @@ export function runServer(sequelize) {
     /**
      * Cette route permet d'envoyer une demande d'ami parmis les utilisateurs afficher dans la barre de recherche OK
      */
-    app.post('/send-friend-requests',getClientTokenAndVerifAccess, async (request, response) => {
+    app.post('/send-friend-requests', getClientTokenAndVerifAccess, async (request, response) => {
         // recupere un objet du front {userid(demandeur):1, friendid(receveur):2}
         // le front fetch lien,{methode:post, body: {objet: {userid(demandeur):1, friendid(receveur):2} }}
 
@@ -388,7 +410,7 @@ export function runServer(sequelize) {
     /**
      * Récupérer les demandes d'amis reçues OK
      */
-    app.get('/friend-requests/:userId',getClientTokenAndVerifAccess, async (request, response) => {
+    app.get('/friend-requests/:userId', getClientTokenAndVerifAccess, async (request, response) => {
         try {
             const { userId } = request.params;//ici c'est mon userId 
             // console.log(userId)
@@ -432,7 +454,7 @@ export function runServer(sequelize) {
     /**
      * cette route permet a l'utilisateur deja connecte de recevoir d'accepter ou refuser OK
      */
-    app.post('/confirm-friend-requests',getClientTokenAndVerifAccess, async (request, response) => {
+    app.post('/confirm-friend-requests', getClientTokenAndVerifAccess, async (request, response) => {
         try {
             const { userId, friendId, reponse } = request.body;
             console.log({
@@ -488,7 +510,7 @@ export function runServer(sequelize) {
     /**
      * Cette route permet de supprimer un ami , detruit la relation presente dans la table Friends dans les deux sens OK
      */
-    app.delete('/delete-friend',getClientTokenAndVerifAccess, async (request, response) => {
+    app.delete('/delete-friend', getClientTokenAndVerifAccess, async (request, response) => {
 
         try {
             const { userId, friendId } = request.body;
@@ -527,7 +549,7 @@ export function runServer(sequelize) {
     /**
      * cette route permet de recuperer mes amis , donc dont le status est bien accepted  OK
      */
-    app.get('/myfriend/:userId',getClientTokenAndVerifAccess, async (request, response) => {
+    app.get('/myfriend/:userId', getClientTokenAndVerifAccess, async (request, response) => {
 
         try {
             const { userId } = request.params;//ici c'est mon user
