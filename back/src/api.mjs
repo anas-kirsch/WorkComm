@@ -321,7 +321,6 @@ export function runServer(sequelize) {
     // app.delete
 
 
-
     /**
      * cette route doit permettre a un utilisateur de supprimer son compte  OK
      */
@@ -659,84 +658,4 @@ export function runServer(sequelize) {
 
 
 
-
-
-
-
-// app.post('/register', async (request, response) => {
-//         try {
-//             console.log("route : register")
-
-//             const myNewUser = request.body;
-//             console.log("1", myNewUser);
-
-
-
-
-//             const ifUserExist = await User.findOne({ where: { username: myNewUser.username } });
-
-//             if (ifUserExist) {
-
-//                 console.log(`l'user ${myNewUser.username} existe deja, essayez un autre nom d'utilisateur. `)
-//                 return response.status(400).json(`l'user ${myNewUser.username} existe deja !`)
-//             }
-
-//             if (!myNewUser) {   
-//                 return response.status(400).json({ error: "Données manquantes." });
-//             }
-
-//             if (myNewUser) {
-//                 if (myNewUser.password != myNewUser.confirmPassword) {
-//                     return response.status(400).json({ error: "Les mots de passe ne correspondent pas." });
-
-//                 } else {
-
-//                     const validUser = {
-//                         username: myNewUser.username,
-//                         mail: myNewUser.mail,
-//                         role: myNewUser.role,
-//                         language: myNewUser.language,
-//                         bio: myNewUser.bio,
-//                         password: myNewUser.password
-
-//                     }
-//                     console.log("2", validUser)
-
-//                     const insertNewUser = await User.create({
-//                         username: validUser.username,
-//                         mail: validUser.mail,
-//                         role: validUser.role,
-//                         language: validUser.language,
-//                         bio: validUser.bio,
-//                         password: validUser.password,
-//                     });
-//                     console.log('3:', insertNewUser)
-
-//                     // getAndSaveProfilPicture(param);
-
-//                     if (insertNewUser) {
-
-//                         response.status(200).json({
-//                             message: 'votre user a bien été créer',
-//                             user: {
-//                                 username: insertNewUser.username,
-//                                 mail: insertNewUser.mail
-//                             }
-
-//                         })
-
-//                     }
-
-//                 }
-
-
-//             }
-
-//         } catch (error) {
-//             console.error(error); // pour le voir dans la console
-//             response.status(500).json({ error: "Erreur serveur lors de l'inscription." });
-
-//         }
-
-//     })
 

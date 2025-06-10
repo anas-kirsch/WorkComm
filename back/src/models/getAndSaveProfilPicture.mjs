@@ -30,12 +30,6 @@ export async function getAndSaveProfilPicture(picture, userId) {
 
         } else {
 
-            // console.log("testttttt 9000:", picture.size);
-
-            // if (picture.size > 2 * 1024 * 1024) {
-            //     throw new Error("L'image dépasse la taille maximale autorisée de 2 Mo.");
-
-            // }
             const extensionFile = picture.name.split(".").pop()?.toLowerCase();
             const fileName = picture.name
                 .split(".")[0]
