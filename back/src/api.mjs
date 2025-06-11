@@ -14,7 +14,7 @@ import { get } from "http";
 import { getProfilPictureFromDataB } from "./models/getAndSaveProfilPicture.mjs"
 import jwt from "jsonwebtoken"
 import { getClientTokenAndVerifAccess } from "./models/getClientTokenAndVerifAccess.mjs";
-import fs from "fs/promises"; 
+import fs from "fs/promises";
 
 
 const secret = process.env.SECRET_KEY ?? "secret-key";
@@ -334,7 +334,7 @@ export function runServer(sequelize) {
             // console.log(getUserToDelete);
 
             const getPicUser = await profilPicture.findOne({ where: { UserId: userId } });
-            console.log("----------------------------->", getPicUser)
+            console.log("------>", getPicUser)
 
             const getHisFriends = await Friends.findAll({
                 where: { [Op.or]: { UserId: userId, friendId: userId } }
@@ -565,9 +565,7 @@ export function runServer(sequelize) {
             response.status(500).json({ error: "Erreur serveur." });
         }
 
-
     });
-
 
     /**
      * cette route permet de recuperer mes amis , donc dont le status est bien accepted  OK
