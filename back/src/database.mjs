@@ -116,6 +116,48 @@ export const profilPicture = sequelize.define("profilPicture", {
 });
 
 
+/**
+ * cette table permet de referencer les diffentes conversations ouvertes entres des amis ainsi que le nom de leur conversation
+ */
+export const conversation = sequelize.define("conversation", {
+
+    chat_name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+}, {
+    indexes: [
+        {
+            unique: true,
+            fields: ['UserId', 'friendId']
+        }
+    ]
+})
+
+
+/**
+ * Un utilisateur peut avoir plusieurs conversations où il est l'utilisateur principal (UserId).
+ */
+User.hasMany(conversation, { foreignKey: 'UserId' });
+
+/**
+ * Chaque conversation appartient à un utilisateur principal (UserId).
+ */
+conversation.belongsTo(User, { foreignKey: 'UserId' });
+
+/**
+ * Un utilisateur peut aussi avoir plusieurs conversations où il est l'ami (friendId).
+ */
+User.hasMany(conversation, { foreignKey: 'friendId', as: 'friendConversations' });
+
+/**
+ * Chaque conversation appartient aussi à un utilisateur ami (friendId), référencé comme 'friend'.
+ */
+conversation.belongsTo(User, { foreignKey: 'friendId', as: 'friend' });
+
+
+
+
 
 /**
  * creer la relation entre les tables User et Friends 
@@ -126,8 +168,10 @@ User.belongsToMany(User, { as: 'friend', through: Friends });
  * creer la relation entre les tables User et profilPicture
  */
 User.hasOne(profilPicture);
-// profilPicture.hasOne(User);
 profilPicture.belongsTo(User);
+
+
+
 
 
 

@@ -627,6 +627,23 @@ export function runServer(sequelize) {
 
     })
 
+
+
+    app.get('/private-chat',getClientTokenAndVerifAccess,async (request,response)=>{
+
+        // response.status(200).send("chat privee");
+                
+
+
+    });
+
+
+
+
+
+
+
+
     app.listen(port, () => {
 
         console.log(`Server listen on port ${port}`)
