@@ -628,13 +628,38 @@ export function runServer(sequelize) {
     })
 
 
+    app.post('/private-chat', getClientTokenAndVerifAccess, async (request, response) => {
+        try {
+            // Récupère les id des deux utilisateurs qui vont chater ensemble
+            const { myUserId, friendUserId } = request.body;
+            if (!myUserId || !friendUserId) {
+                return response.status(400).json({ error: "Données manquantes." });
+            }
 
-    app.get('/private-chat',getClientTokenAndVerifAccess,async (request,response)=>{
+            // Génère le nom unique de la room
+            const [id1, id2] = [myUserId, friendUserId].sort((a, b) => a - b);
+            const chatName = `${id1}/${id2}`;
 
-        // response.status(200).send("chat privee");
-                
+            // Vérifie ou crée la conversation
+            let conv = await conversation.findOne({ where: { chat_name: chatName } });
+            if (!conv) {
+                conv = await conversation.create({
+                    chat_name: chatName,
+                    UserId: id1,
+                    friendId: id2
+                });
+            }
 
+            // Renvoie au client le nom de la room et l'id de la conversation
+            response.status(200).json({
+                chat_name: chatName,
+                conversationId: conv.id
+            });
 
+        } catch (error) {
+            console.error(error);
+            response.status(500).json({ error: "Erreur serveur" });
+        }
     });
 
 

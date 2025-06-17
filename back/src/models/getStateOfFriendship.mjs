@@ -10,7 +10,7 @@ export function getStateOfFriendship({ userId, friendId }) {
    
 
     // cette fonction verifie la relation possiblement entre deux id , si il sont amis , une demande est en cour ou alors aucune relation entre les deux 
-
+    
 
 
 

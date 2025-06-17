@@ -9,7 +9,7 @@ dotenv.config();
  */
 export const sequelize = new Sequelize("postgres", "postgres", process.env.DB_PASSWORD ?? "root", {
     "host": process.env.DB_HOST ?? "localhost",
-    "port": process.env.PORT ?? "3000",
+    "port": process.env.DB_PORT ?? 5432,
     "dialect": "postgres"
 })
 
@@ -19,7 +19,6 @@ export const sequelize = new Sequelize("postgres", "postgres", process.env.DB_PA
 sequelize.authenticate()
     .then(() => console.log(" ### Connexion à la base de donnée ###"))
     .catch(error => console.log(error));
-
 
 // define les tables
 
@@ -119,8 +118,28 @@ export const profilPicture = sequelize.define("profilPicture", {
 /**
  * cette table permet de referencer les diffentes conversations ouvertes entres des amis ainsi que le nom de leur conversation
  */
-export const conversation = sequelize.define("conversation", {
+// export const conversation = sequelize.define("conversation", {
 
+//     chat_name: {
+//         type: DataTypes.STRING,
+//         allowNull: false
+//     },
+// }, {
+//     indexes: [
+//         {
+//             unique: true,
+//             fields: ['UserId', 'friendId']
+//         }
+//     ]
+// })
+
+
+
+// filepath: /home/anas/WorkComm/back/src/database.mjs
+/**
+ * cette table permet de referencer les diffentes conversations ouvertes entres des amis ainsi que le nom de leur conversation
+ */
+export const conversation = sequelize.define("conversation", {
     chat_name: {
         type: DataTypes.STRING,
         allowNull: false
@@ -131,9 +150,19 @@ export const conversation = sequelize.define("conversation", {
             unique: true,
             fields: ['UserId', 'friendId']
         }
-    ]
-})
-
+    ],
+    hooks: {
+        beforeValidate: (conv) => {
+            if (conv.UserId && conv.friendId) {
+                const [id1, id2] = [conv.UserId, conv.friendId].sort((a, b) => a - b);
+                conv.chat_name = `${id1}/${id2}`;
+                conv.UserId = id1;
+                conv.friendId = id2;
+            }
+        }
+    }
+});
+// ...existing code...
 
 /**
  * Un utilisateur peut avoir plusieurs conversations où il est l'utilisateur principal (UserId).
@@ -154,7 +183,6 @@ User.hasMany(conversation, { foreignKey: 'friendId', as: 'friendConversations' }
  * Chaque conversation appartient aussi à un utilisateur ami (friendId), référencé comme 'friend'.
  */
 conversation.belongsTo(User, { foreignKey: 'friendId', as: 'friend' });
-
 
 
 
