@@ -13,6 +13,7 @@ export const sequelize = new Sequelize("postgres", "postgres", process.env.DB_PA
     "dialect": "postgres"
 })
 
+
 /**
  * permet de se connecter a la bdd supabase ici
  */
@@ -115,27 +116,7 @@ export const profilPicture = sequelize.define("profilPicture", {
 });
 
 
-/**
- * cette table permet de referencer les diffentes conversations ouvertes entres des amis ainsi que le nom de leur conversation
- */
-// export const conversation = sequelize.define("conversation", {
 
-//     chat_name: {
-//         type: DataTypes.STRING,
-//         allowNull: false
-//     },
-// }, {
-//     indexes: [
-//         {
-//             unique: true,
-//             fields: ['UserId', 'friendId']
-//         }
-//     ]
-// })
-
-
-
-// filepath: /home/anas/WorkComm/back/src/database.mjs
 /**
  * cette table permet de referencer les diffentes conversations ouvertes entres des amis ainsi que le nom de leur conversation
  */
@@ -162,7 +143,17 @@ export const conversation = sequelize.define("conversation", {
         }
     }
 });
-// ...existing code...
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Un utilisateur peut avoir plusieurs conversations où il est l'utilisateur principal (UserId).

@@ -20,6 +20,7 @@ import fs from "fs/promises";
 const secret = process.env.SECRET_KEY ?? "secret-key";
 
 
+
 /**
  * 
  * @param {Sequelize} sequelize 
@@ -92,7 +93,7 @@ export function runServer(sequelize) {
                     }
                     console.log("2", validUser)
 
-                    const insertNewUser = await User.create({
+                    const insertNewUser = await User.findOrCreate({ //create sinon
                         username: validUser.username,
                         mail: validUser.mail,
                         role: validUser.role,
@@ -628,6 +629,9 @@ export function runServer(sequelize) {
     })
 
 
+    /**
+     * cette route permet de rejoindre ou creer un chat avec un ami
+     */
     app.post('/private-chat', getClientTokenAndVerifAccess, async (request, response) => {
         try {
             // Récupère les id des deux utilisateurs qui vont chater ensemble
@@ -642,6 +646,7 @@ export function runServer(sequelize) {
 
             // Vérifie ou crée la conversation
             let conv = await conversation.findOne({ where: { chat_name: chatName } });
+
             if (!conv) {
                 conv = await conversation.create({
                     chat_name: chatName,
@@ -664,6 +669,41 @@ export function runServer(sequelize) {
 
 
 
+    /**
+     * cette route permet de rejoindre ou creer un groupe de chat avec plusieurs amis
+     */
+    app.post('/group-chat', getClientTokenAndVerifAccess, async (request, response) => {
+
+        try {
+
+            const data = request.body;
+            console.log(data);
+            if (!data) {
+                return response.status(400).json({ error: "Données manquantes." });
+            } else {
+
+                console.log(data.usersArray) // l'Array de tout les users invite au groupe ou y participant
+                console.log(data.groupName)// le nom du groupe 
+
+                
+
+
+            }
+
+
+
+
+
+        } catch (error) {
+            console.error(error);
+            response.status(500).json({ error: "Erreur serveur" });
+        }
+
+
+
+
+
+    })
 
 
 
