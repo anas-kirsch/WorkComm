@@ -15,6 +15,12 @@ import { getProfilPictureFromDataB } from "./models/getAndSaveProfilPicture.mjs"
 import jwt from "jsonwebtoken"
 import { getClientTokenAndVerifAccess } from "./models/getClientTokenAndVerifAccess.mjs";
 import fs from "fs/promises";
+import { groupName } from "./database.mjs";
+import { groupMembers } from "./database.mjs";
+import { error } from "console";
+import { getgroups } from "process";
+
+
 
 
 const secret = process.env.SECRET_KEY ?? "secret-key";
@@ -648,7 +654,7 @@ export function runServer(sequelize) {
             let conv = await conversation.findOne({ where: { chat_name: chatName } });
 
             if (!conv) {
-                conv = await conversation.create({
+                conv = await conversation.create({ 
                     chat_name: chatName,
                     UserId: id1,
                     friendId: id2
@@ -683,9 +689,50 @@ export function runServer(sequelize) {
             } else {
 
                 console.log(data.usersArray) // l'Array de tout les users invite au groupe ou y participant
-                console.log(data.groupName)// le nom du groupe 
+                console.log(data.newGroupName)// le nom du groupe 
 
-                
+
+                // enregistre dans la table groupName le nom du groupe qui vient d'etre créer 
+                const newGroup = await groupName.create({
+                    group_name: data.newGroupName
+
+                })
+
+                // Si erreur dans l'ajout
+                if (!newGroup) {
+                    return response.status(500).json({
+                        message: "impossible d'ajouter le groupe name en bdd",
+                        body: data.newGroupName
+                    })
+                } else { //sinon
+
+                    console.log("le groupe a bien été ajouter", data.newGroupName);
+
+                    // une fois le nom de groupe enregistrer on récupère son id 
+                    const getGroup = await groupName.findOne({ where: { group_name: data.newGroupName } })
+                    if (!getGroup) {
+                        console.error("Impossible de récupérer l'id du groupe");
+                        throw new Error("Impossible de récupérer l'id du groupe");
+                    }
+
+                    console.log("ID du groupe :", getGroup.id);
+
+
+                    // insere le groupeId a chaque fois suivi des UserId qui sont dedans 
+                    for (const oneUser of data.usersArray) {
+                        const addUserToGroup = await groupMembers.findOrCreate({
+                            groupNameId: getGroup.id,
+                            UserId: oneUser
+
+                        });
+                        if (!addUserToGroup) {
+                            throw new Error(`impossible d'ajouter a les UserId au groupe : ${getGroup.id}`)
+                            console.error(`impossible d'ajouter a les UserId au groupe : ${getGroup.id}`);
+                        }
+
+                    }
+
+                }
 
 
             }
@@ -715,27 +762,3 @@ export function runServer(sequelize) {
     })
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -2,6 +2,8 @@ import { userInfo } from "os";
 import { DataTypes, ENUM, Model, Sequelize } from "sequelize";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
+import { group } from "console";
+// import dataTypes from "sequelize/lib/data-types";
 dotenv.config();
 
 /**
@@ -145,11 +147,36 @@ export const conversation = sequelize.define("conversation", {
 });
 
 
+/**
+ * cette table permet de referencer les noms des conversations de groupes qui ont été crées
+ */
+export const groupName = sequelize.define("groupName", {
+
+    group_name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    }
+
+})
 
 
 
+/**
+ * cette table est une jointure entre les tables groupName et User, référencant les participants de chaque groupe
+ */
+export const groupMembers = sequelize.define("groupMembers", {
+
+}, {
+    timestamps: false
+});
 
 
+/**
+ * ces relations crées une jointure entre la table groupName et User par l'intermédiraire de la table groupMembers
+ */
+User.belongsToMany(groupName, { through: groupMembers, foreignKey: "UserId" });
+groupName.belongsToMany(User, { through: groupMembers, foreignKey: "groupNameId" });
 
 
 
