@@ -173,11 +173,55 @@ export const groupMembers = sequelize.define("groupMembers", {
 
 
 /**
+ * cette table permet d'enregistrer tout les messages de l'application que ce soit des conversations privées ou de groupes
+ */
+export const Message = sequelize.define('Message',{
+
+    content: {
+        type : DataTypes.STRING,
+        allowNull :false,
+    }
+})
+
+/**
+ * cette table referencie quel User de quel groupe a envoyer quel message 
+ */
+export const GroupMessage = sequelize.define("groupMessage",{
+    
+})
+
+/**
+ * cette table referencie les conversations (donc messages) privées entre deux users à chaque fois 
+ */
+export const privateMessage = sequelize.define("privateMessage",{
+
+
+})
+
+
+/**
+ * relation des nouvelles tables 
+ */
+
+GroupMessage.belongsTo(User,{ foreignKey : "UserId"});
+GroupMessage.belongsTo(groupName,{foreignKey : "GroupNameId"});
+GroupMessage.belongsTo(Message,{foreignKey : "MessageID"});
+
+
+privateMessage.belongsTo(User,{foreignKey : "SenderId"});
+privateMessage.belongsTo(User,{foreignKey : "receverId"});
+privateMessage.belongsTo(conversation,{foreignKey : "ConversationId"});
+
+
+
+
+
+
+/**
  * ces relations crées une jointure entre la table groupName et User par l'intermédiraire de la table groupMembers
  */
 User.belongsToMany(groupName, { through: groupMembers, foreignKey: "UserId" });
 groupName.belongsToMany(User, { through: groupMembers, foreignKey: "groupNameId" });
-
 
 
 

@@ -19,7 +19,7 @@ import { groupName } from "./database.mjs";
 import { groupMembers } from "./database.mjs";
 import { error } from "console";
 import { getgroups } from "process";
-
+import { conversation } from "./database.mjs";
 
 
 
@@ -261,7 +261,7 @@ export function runServer(sequelize) {
 
     })
 
-
+    //route create admin
     // /**
     //  * Cette route permet d'ajouter un administrateur, plus tard elle sera ferme
     //  */
@@ -324,8 +324,59 @@ export function runServer(sequelize) {
 
     /**
      * cette route doit permettre a l'admin de supprimer des utilisateur 
-     */
-    // app.delete
+     * 
+    */
+    app.delete("/admin/delete/:userId", async (request, response) => {
+
+        try {
+
+            const userId = request.params
+            const getUserToDelete = await User.findByPk(userId);
+            // console.log(getUserToDelete);
+            const getPicUser = await profilPicture.findOne({ where: { UserId: userId } });
+            console.log("------>", getPicUser)
+
+            const getHisFriends = await Friends.findAll({
+                where: { [Op.or]: { UserId: userId, friendId: userId } }
+            })
+
+
+            if (getUserToDelete && getPicUser) {
+                await getUserToDelete.destroy();
+                await getPicUser.destroy();
+
+                const imagePath = getPicUser.imagePath;
+                const pathFile = "/images" + imagePath.split("/images").pop();
+                console.log(pathFile);
+
+                try {
+                    await fs.unlink(`../public${pathFile}`);
+                    console.log("Fichier supprimé :", pathFile);
+                } catch (err) {
+                    console.error("Erreur lors de la suppression du fichier :", err);
+                }
+
+
+                if (getUserToDelete && getHisFriends.length > 0) {
+                    for (const friend of getHisFriends) {
+                        await friend.destroy();
+                    }
+                    response.status(200).json("Votre utilisateur a bien été supprimé")
+
+                } else {
+                    response.status(200).json("Votre utilisateur a bien été supprimé")
+
+                }
+            }
+
+        } catch (error) {
+            console.error(error);
+            response.status(500).json({ error: "Erreur serveur." });
+
+        }
+
+
+    })
 
 
     /**
@@ -338,7 +389,7 @@ export function runServer(sequelize) {
             const { userId } = request.params;
 
             const getUserToDelete = await User.findByPk(userId);
-            // console.log(getUserToDelete);
+            // console.log(getUserToDelete);c
 
             const getPicUser = await profilPicture.findOne({ where: { UserId: userId } });
             console.log("------>", getPicUser)
@@ -654,7 +705,7 @@ export function runServer(sequelize) {
             let conv = await conversation.findOne({ where: { chat_name: chatName } });
 
             if (!conv) {
-                conv = await conversation.create({ 
+                conv = await conversation.create({
                     chat_name: chatName,
                     UserId: id1,
                     friendId: id2
@@ -674,7 +725,6 @@ export function runServer(sequelize) {
     });
 
 
-
     /**
      * cette route permet de rejoindre ou creer un groupe de chat avec plusieurs amis
      */
@@ -684,12 +734,26 @@ export function runServer(sequelize) {
 
             const data = request.body;
             console.log(data);
-            if (!data) {
+            if (!data || !data.usersArray || !data.newGroupName) {
                 return response.status(400).json({ error: "Données manquantes." });
             } else {
 
-                console.log(data.usersArray) // l'Array de tout les users invite au groupe ou y participant
-                console.log(data.newGroupName)// le nom du groupe 
+                // console.log(data.usersArray) // l'Array de tout les users invite au groupe ou y participant
+                // console.log(data.newGroupName)// le nom du groupe 
+
+
+                let usersArray = data.usersArray;
+                if (typeof usersArray === "string") {
+                    try {
+                        usersArray = JSON.parse(usersArray);
+                    } catch (error) {
+                        return response.status(400).json({ error: "usersArray mal formé" });
+                    }
+                }
+                if (!Array.isArray(usersArray) || usersArray.length === 0) {
+                    return response.status(400).json({ error: "usersArray doit être un tableau non vide" });
+                }
+
 
 
                 // enregistre dans la table groupName le nom du groupe qui vient d'etre créer 
@@ -719,41 +783,169 @@ export function runServer(sequelize) {
 
 
                     // insere le groupeId a chaque fois suivi des UserId qui sont dedans 
-                    for (const oneUser of data.usersArray) {
+                    for (const oneUser of usersArray) {
                         const addUserToGroup = await groupMembers.findOrCreate({
-                            groupNameId: getGroup.id,
-                            UserId: oneUser
+                            where: {
 
+                                groupNameId: getGroup.id,
+                                UserId: oneUser
+
+                            }
                         });
                         if (!addUserToGroup) {
                             throw new Error(`impossible d'ajouter a les UserId au groupe : ${getGroup.id}`)
                             console.error(`impossible d'ajouter a les UserId au groupe : ${getGroup.id}`);
                         }
-
                     }
 
+                    // Récupère les membres du groupe pour la réponse
+                    const members = await groupMembers.findAll({
+                        where: { groupNameId: getGroup.id },
+                        attributes: ['UserId']
+                    });
+
+                    response.status(201).json({
+                        groupId: getGroup.id,
+                        groupName: getGroup.group_name,
+                        members: members.map(m => m.UserId)
+                    });
                 }
 
-
             }
-
-
-
-
 
         } catch (error) {
             console.error(error);
             response.status(500).json({ error: "Erreur serveur" });
         }
 
-
-
-
-
     })
 
 
+    /**
+     * cette route permet d'ajouter un membre dans un groupe
+     */
+    app.post('/add-group-member', getClientTokenAndVerifAccess, async (request, response) => {
 
+        try {
+
+            const data = request.body;
+            console.log(data.newMemberId)
+            console.log(data.groupId)
+
+            if (!data) {
+                return response.status(400).json({ error: "Données manquantes." });
+            } else {
+
+                const findGroup = await groupName.findOne({ where: { id: data.groupId } })
+
+                if (!findGroup) {
+                    return response.status(400).json({ error: "groupe inexistant." });
+
+                }
+
+                if (findGroup) {
+
+                    const verifMemberExist = await groupMembers.findOne({
+                        where: { groupNameId: data.groupId, UserId: data.newMemberId }
+                    })
+
+                    if (verifMemberExist) {
+                        return response.status(400).json({ error: "membre deja dans le groupe." });
+                    } {
+
+                        const InsertNewMember = await groupMembers.create({
+                            groupNameId: data.groupId, UserId: data.newMemberId
+                        })
+
+                        if (InsertNewMember) {
+
+                            return response.status(200).json({
+                                message: `le nouveau membre du groupe a bien été ajouter : ${data.newMemberId}`,
+                                body: {
+                                    groupe: findGroup.group_name,
+                                    id: data.newMemberId,
+                                }
+                            })
+
+                        }
+
+                    }
+
+                }
+            }
+
+        } catch (error) {
+            console.error(error);
+            response.status(500).json({ error: "Erreur serveur" });
+        }
+    })
+
+
+    /**
+     * cette route permet de quitter un groupe 
+     */
+    app.delete('/quit-group-member', getClientTokenAndVerifAccess, async (request, response) => {
+
+        try {
+
+            const data = request.body;
+            // console.log(data);
+            console.log(data.MemberId);
+            console.log(data.groupId);
+
+            if (!data) {
+                return response.status(400).json({ error: "Données manquantes." });
+            } else {
+
+
+                const findGroup = await groupName.findOne({ where: { id: data.groupId } })
+
+                if (!findGroup) {
+                    return response.status(400).json({ error: "groupe inexistant." });
+
+                }
+
+                if (findGroup) {
+
+                    const verifMemberExist = await groupMembers.findOne({
+                        where: { groupNameId: data.groupId, UserId: data.MemberId }
+                    })
+
+                    if (!verifMemberExist) {
+                        return response.status(400).json({ error: "membre du groupe introuvable." });
+                    }
+
+                    if (verifMemberExist) {
+                        const deleteMember = await groupMembers.destroy({
+                            where: {
+                                groupNameId: data.groupId,
+                                UserId: data.MemberId
+                            }
+                        });
+
+                        if (deleteMember) {
+                            return response.status(200).json({
+                                message: "Le membre a bien quitté le groupe.",
+                                memberId: data.MemberId,
+                                groupId: data.groupId
+                            });
+                        } else {
+                            return response.status(500).json({ error: "Erreur lors de la suppression du membre du groupe." });
+                        }
+
+
+                    }
+
+                }
+
+            }
+
+        } catch (error) {
+
+        }
+    })
+
+        
 
 
     app.listen(port, () => {
@@ -762,3 +954,82 @@ export function runServer(sequelize) {
     })
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// app.delete('/quit-group-member', getClientTokenAndVerifAccess, async (request, response) => {
+//     try {
+//         const data = request.body;
+//         console.log(data.MemberId);
+//         console.log(data.groupId);
+
+//         if (!data) {
+//             return response.status(400).json({ error: "Données manquantes." });
+//         }
+
+//         const findGroup = await groupName.findOne({ where: { id: data.groupId } });
+//         if (!findGroup) {
+//             return response.status(400).json({ error: "groupe inexistant." });
+//         }
+
+//         const verifMemberExist = await groupMembers.findOne({
+//             where: { groupNameId: data.groupId, UserId: data.MemberId }
+//         });
+
+//         if (!verifMemberExist) {
+//             return response.status(400).json({ error: "membre du groupe introuvable." });
+//         }
+
+//         const deleteMember = await groupMembers.destroy({
+//             where: {
+//                 groupNameId: data.groupId,
+//                 UserId: data.MemberId
+//             }
+//         });
+
+//         if (deleteMember) {
+//             // Vérifie s'il reste des membres dans le groupe
+//             const remainingMembers = await groupMembers.count({
+//                 where: { groupNameId: data.groupId }
+//             });
+
+//             if (remainingMembers === 0) {
+//                 await groupName.destroy({ where: { id: data.groupId } });
+//                 return response.status(200).json({
+//                     message: "Le membre a bien quitté le groupe. Le groupe a été supprimé car il n'avait plus de membres.",
+//                     memberId: data.MemberId,
+//                     groupId: data.groupId
+//                 });
+//             }
+
+//             return response.status(200).json({
+//                 message: "Le membre a bien quitté le groupe.",
+//                 memberId: data.MemberId,
+//                 groupId: data.groupId
+//             });
+//         } else {
+//             return response.status(500).json({ error: "Erreur lors de la suppression du membre du groupe." });
+//         }
+//     } catch (error) {
+//         console.error(error);
+//         response.status(500).json({ error: "Erreur serveur." });
+//     }
+// });
