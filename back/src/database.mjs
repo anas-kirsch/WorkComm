@@ -200,25 +200,28 @@ export const privateMessage = sequelize.define("privateMessage",{
 
 
 /**
- * relation des nouvelles tables 
+ * relation creant la table de jointure qui enregiste l'historique des messages envoyés dans un groupe
  */
-
 GroupMessage.belongsTo(User,{ foreignKey : "UserId"});
 GroupMessage.belongsTo(groupName,{foreignKey : "GroupNameId"});
 GroupMessage.belongsTo(Message,{foreignKey : "MessageID"});
 
-
+/**
+ * relation creant la table de jointure qui enregistre l'historique des messages envoyés dans un chat privé 
+ */
 privateMessage.belongsTo(User,{foreignKey : "SenderId"});
 privateMessage.belongsTo(User,{foreignKey : "receverId"});
 privateMessage.belongsTo(conversation,{foreignKey : "ConversationId"});
 
 
 
-
+/**
+ * ces relations crées une jointure entre la table groupName et User par l'intermédiraire de la table groupMembers
+ */
 
 
 /**
- * ces relations crées une jointure entre la table groupName et User par l'intermédiraire de la table groupMembers
+ * relation pour faire la table qui save les membres de chaque groupe
  */
 User.belongsToMany(groupName, { through: groupMembers, foreignKey: "UserId" });
 groupName.belongsToMany(User, { through: groupMembers, foreignKey: "groupNameId" });

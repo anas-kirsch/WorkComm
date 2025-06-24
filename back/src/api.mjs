@@ -1,25 +1,33 @@
-import { Op, Sequelize } from "sequelize";
+// dependances externes du projet 
+import { json, Op, Sequelize } from "sequelize";
 import express, { request, response } from "express";
 import cors from "cors";
-import { sequelize } from "./database.mjs";
-import { User } from "./database.mjs";
 // import {AdminUser} from "./database.mjs"
-import { Friends } from "./database.mjs";
 import bcrypt from "bcrypt";
-import { getAndSaveProfilPicture } from "./models/getAndSaveProfilPicture.mjs";
 import parseFormData from '@trojs/formdata-parser';
 import fileUpload from "express-fileupload";
-import { profilPicture } from "./database.mjs";
 import { get } from "http";
-import { getProfilPictureFromDataB } from "./models/getAndSaveProfilPicture.mjs"
 import jwt from "jsonwebtoken"
-import { getClientTokenAndVerifAccess } from "./models/getClientTokenAndVerifAccess.mjs";
 import fs from "fs/promises";
+import { error, group } from "console";
+import { getgroups } from "process";
+
+// dépendances internes du projet
+import { User } from "./database.mjs";
+import { getAndSaveProfilPicture } from "./models/getAndSaveProfilPicture.mjs";
+import { profilPicture } from "./database.mjs";
+import { getProfilPictureFromDataB } from "./models/getAndSaveProfilPicture.mjs"
+import { getClientTokenAndVerifAccess } from "./models/getClientTokenAndVerifAccess.mjs";
 import { groupName } from "./database.mjs";
 import { groupMembers } from "./database.mjs";
-import { error } from "console";
-import { getgroups } from "process";
 import { conversation } from "./database.mjs";
+import { sequelize } from "./database.mjs";
+import { Friends } from "./database.mjs";
+import { Message } from "./database.mjs";
+import { GroupMessage } from "./database.mjs";
+import { privateMessage } from "./database.mjs";
+import { stringify } from "querystring";
+import { Json } from "sequelize/lib/utils";
 
 
 
@@ -941,11 +949,124 @@ export function runServer(sequelize) {
             }
 
         } catch (error) {
-
+            console.error(error);
+            response.status(500).json({ error: "Erreur serveur" });
         }
     })
 
-        
+
+    // historique et message de groupe
+
+
+    // 4 routes
+    // envoyer un message et save en bdd
+    // modifier un message et save en bdd
+    // supprimer un message et save en bdd
+    // recuperer les messages quand on arrive sur un chat
+
+
+
+    /**
+     * cette route enregistre dans la table Messages le message envoyer par un utilisateur dans un groupe, puis apres cela il ajoute dans la table groupMessages 
+     * l'id de celui qui l'a envoyer, dans quel groupe et l'id du message enregistrer préalablement afin de pouvoir toujours le retrouver
+     */
+    app.post('/send-group-message', getClientTokenAndVerifAccess, async (request, response) => {
+
+        try {
+
+            // recupere le body de la requete 
+            const { messageContent, UserId, groupId } = request.body;
+            console.log({
+                messageContent,
+                UserId,
+                groupId
+            });
+
+
+            if (!request.body || !messageContent || !UserId || !groupId) {
+                return response.status(400).json("données manquantes.")
+            }
+
+            if (messageContent || UserId || groupId) {
+
+                // ajoute le message envoyer par un User dans la table Messages 
+                const insertNewMessage = await Message.create({
+                    content: messageContent,
+                })
+
+                if (!insertNewMessage) {
+                    console.error("impossible d'ajouter le message.")
+                    throw new error("impossible d'ajouter le message")
+                }
+
+                if (insertNewMessage) {
+                    let MessageID = insertNewMessage.dataValues.id
+                    MessageID = JSON.stringify(MessageID)
+                    console.log(MessageID)
+
+
+                    const newGroupMessage = await GroupMessage.create({
+                        UserId: UserId,      // id de l'utilisateur
+                        GroupNameId: groupId,    // id du groupe
+                        MessageID: MessageID // id du message
+                    })
+
+
+                    if (!newGroupMessage) {
+                        throw new error("erreur : message non inserer dans la bdd")
+                    }
+
+                    if (newGroupMessage) {
+                        return response.status(200).json({
+                            message: "Message enregistré, Historique à jour",
+                            body : {
+                                UserId,
+                                groupId,
+                                MessageID,
+                                messageContent
+                            }
+                        })
+                    }
+                }
+
+            }
+
+
+        } catch (error) {
+            console.error(error);
+            response.status(500).json({ error: "Erreur serveur" });
+        }
+
+    })
+
+
+
+
+
+
+
+
+
+    // historique et message privée
+
+
+    // 4 routes 
+    // envoyer un message a un ami et save en bdd
+    // modifer un message et save en bdd
+    // supprimer un message et save en bdd
+    // recuperer tout les messages que l'on a echanger avec un ami
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     app.listen(port, () => {
