@@ -971,78 +971,74 @@ export function runServer(sequelize) {
      * l'id de celui qui l'a envoyer, dans quel groupe et l'id du message enregistrer préalablement afin de pouvoir toujours le retrouver
      */
     app.post('/send-group-message', getClientTokenAndVerifAccess, async (request, response) => {
-
         try {
+            const UserId = request.user.id;
+            const { messageContent, groupId } = request.body;
 
-            // recupere le body de la requete 
-            const { messageContent, UserId, groupId } = request.body;
-            console.log({
-                messageContent,
-                UserId,
-                groupId
+
+            const MAX_MESSAGE_LENGTH = 2000;
+
+            if (!messageContent || messageContent.length === 0) {
+                return response.status(400).json({ error: "Le message ne peut pas être vide." });
+            }
+            if (messageContent.length > MAX_MESSAGE_LENGTH) {
+                return response.status(400).json({ error: `Le message ne doit pas dépasser ${MAX_MESSAGE_LENGTH} caractères.` });
+            }
+
+
+            if (!messageContent || !UserId || !groupId) {
+                console.log(messageContent)
+                console.log(groupId)
+                console.log(UserId)
+                return response.status(400).json({ error: "Données manquantes." });
+            }
+
+            // Vérifie que l'utilisateur est membre du groupe
+            const isMember = await groupMembers.findOne({
+                where: { groupNameId: groupId, UserId }
+            });
+            if (!isMember) {
+                return response.status(403).json({ error: "Vous n'êtes pas membre de ce groupe." });
+            }
+
+            // Ajoute le message dans la table Messages
+            const insertNewMessage = await Message.create({
+                content: messageContent,
             });
 
-
-            if (!request.body || !messageContent || !UserId || !groupId) {
-                return response.status(400).json("données manquantes.")
+            if (!insertNewMessage) {
+                console.error("impossible d'ajouter le message.");
+                throw new Error("impossible d'ajouter le message");
             }
 
-            if (messageContent || UserId || groupId) {
+            let MessageID = insertNewMessage.dataValues.id;
+            MessageID = JSON.stringify(MessageID)
 
-                // ajoute le message envoyer par un User dans la table Messages 
-                const insertNewMessage = await Message.create({
-                    content: messageContent,
-                })
+            // Ajoute la liaison dans GroupMessage
+            const newGroupMessage = await GroupMessage.create({
+                UserId,
+                GroupNameId: groupId,
+                MessageID
+            });
 
-                if (!insertNewMessage) {
-                    console.error("impossible d'ajouter le message.")
-                    throw new error("impossible d'ajouter le message")
-                }
-
-                if (insertNewMessage) {
-                    let MessageID = insertNewMessage.dataValues.id
-                    MessageID = JSON.stringify(MessageID)
-                    console.log(MessageID)
-
-
-                    const newGroupMessage = await GroupMessage.create({
-                        UserId: UserId,      // id de l'utilisateur
-                        GroupNameId: groupId,    // id du groupe
-                        MessageID: MessageID // id du message
-                    })
-
-
-                    if (!newGroupMessage) {
-                        throw new error("erreur : message non inserer dans la bdd")
-                    }
-
-                    if (newGroupMessage) {
-                        return response.status(200).json({
-                            message: "Message enregistré, Historique à jour",
-                            body : {
-                                UserId,
-                                groupId,
-                                MessageID,
-                                messageContent
-                            }
-                        })
-                    }
-                }
-
+            if (!newGroupMessage) {
+                throw new Error("erreur : message non inséré dans la bdd");
             }
 
-
+            return response.status(200).json({
+                message: "Message enregistré, Historique à jour",
+                body: {
+                    UserId,
+                    groupId,
+                    MessageID,
+                    messageContent
+                }
+            });
         } catch (error) {
             console.error(error);
             response.status(500).json({ error: "Erreur serveur" });
         }
-
-    })
-
-
-
-
-
+    });
 
 
 

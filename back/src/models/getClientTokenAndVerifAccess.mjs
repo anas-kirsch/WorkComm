@@ -15,8 +15,8 @@ export async function getClientTokenAndVerifAccess(request, response, next) {
     try {
         //Coté client le token est envoyé dans le header authorization
         const authHeader = request.headers.authorization;
-        
-        console.log("authHeader",authHeader)
+
+        console.log("authHeader", authHeader)
         // Je récupère uniquement le token du header pas le mot Bearer
         const token = authHeader.split(" ")[1];
         console.log(token)
@@ -27,6 +27,7 @@ export async function getClientTokenAndVerifAccess(request, response, next) {
             console.log(verifyToken);
             console.log("token valid");
 
+            request.user = verifyToken; // <-- Ajoute le token décodé à la requête
 
             switch (verifyToken.role) {
                 case "admin":
