@@ -210,8 +210,9 @@ GroupMessage.belongsTo(Message,{foreignKey : "MessageID"});
  * relation creant la table de jointure qui enregistre l'historique des messages envoyés dans un chat privé 
  */
 privateMessage.belongsTo(User,{foreignKey : "SenderId"});
-privateMessage.belongsTo(User,{foreignKey : "receverId"});
+privateMessage.belongsTo(User,{foreignKey : "receiverId"});
 privateMessage.belongsTo(conversation,{foreignKey : "ConversationId"});
+privateMessage.belongsTo(Message),{foreignKey : "MessageID"}
 
 
 

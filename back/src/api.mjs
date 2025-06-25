@@ -28,6 +28,7 @@ import { GroupMessage } from "./database.mjs";
 import { privateMessage } from "./database.mjs";
 import { stringify } from "querystring";
 import { Json } from "sequelize/lib/utils";
+import { publicDecrypt, verify } from "crypto";
 
 
 
@@ -108,12 +109,15 @@ export function runServer(sequelize) {
                     console.log("2", validUser)
 
                     const insertNewUser = await User.findOrCreate({ //create sinon
-                        username: validUser.username,
-                        mail: validUser.mail,
-                        role: validUser.role,
-                        language: validUser.language,
-                        bio: validUser.bio,
-                        password: validUser.password,
+
+                        where: {
+                            username: validUser.username,
+                            mail: validUser.mail,
+                            role: validUser.role,
+                            language: validUser.language,
+                            bio: validUser.bio,
+                            password: validUser.password,
+                        }
                     });
                     console.log('3:', insertNewUser)
 
@@ -955,17 +959,6 @@ export function runServer(sequelize) {
     })
 
 
-    // historique et message de groupe
-
-
-    // 4 routes
-    // envoyer un message et save en bdd
-    // modifier un message et save en bdd
-    // supprimer un message et save en bdd
-    // recuperer les messages quand on arrive sur un chat
-
-
-
     /**
      * cette route enregistre dans la table Messages le message envoyer par un utilisateur dans un groupe, puis apres cela il ajoute dans la table groupMessages 
      * l'id de celui qui l'a envoyer, dans quel groupe et l'id du message enregistrer préalablement afin de pouvoir toujours le retrouver
@@ -975,7 +968,6 @@ export function runServer(sequelize) {
             const UserId = request.user.id;
             const { messageContent, groupId } = request.body;
 
-
             const MAX_MESSAGE_LENGTH = 2000;
 
             if (!messageContent || messageContent.length === 0) {
@@ -984,7 +976,6 @@ export function runServer(sequelize) {
             if (messageContent.length > MAX_MESSAGE_LENGTH) {
                 return response.status(400).json({ error: `Le message ne doit pas dépasser ${MAX_MESSAGE_LENGTH} caractères.` });
             }
-
 
             if (!messageContent || !UserId || !groupId) {
                 console.log(messageContent)
@@ -1041,18 +1032,360 @@ export function runServer(sequelize) {
     });
 
 
+    /**
+     * cette route permet de modifier un message envoyer dans un groupe 
+     */
+    app.put('/update-group-message', getClientTokenAndVerifAccess, async (request, response) => {
+
+        try {
+            // data = Userid , message id , new message
+            const UserId = request.user.id;
+            const { messageId, newMessage, groupId } = request.body;
+            console.log({
+                messageId,
+                groupId,
+                newMessage,
+                UserId
+            });
+
+            if (!messageId || !groupId || !newMessage || !UserId) {
+                return response.status(400).json("erreur données maquantes.")
+            } else {
 
 
-    // historique et message privée
+                const verif = await GroupMessage.findOne({
+                    where: {
+                        UserId: UserId, GroupNameId: groupId, MessageID: messageId
+                    }
+                })
+
+                if (!verif) {
+                    throw new error("erreur")
+                } else {
 
 
-    // 4 routes 
-    // envoyer un message a un ami et save en bdd
-    // modifer un message et save en bdd
+
+                    const changeMessage = await Message.update(
+                        { content: newMessage }, // champs à mettre à jour
+                        { where: { id: messageId } }    // condition de sélection
+                    );
+
+                    if (!changeMessage) {
+                        throw new Error("impossible de modifier le message ")
+                    }
+
+                    if (changeMessage) {
+
+                        return response.status(200).json({
+
+                            body: { newMessage, UserId, groupId },
+                            message: "le message a bien été modifier"
+                        })
+
+                    }
+                }
+
+            }
+
+        } catch (error) {
+            console.error(error);
+            response.status(500).json({ error: "Erreur serveur" });
+
+        }
+
+    })
+
+
+    /**
+     * cette route permet de supprimer un message de groupe 
+     */
+    app.delete('/delete-group-message', getClientTokenAndVerifAccess, async (request, response) => {
+
+        try {
+            const UserId = request.user.id;
+            const { messageId, groupId } = request.body;
+
+            if (!UserId || !messageId || !groupId) {
+                return response.status(400).json("Erreur données manquantes.")
+            } else {
+
+                const verif = await GroupMessage.destroy({
+                    where: {
+                        UserId: UserId, GroupNameId: groupId, MessageID: messageId
+                    }
+                })
+
+                const delMessage = await Message.destroy({
+                    where: {
+                        id: messageId
+                    }
+                })
+
+                if (!verif && !delMessage) {
+                    return response.status(500).json({ error: "Erreur lors de la suppression du message." });
+                }
+
+                if (verif || delMessage) {
+
+                    return response.status(200).json({
+                        message: "le message à bien été supprimer.",
+                        body: {
+                            UserId: UserId,
+                            GroupId: groupId
+                        }
+                    })
+
+
+                }
+            }
+
+        } catch (error) {
+            console.error(error);
+            response.status(500).json({ error: "Erreur serveur" });
+        }
+
+
+    })
+
+
+    /**
+     * cette route permet de recuperer tout les message d'un groupe 
+     */
+    app.post("/getAll-group-message", getClientTokenAndVerifAccess, async (request, response) => {
+
+        try {
+
+            const UserId = request.user.id;
+            const { groupId } = request.body;
+
+            if (!UserId || !groupId) {
+                return response.status(400).json("Erreur données manquantes.")
+            } else {
+
+                const isUserInGroup = await groupMembers.findOne({
+                    where: {
+                        groupNameId: groupId,
+                        UserId: UserId
+                    }
+                })
+
+                if (!isUserInGroup) {
+                    return response.status(400).json({
+                        message: `le user ${UserId} n'est pas membre du groupe`
+                    })
+                }
+
+                if (isUserInGroup) {
+                    const getAllReferenced = await GroupMessage.findAll({
+                        where: {
+                            GroupNameId: groupId
+                        }
+                    })
+
+                    if (!getAllReferenced || getAllReferenced.length === 0) {
+                        return response.status(200).json("aucun message dans l'historique, commencez à chatter.");
+                    } else {
+
+
+                        // console.log(getAllReferenced)
+
+                        // Récupère les IDs des messages
+                        const messageIds = getAllReferenced.map(ref => ref.MessageID);
+                        console.log("ID :", messageIds)
+
+                        // Récupère tous les messages d'un coup
+                        const getMessageContent = await Message.findAll({
+                            where: { id: messageIds }
+                        });
+
+
+                        return response.status(200).json({
+                            message: "Voici votre historique",
+                            body: {
+                                getAllReferenced,
+                                getMessageContent,
+                            }
+                        })
+
+
+                    }
+                }
+
+
+            }
+
+        } catch (error) {
+            console.error(error);
+            response.status(500).json({ error: "Erreur serveur" });
+        }
+
+
+    })
+
+
     // supprimer un message et save en bdd
     // recuperer tout les messages que l'on a echanger avec un ami
 
 
+    /**
+     * cette route permet un utilisateur d'envoyer un message a son ami 
+     */
+    app.post("/send-private-message", getClientTokenAndVerifAccess, async (request, response) => {
+
+        try {
+
+            const UserId = request.user.id;
+            const { messageContent, friendId, group_name } = request.body;
+
+            if (!UserId || !messageContent || !friendId || !group_name) {
+                return response.status(400).json("Erreur données manquantes.");
+            }
+
+            console.log({
+                UserId, messageContent, friendId, group_name
+            })
+
+            const MAX_MESSAGE_LENGTH = 2000;
+
+            if (messageContent.length === 0) {
+                return response.status(400).json({ error: "Le message ne peut pas être vide." });
+            }
+            if (messageContent.length > MAX_MESSAGE_LENGTH) {
+                return response.status(400).json({ error: `Le message ne doit pas dépasser ${MAX_MESSAGE_LENGTH} caractères.` });
+            }
+
+
+            const verifConversationExist = await conversation.findOne({
+                where: { UserId: UserId, friendId: friendId, chat_name: group_name }
+            })
+
+            console.log('test 1', verifConversationExist);
+
+            if (!verifConversationExist) {
+                return response.status(404).json({ error: "Conversation introuvable." })
+            }
+
+            console.log("success")//
+
+            const insertNewMessage = await Message.create({
+                content: messageContent,
+            });
+
+            if (!insertNewMessage) {
+                console.error("impossible d'ajouter le message.");
+                throw new Error("impossible d'ajouter le message");
+            }
+
+            let MessageID = insertNewMessage.dataValues.id;
+            MessageID = JSON.stringify(MessageID)
+
+            const sendMessage = await privateMessage.create({
+                SenderId: UserId,
+                receiverId: friendId,
+                ConversationId: verifConversationExist.id,
+                MessageId: MessageID
+            })
+
+            if (!sendMessage) {
+                const destroy = await Message.destroy({
+                    where: { id: MessageID }
+                })
+            }
+
+            return response.status(200).json({
+                message: "message bien envoyé, Historique à jour.",
+                body: {
+                    UserId,
+                    friendId,
+                    group_name,
+                    messageContent,
+                    MessageID
+                }
+            })
+
+        } catch (error) {
+            console.error(error);
+            response.status(500).json({ error: "Erreur serveur" });
+        }
+
+
+
+
+    })
+
+
+
+    app.put("/update-private-message", getClientTokenAndVerifAccess, async (request, response) => {
+        try {
+
+            const UserId = request.user.id;
+            const { messageId, newMessage, group_name } = request.body;
+            console.log({
+                UserId,
+                messageId,
+                newMessage,
+                group_name
+            });
+
+            if (!messageId || !group_name || !newMessage || !UserId) {
+                return response.status(400).json("erreur données maquantes.")
+            }
+
+            const conversationID = await conversation.findOne({
+                where: {
+                    chat_name: group_name
+                }
+            })
+
+            if (!conversationID) {
+                console.error("id de conversation introuvable.");
+                throw new error("id de conversation introuvable.");
+            }
+
+            const verifConversationExist = await privateMessage.findOne({
+                where: {
+                    SenderId: UserId,
+                    ConversationId: conversationID.dataValues.id,
+                    MessageId: messageId
+                }
+            })
+
+            if (!verifConversationExist) {
+                return response.status(404).json({ error: "message inexistante. " })
+            } else {
+
+                console.log(conversationID)
+
+                const changeMessage = await Message.update(
+                    { content: newMessage }, // champs à mettre à jour
+                    { where: { id: messageId } }    // condition de sélection
+                );
+
+
+                if (!changeMessage) {
+                    throw new Error("impossible de modifier le message ")
+                }
+
+                if (changeMessage) {
+
+                    return response.status(200).json({
+
+                        body: { newMessage, UserId, group_name },
+                        message: "le message a bien été modifier"
+                    })
+
+                }
+            }
+
+        } catch (error) {
+            return response.status(500).json({ error: error.message || "Erreur serveur" });
+        }
+
+
+
+
+
+    })
 
 
 
