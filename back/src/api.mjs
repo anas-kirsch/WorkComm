@@ -30,10 +30,7 @@ import { stringify } from "querystring";
 import { Json } from "sequelize/lib/utils";
 import { publicDecrypt, verify } from "crypto";
 
-
-
 const secret = process.env.SECRET_KEY ?? "secret-key";
-
 
 
 /**
@@ -189,7 +186,6 @@ export function runServer(sequelize) {
 
         try {
 
-
             console.log('route : login');
 
             const UserData = request.body;
@@ -238,8 +234,6 @@ export function runServer(sequelize) {
                             expiresIn: "30 days"
                         })
 
-
-
                         const user = {
                             id: getUserConnect.dataValues.id,
                             username: getUserConnect.dataValues.username,
@@ -263,8 +257,6 @@ export function runServer(sequelize) {
                 }
 
             }
-
-
         } catch (error) {
             console.error(error); // pour le voir dans la console
             response.status(500).json({ error: "Erreur serveur lors de l'inscription." });
@@ -532,11 +524,8 @@ export function runServer(sequelize) {
                     dataUsers.push(user)
                     // console.log(dataUsers);
 
-
                 }
                 response.status(200).json(dataUsers);
-
-
             }
         } catch (error) {
             response.status(500).json({ error: "Erreur serveur." });
@@ -679,10 +668,6 @@ export function runServer(sequelize) {
             }
             // console.log(dataOfFriend)
             response.status(200).json(dataOfFriend);
-
-
-
-            // response.status(200).json(friends)
 
         } catch (error) {
 
@@ -959,6 +944,12 @@ export function runServer(sequelize) {
     })
 
 
+
+
+
+
+    // group
+
     /**
      * cette route enregistre dans la table Messages le message envoyer par un utilisateur dans un groupe, puis apres cela il ajoute dans la table groupMessages 
      * l'id de celui qui l'a envoyer, dans quel groupe et l'id du message enregistrer préalablement afin de pouvoir toujours le retrouver
@@ -1223,9 +1214,8 @@ export function runServer(sequelize) {
     })
 
 
-    // supprimer un message et save en bdd
-    // recuperer tout les messages que l'on a echanger avec un ami
 
+    // private 
 
     /**
      * cette route permet un utilisateur d'envoyer un message a son ami 
@@ -1314,7 +1304,9 @@ export function runServer(sequelize) {
     })
 
 
-
+    /**
+     * permet de modifier un message dans un chat privée avec un ami
+     */
     app.put("/update-private-message", getClientTokenAndVerifAccess, async (request, response) => {
         try {
 
@@ -1381,19 +1373,117 @@ export function runServer(sequelize) {
             return response.status(500).json({ error: error.message || "Erreur serveur" });
         }
 
-
-
-
-
     })
 
 
+    /**
+     * permet de supprimer un message chat privée envoyer à un ami
+     */
+    app.delete('/delete-private-message', getClientTokenAndVerifAccess, async (request, response) => {
+        try {
+            const UserId = request.user.id;
+            const { messageId, group_name } = request.body;
+
+            if (!UserId || !messageId || !group_name) {
+                return response.status(400).json("Erreur données manquantes.");
+            }
+
+            const conversationID = await conversation.findOne({
+                where: { chat_name: group_name }
+            });
+
+            if (!conversationID) {
+                console.error("id de conversation introuvable.");
+                throw new Error("id de conversation introuvable.");
+            }
+
+            const verifConversationExist = await privateMessage.destroy({
+                where: {
+                    SenderId: UserId,
+                    ConversationId: conversationID.dataValues.id,
+                    MessageId: messageId
+                }
+            });
+
+            const delMessage = await Message.destroy({
+                where: { id: messageId }
+            });
+
+            if (verifConversationExist === 0 || delMessage === 0) {
+                return response.status(500).json({ error: "Erreur lors de la suppression du message." });
+            }
+
+            return response.status(200).json({
+                message: "Le message a bien été supprimé.",
+                body: { UserId, group_name }
+            });
+
+        } catch (error) {
+            console.error(error);
+            response.status(500).json({ error: "Erreur serveur" });
+        }
+    });
+
+
+    /**
+     * cette route permet de recuperer tout les messages d'un chat privée avec un ami
+     */
+    app.post('/getAll-private-message', getClientTokenAndVerifAccess, async (request, response) => {
+        try {
+            const UserId = request.user.id;
+            const { group_name } = request.body;
+
+            if (!UserId || !group_name) {
+                return response.status(400).json({ error: "Erreur données manquantes." });
+            }
+
+            const conversationID = await conversation.findOne({
+                where: { chat_name: group_name }
+            });
+
+            // console.log("test",conversationID)
+
+            if (!conversationID) {
+                return response.status(404).json({ error: "Conversation introuvable." });
+            }
+
+            const getAllReferenced = await privateMessage.findAll({
+                where: { ConversationId: conversationID.id }
+            });
 
 
 
+            if (!getAllReferenced || getAllReferenced.length === 0) {
+                return response.status(200).json({
+                    message: "Aucun message dans l'historique, commencez à chatter.",
+                    body: []
+                });
+            }
 
+            // Récupère les IDs des messages
+            const messageIds = getAllReferenced.map(ref => ref.MessageId);
 
+            // console.log(messageIds)
 
+            // Récupère tous les messages d'un coup, triés par date si possible
+            const getMessageContent = await Message.findAll({
+                where: { id: messageIds },
+                order: [['createdAt', 'ASC']] // enlève cette ligne si tu n'as pas de champ createdAt
+            });
+
+            return response.status(200).json({
+                message: "Voici votre historique",
+                body: {
+                    references: getAllReferenced,
+                    messages: getMessageContent
+                }
+            });
+
+        } catch (error) {
+            console.error(error);
+            response.status(500).json({ error: "Erreur serveur" });
+        }
+    });
 
 
 
@@ -1405,81 +1495,3 @@ export function runServer(sequelize) {
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// app.delete('/quit-group-member', getClientTokenAndVerifAccess, async (request, response) => {
-//     try {
-//         const data = request.body;
-//         console.log(data.MemberId);
-//         console.log(data.groupId);
-
-//         if (!data) {
-//             return response.status(400).json({ error: "Données manquantes." });
-//         }
-
-//         const findGroup = await groupName.findOne({ where: { id: data.groupId } });
-//         if (!findGroup) {
-//             return response.status(400).json({ error: "groupe inexistant." });
-//         }
-
-//         const verifMemberExist = await groupMembers.findOne({
-//             where: { groupNameId: data.groupId, UserId: data.MemberId }
-//         });
-
-//         if (!verifMemberExist) {
-//             return response.status(400).json({ error: "membre du groupe introuvable." });
-//         }
-
-//         const deleteMember = await groupMembers.destroy({
-//             where: {
-//                 groupNameId: data.groupId,
-//                 UserId: data.MemberId
-//             }
-//         });
-
-//         if (deleteMember) {
-//             // Vérifie s'il reste des membres dans le groupe
-//             const remainingMembers = await groupMembers.count({
-//                 where: { groupNameId: data.groupId }
-//             });
-
-//             if (remainingMembers === 0) {
-//                 await groupName.destroy({ where: { id: data.groupId } });
-//                 return response.status(200).json({
-//                     message: "Le membre a bien quitté le groupe. Le groupe a été supprimé car il n'avait plus de membres.",
-//                     memberId: data.MemberId,
-//                     groupId: data.groupId
-//                 });
-//             }
-
-//             return response.status(200).json({
-//                 message: "Le membre a bien quitté le groupe.",
-//                 memberId: data.MemberId,
-//                 groupId: data.groupId
-//             });
-//         } else {
-//             return response.status(500).json({ error: "Erreur lors de la suppression du membre du groupe." });
-//         }
-//     } catch (error) {
-//         console.error(error);
-//         response.status(500).json({ error: "Erreur serveur." });
-//     }
-// });
