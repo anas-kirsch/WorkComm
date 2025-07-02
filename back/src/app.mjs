@@ -3,6 +3,9 @@ import { runServer } from "./api.mjs";
 import cors from "cors";
 import { User } from "./database.mjs";
 
+
+
+
 await sequelize.sync({logging : true})
     .then(async () => {
         await Promise.all([
