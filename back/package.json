@@ -9,5 +9,8 @@
     "pg": "^8.16.0",
     "postgres": "^3.4.6",
     "sequelize": "^6.37.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }

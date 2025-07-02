@@ -212,7 +212,7 @@ GroupMessage.belongsTo(Message,{foreignKey : "MessageID"});
 privateMessage.belongsTo(User,{foreignKey : "SenderId"});
 privateMessage.belongsTo(User,{foreignKey : "receiverId"});
 privateMessage.belongsTo(conversation,{foreignKey : "ConversationId"});
-privateMessage.belongsTo(Message),{foreignKey : "MessageID"}
+privateMessage.belongsTo(Message,{foreignKey : "MessageID"});
 
 
 

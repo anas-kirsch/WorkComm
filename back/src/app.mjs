@@ -1,13 +1,17 @@
+// console.log("Début du script app.mjs");
 import { sequelize } from "./database.mjs";
+// console.log("Import sequelize OK");
 import { runServer } from "./api.mjs";
+// console.log("Import runServer OK");
 import cors from "cors";
+// console.log("Import cors OK");
 import { User } from "./database.mjs";
+// console.log("Import User OK");
 
-
-
-
+console.log("Avant sequelize.sync");
 await sequelize.sync({logging : true})
     .then(async () => {
+        console.log("Après sequelize.sync");
         await Promise.all([
             User.findOrCreate({ where: { username: "anas" }, defaults: { mail: "anas83kirsch@gmail.com", role: "Admin", password: "U2sdkq5c.831-" } }),
             User.findOrCreate({ where: { username: "taiyang" }, defaults: { mail: "taiyang83000@gmail.com", password: "Taiyang12345." } }),
