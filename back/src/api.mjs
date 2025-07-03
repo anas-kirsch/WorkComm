@@ -105,27 +105,31 @@ export function runServer(sequelize) {
                     }
                     console.log("2", validUser)
 
-                    const insertNewUser = await User.findOrCreate({ //create sinon
-
+                    const insertNewUser = await User.findOrCreate({
                         where: {
                             username: validUser.username,
                             mail: validUser.mail,
-                            role: validUser.role,
+                        },
+                        defaults: {
+                            role: "user",
                             language: validUser.language,
                             bio: validUser.bio,
                             password: validUser.password,
                         }
                     });
-                    console.log('3:', insertNewUser)
+                    // console.log('3:', insertNewUser)
 
                     if (insertNewUser) {
+
+                        const userInstance = insertNewUser[0];
+                        // console.log("900000",userInstance.dataValues.id);
 
                         console.log("test file", request.files);
 
                         if (request.files || request.files == null) {
 
                             if (request.files && request.files.picture.size > 2 * 1024 * 1024) {
-                                const getUserToDestroy = await User.findOne({ where: { id: insertNewUser.id } })
+                                const getUserToDestroy = await User.findOne({ where: { id: userInstance.dataValues.id } })
                                 const deleteUserBecauseError = getUserToDestroy.destroy();
                                 return response.status(400).json({
                                     message: "erreur la photo est trop grande"
@@ -139,15 +143,17 @@ export function runServer(sequelize) {
                                 picture = request.files.picture;
                             }
 
-                            const addPic = await getAndSaveProfilPicture(picture, insertNewUser.id)
+                            const addPic = await getAndSaveProfilPicture(picture, userInstance.dataValues.id)
 
                             if (addPic) {
                                 response.status(200).json({
                                     message: 'votre user a bien été créer',
                                     user: {
-                                        userId: insertNewUser.id,
-                                        username: insertNewUser.username,
-                                        mail: insertNewUser.mail
+                                        userId:userInstance.dataValues.id,
+                                        username: userInstance.dataValues.username,
+                                        mail:userInstance.dataValues.mail,
+                                        bio: userInstance.dataValues.bio,
+                                        language : userInstance.dataValues.language
                                     }
 
                                 })

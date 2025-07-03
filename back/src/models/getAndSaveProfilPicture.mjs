@@ -61,6 +61,7 @@ export async function getAndSaveProfilPicture(picture, userId) {
         }
     } catch (error) {
         console.error(error);
+        return response.status(500).json("erreur serveur.")
     }
 
 }

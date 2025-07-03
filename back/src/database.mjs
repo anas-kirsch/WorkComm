@@ -47,7 +47,7 @@ export const User = sequelize.define("User", {
     },
     bio: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
         defaultValue: "..."
     },
     role: {
