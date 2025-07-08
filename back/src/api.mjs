@@ -149,11 +149,11 @@ export function runServer(sequelize) {
                                 response.status(200).json({
                                     message: 'votre user a bien été créer',
                                     user: {
-                                        userId:userInstance.dataValues.id,
+                                        userId: userInstance.dataValues.id,
                                         username: userInstance.dataValues.username,
-                                        mail:userInstance.dataValues.mail,
+                                        mail: userInstance.dataValues.mail,
                                         bio: userInstance.dataValues.bio,
-                                        language : userInstance.dataValues.language
+                                        language: userInstance.dataValues.language
                                     }
 
                                 })
