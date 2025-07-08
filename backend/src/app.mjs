@@ -1,7 +1,7 @@
-import { sequelize } from "./database.mjs";
-import { runServer } from "./api.mjs";
+import { sequelize } from "./configs/dbConnect.mjs";
+import { runServer } from "./controllers/api.mjs";
 import cors from "cors";
-import { User } from "./database.mjs";
+import { User } from "./models/database.mjs";
 
 console.log("Avant sequelize.sync");
 await sequelize.sync({logging : true})
