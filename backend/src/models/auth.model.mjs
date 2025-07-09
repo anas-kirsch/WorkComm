@@ -1,5 +1,4 @@
 import { sequelize } from "../configs/dbConnect.mjs";
-import {Sequilize} from "Sequelize"
 import { json, Op, Sequelize } from "sequelize";
 import {User} from "../models/database.mjs"
 

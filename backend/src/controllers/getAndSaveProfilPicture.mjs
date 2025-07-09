@@ -1,6 +1,6 @@
 import { response } from 'express';
-import { profilPicture } from '../database.mjs';
-import { sequelize } from "../database.mjs";
+import { profilPicture } from '../models/database.mjs';
+import { sequelize } from "../configs/dbConnect.mjs";
 import { error } from 'console';
 import fileUpload from 'express-fileupload';
 import path from 'path';

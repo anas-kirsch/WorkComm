@@ -60,3 +60,6 @@ export async function getClientTokenAndVerifAccess(request, response, next) {
 
 
 }
+
+
+export default getClientTokenAndVerifAccess;

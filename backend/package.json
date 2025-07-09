@@ -12,7 +12,15 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@trojs/formdata-parser": "^0.3.0",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.1.0",
     "express": "^5.1.0",
-    "nodemailer": "^7.0.4"
+    "express-fileupload": "^1.5.2",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^7.0.4",
+    "pg": "^8.16.3",
+    "sequelize": "^6.37.7"
   }
 }
