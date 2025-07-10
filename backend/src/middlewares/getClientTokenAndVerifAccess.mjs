@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 
-const secret = process.env.SECRET_KEY ?? "secret-key";
+const secret = process.env.JWT_SECRET ?? "secret-key";
 
 
 /**
@@ -48,6 +48,7 @@ export async function getClientTokenAndVerifAccess(request, response, next) {
 
 
     } catch (error) {
+        console.error("JWT error:", error); // Ajoute ceci
         response.status(401).json({
             message: "Unauthorized access",
             error: error.message

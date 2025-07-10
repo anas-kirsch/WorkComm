@@ -1,21 +1,23 @@
 import express from "express"
-import { createChatGroup,
+import {
+    createChatGroup,
     getGroupId,
-    addUserToGroupIfNotExists, 
-    getAllGroupMember, 
-    isUserInGroup, 
-    addUserToGroup, 
-    removeUserFromGroup, 
-    findGroup, 
-    createMessage, 
-    createGroupMessageLink, 
-    findGroupMessageLink, 
-    updateMessage, 
-    deleteGroupMessageLink, 
-    findMessage, 
-    deleteMessage, 
-    findAllGroupMessagesByGroupId, 
-    getGroupMessages } from "../models/chat.group.model.mjs"
+    addUserToGroupIfNotExists,
+    getAllGroupMember,
+    isUserInGroup,
+    addUserToGroup,
+    removeUserFromGroup,
+    findGroup,
+    createMessage,
+    createGroupMessageLink,
+    findGroupMessageLink,
+    updateMessage,
+    deleteGroupMessageLink,
+    findMessage,
+    deleteMessage,
+    findAllGroupMessagesByGroupId,
+    getGroupMessages
+} from "../models/chat.group.model.mjs"
 
 export class GroupChatController {
 
@@ -101,65 +103,53 @@ export class GroupChatController {
 
 
     /**
-     * cette methode static permet d'ajouter un utilisateur comme nouveau membre dans un groupe existant
-     */
+   * cette methode static permet d'ajouter un utilisateur comme nouveau membre dans un groupe existant
+   */
     static async addGroupMember(request, response) {
-
         try {
-
+            const userId = request.user.id;
             const data = request.body;
             console.log(data.newMemberId)
             console.log(data.groupId)
 
-            if (!data) {
+            if (!data || !data.groupId || !data.newMemberId) {
                 return response.status(400).json({ error: "Données manquantes." });
-            } else {
-
-                const findGroup = await findGroup(data.groupId);
-
-                if (!findGroup) {
-                    return response.status(400).json({ error: "groupe inexistant." });
-
-                }
-
-                if (findGroup) {
-
-                    const verifMemberExist = await isUserInGroup(data.groupId, data.newMemberId);
-
-                    if (verifMemberExist) {
-                        return response.status(400).json({ error: "membre deja dans le groupe." });
-                    } {
-
-                        const InsertNewMember = await addUserToGroup(data.groupId, data.newMemberId);
-
-                        if (!InsertNewMember) {
-                            return response.status(500).json({ error: "impossible d'ajouter cet utilisateur au groupe, reessayer.." })
-                        }
-
-                        if (InsertNewMember) {
-
-                            return response.status(200).json({
-                                message: `le nouveau membre du groupe a bien été ajouter : ${data.newMemberId}`,
-                                body: {
-                                    groupe: findGroup.group_name,
-                                    id: data.newMemberId,
-                                }
-                            })
-                        }
-
-                    }
-
-                }
             }
 
+            // Vérifie que l'utilisateur qui fait la demande est bien membre du groupe
+            const isRequesterMember = await isUserInGroup(data.groupId, userId);
+            if (!isRequesterMember) {
+                return response.status(403).json({ error: "Vous n'êtes pas membre de ce groupe." });
+            }
+
+            const findaGroup = await findGroup(data.groupId);
+            if (!findaGroup) {
+                return response.status(400).json({ error: "groupe inexistant." });
+            }
+
+            const verifMemberExist = await isUserInGroup(data.groupId, data.newMemberId);
+            if (verifMemberExist) {
+                return response.status(400).json({ error: "membre deja dans le groupe." });
+            }
+
+            const InsertNewMember = await addUserToGroup(data.groupId, data.newMemberId);
+            if (!InsertNewMember) {
+                return response.status(500).json({ error: "impossible d'ajouter cet utilisateur au groupe, reessayer.." })
+            }
+
+            return response.status(200).json({
+                message: `le nouveau membre du groupe a bien été ajouté : ${data.newMemberId}`,
+                body: {
+                    groupe: findaGroup.group_name,
+                    id: data.newMemberId,
+                }
+            })
         } catch (error) {
             console.error(error);
             response.status(500).json({ error: "Erreur serveur" });
         }
-
-
-
     }
+
 
 
     /**
@@ -175,13 +165,13 @@ export class GroupChatController {
             if (!data || !userId || !data.groupId) {
                 return response.status(400).json({ error: "Données manquantes." });
             } else {
-                const findGroup = await findGroup(data.groupId);
+                const findaGroup = await findGroup(data.groupId);
 
-                if (!findGroup) {
+                if (!findaGroup) {
                     return response.status(400).json({ error: "groupe inexistant." });
                 }
 
-                if (findGroup) {
+                if (findaGroup) {
 
                     const verifMemberExist = await isUserInGroup(data.groupId, userId);
 
@@ -373,6 +363,7 @@ export class GroupChatController {
         }
     }
 
+    
 
     /**
      * cette methode static permet de recuperer tout les messages d'un groupe, renvoie un array[] vide si aucun message
@@ -385,15 +376,15 @@ export class GroupChatController {
             if (!userId || !groupId) {
                 return response.status(400).json({ error: "Erreur données manquantes." })
             } else {
-                const isUserInGroup = await isUserInGroup(groupId, userId);
+                const isUserInGroupe = await isUserInGroup(groupId, userId);
 
-                if (!isUserInGroup) {
+                if (!isUserInGroupe) {
                     return response.status(400).json({
                         error: `le user ${userId} n'est pas membre du groupe`
                     })
                 }
 
-                if (isUserInGroup) {
+                if (isUserInGroupe) {
                     const getAllReferenced = await findAllGroupMessagesByGroupId(groupId);
 
                     if (!getAllReferenced || getAllReferenced.length === 0) {

@@ -1,6 +1,6 @@
 
 import express from "express"
-import { findUser, findUserByUsernameOrMail, findUserOrCreate, getUserProfilPicture, getUserData} from "../models/user.model.mjs";
+import { findUser, findUserByUsernameOrMail, findUserOrCreate, getUserProfilPicture, getUserData } from "../models/user.model.mjs";
 // import { findUserOrCreate } from "../models/user.model.mjs";
 // import { getUserToDestroy } from "../models/user.model.mjs";
 import nodemailer from 'nodemailer';
@@ -8,7 +8,10 @@ import { emailSender } from "./smtp.controller.mjs";
 import { friendRequest, getUserFriend, getFriendRequest, getInverseFriendship, frienshipCreate, getFriendship, findAllFriendship } from "../models/friend.model.mjs"
 import fs from 'fs/promises';
 import { getProfilPictureFromDataB } from "../controllers/getAndSaveProfilPicture.mjs"
-
+import { getAndSaveProfilPicture } from "../controllers/getAndSaveProfilPicture.mjs"
+import { sequelize } from "../configs/dbConnect.mjs";
+import { getAllGroupsForUser, getAllGroupMessagesByUser } from "../models/chat.group.model.mjs"
+import { getAllPrivateChatsForUser, getAllPrivateMessagesByUser, getPrivateMessages } from "../models/chat.private.model.mjs"
 
 export class UserController {
 
@@ -21,6 +24,7 @@ export class UserController {
         try {
             console.log("route : register")
             const myNewUser = request.body;
+
             // console.log("1", myNewUser);
             if (!myNewUser) {
                 return response.status(400).json({ error: "Données manquantes." });
@@ -42,7 +46,7 @@ export class UserController {
                     const validUser = {
                         username: myNewUser.username,
                         mail: myNewUser.mail,
-                        role: myNewUser.role,
+                        role: "user",
                         language: myNewUser.language,
                         bio: myNewUser.bio,
                         password: myNewUser.password
@@ -128,70 +132,250 @@ export class UserController {
     }
 
 
-    /**
-     * Cette methode static permet à un utilisateur de supprimer son compte 
-     */
+    // /**
+    //  * Cette methode static permet à un utilisateur de supprimer son compte 
+    //  */
+    // static async deleteUser(request, response) {
+
+    //     try {
+
+    //         // const { userId } = request.params;
+    //         const userId = request.user.id;
+
+    //         const getUserToDelete = await findUser(userId)
+    //         // console.log(getUserToDelete);c
+
+    //         const getPicUser = await getUserProfilPicture(userId);
+    //         // console.log("------>", getPicUser)
+
+    //         const getHisFriends = await getUserFriend(userId);
+
+
+    //         if (getUserToDelete && getPicUser) {
+    //             await getUserToDelete.destroy();
+    //             await getPicUser.destroy();
+
+    //             const imagePath = getPicUser.imagePath;
+    //             const pathFile = "/images" + imagePath.split("/images").pop();
+    //             console.log(pathFile);
+
+    //             try {
+    //                 await fs.unlink(`../public${pathFile}`);
+    //                 console.log("Fichier supprimé :", pathFile);
+    //             } catch (err) {
+    //                 console.error("Erreur lors de la suppression du fichier :", err);
+    //             }
+
+
+    //             if (getUserToDelete && getHisFriends.length > 0) {
+    //                 for (const friend of getHisFriends) {
+    //                     await friend.destroy();
+    //                 }
+    //                 response.status(200).json("Votre utilisateur a bien été supprimé")
+
+    //             } else {
+    //                 response.status(200).json("Votre utilisateur a bien été supprimé")
+
+    //             }
+    //         }
+
+
+
+    //     } catch (error) {
+
+    //         console.error(error);
+    //         response.status(500).json({ error: "Erreur serveur." });
+    //     }
+
+
+
+
+
+
+
+
+
+    // }
+
+
+
     static async deleteUser(request, response) {
-
+        const t = await sequelize.transaction();
         try {
-
-            // const { userId } = request.params;
             const userId = request.user.id;
 
-            const getUserToDelete = await findUser(userId)
-            // console.log(getUserToDelete);c
+            // Récupération des données nécessaires
+            const userToDelete = await findUser(userId, { transaction: t });
+            const userPic = await getUserProfilPicture(userId, { transaction: t });
+            const userFriends = await getUserFriend(userId, { transaction: t });
 
-            const getPicUser = await getUserProfilPicture(userId);
-            // console.log("------>", getPicUser)
+            if (!userToDelete || !userPic) {
+                await t.rollback();
+                return response.status(404).json({ error: "Utilisateur ou photo non trouvée." });
+            }
 
-            const getHisFriends = await getUserFriend(userId);
+            // Récupération des messages à supprimer
+            const groupMessages = await getAllGroupMessagesByUser(userId, { transaction: t });
+            const privateMessages = await getAllPrivateMessagesByUser(userId, { transaction: t });
 
+            // Construction de la liste des IDs de messages à supprimer
+            const messageIds = [
+                ...groupMessages.map(msg => msg.dataValues.MessageID),
+                ...privateMessages.map(msg => msg.dataValues.MessageId)
+            ];
 
-            if (getUserToDelete && getPicUser) {
-                await getUserToDelete.destroy();
-                await getPicUser.destroy();
+            // Suppression des messages (si il y en a)
+            if (messageIds.length > 0) {
+                const deleteMessage = await getPrivateMessages(messageIds, { transaction: t });
 
-                const imagePath = getPicUser.imagePath;
+                if (deleteMessage) {
+                    for (const msg of groupMessages) {
+                        await msg.destroy({ transaction: t });
+                    }
+                    for (const msg of privateMessages) {
+                        await msg.destroy({ transaction: t });
+                    }
+                }
+            }
+
+            // Suppression des amis
+            if (userFriends && userFriends.length > 0) {
+                for (const friend of userFriends) {
+                    await friend.destroy({ transaction: t });
+                }
+            }
+
+            // Suppression de la photo de profil en base
+            await userPic.destroy({ transaction: t });
+
+            // Suppression de l'utilisateur
+            await userToDelete.destroy({ transaction: t });
+
+            // Suppression du fichier image si ce n'est pas default.jpg
+            const imagePath = userPic.imagePath;
+            const fileName = imagePath.split("/").pop();
+            if (fileName && fileName !== "default.jpg") {
                 const pathFile = "/images" + imagePath.split("/images").pop();
-                console.log(pathFile);
-
                 try {
                     await fs.unlink(`../public${pathFile}`);
                     console.log("Fichier supprimé :", pathFile);
                 } catch (err) {
+                    // On rollback si la suppression du fichier échoue
+                    await t.rollback();
                     console.error("Erreur lors de la suppression du fichier :", err);
-                }
-
-
-                if (getUserToDelete && getHisFriends.length > 0) {
-                    for (const friend of getHisFriends) {
-                        await friend.destroy();
-                    }
-                    response.status(200).json("Votre utilisateur a bien été supprimé")
-
-                } else {
-                    response.status(200).json("Votre utilisateur a bien été supprimé")
-
+                    return response.status(500).json({ error: "Erreur lors de la suppression du fichier image." });
                 }
             }
 
-
-
+            await t.commit();
+            return response.status(200).json({ message: "Votre utilisateur a bien été supprimé." });
         } catch (error) {
-
+            if (t) await t.rollback();
             console.error(error);
-            response.status(500).json({ error: "Erreur serveur." });
+            return response.status(500).json({ error: "Erreur serveur lors de la suppression de l'utilisateur." });
         }
-
-
-
-
-
-
-
-
-
     }
+
+
+
+
+
+    // static async deleteUser(request, response) {
+
+    //     const t = await sequelize.transaction();
+
+
+    //     try {
+    //         const userId = request.user.id;
+
+    //         const getUserToDelete = await findUser(userId, { transaction: t },);
+    //         const getPicUser = await getUserProfilPicture(userId, { transaction: t },);
+    //         const getHisFriends = await getUserFriend(userId, { transaction: t });
+
+    //         if (!getUserToDelete || !getPicUser) {
+    //             // await t.rollback();
+    //             return response.status(404).json({ error: "Utilisateur ou photo non trouvée." });
+    //         }
+    //         const getAllGroupUser = await getAllGroupsForUser(userId, { transaction: t },);
+    //         const getAllPrivateConversation = await getAllPrivateChatsForUser(userId, { transaction: t });
+    //         const getAllMessageReferencedInGroup = await getAllGroupMessagesByUser(userId, { transaction: t });//1
+    //         const getAllMessageReferencedInPrivate = await getAllPrivateMessagesByUser(userId, { transaction: t },);//2
+
+
+    //         let arrayOdMessage = [];
+
+    //         for (const element of getAllMessageReferencedInGroup) {
+    //             // console.log(element.dataValues.MessageID)
+    //             arrayOdMessage.push(element.dataValues.MessageID)
+    //         }
+    //         for (const element of getAllMessageReferencedInPrivate) {
+    //             arrayOdMessage.push(element.dataValues.MessageId)
+    //         }
+    //         console.log(arrayOdMessage) // une seul requete supprimera tout les messages que ce soit de groupes ou conversation privées
+
+    //         const deleteAllMessage = await getPrivateMessages(arrayOdMessage, { transaction: t },);
+
+
+    //             await getUserToDelete.destroy({ transaction: t });
+
+    //         // Suppression de la photo de profil en base
+    //         await getPicUser.destroy({ transaction: t });
+
+    //         // Suppression des amis
+    //         if (getHisFriends.length > 0) {
+    //             for (const friend of getHisFriends) {
+    //                 await friend.destroy({ transaction: t });
+    //             }
+    //         }
+
+    //         // await t.commit();
+
+    //         // Suppression du fichier image si ce n'est pas default.jpg
+    //         const imagePath = getPicUser.imagePath;
+    //         const fileName = imagePath.split("/").pop();
+    //         if (fileName !== "default.jpg") {
+    //             const pathFile = "/images" + imagePath.split("/images").pop();
+    //             try {
+    //                 await fs.unlink(`../public${pathFile}`);
+    //                 console.log("Fichier supprimé :", pathFile);
+    //             } catch (err) {
+    //                 console.error("Erreur lors de la suppression du fichier :", err);
+    //             }
+    //         }
+    //         await t.commit();
+    //         // return response.status(200).json("Votre utilisateur a bien été supprimé");
+    //     } catch (error) {
+    //         if (t) await t.rollback();
+    //         console.error(error);
+    //         response.status(500).json({ error: "Erreur serveur." });
+    //     }
+    // }
+
+
+
+
+    // console.log({
+    //     getUserToDelete,
+    //     getPicUser,
+    //     getHisFriends,
+    //     getAllGroupUser,
+    //     getAllMessageReferencedInGroup,
+    //     getAllPrivateConversation,
+    //     getAllMessageReferencedInPrivate
+
+    // })
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     /**
@@ -330,11 +514,12 @@ export class UserController {
     static async deleteFriend(request, response) {
         try {
             const userId = request.user.id;
-            const friendId = request.body;
+
+            const friendId = request.body.friendId;
             console.log(userId, friendId);
 
             if (!userId || !friendId) {
-                return res.status(400).json({ error: "Données manquantes ou invalides." });
+                return response.status(400).json({ error: "Données manquantes ou invalides." });
             }
 
             const relation1 = await getInverseFriendship(userId, friendId);
@@ -404,7 +589,7 @@ export class UserController {
     }
 
 
-    
+
 
 
 

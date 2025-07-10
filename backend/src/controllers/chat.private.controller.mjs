@@ -3,15 +3,17 @@ import {
     findConversation,
     createConversation,
     findPrivateConversation,
-    createMessage,
+    createMessagePrivate,
     saveMessageHistory,
-    deleteMessage,
+    deleteMessagePrivate,
     findPrivateMessage,
     updatePrivateMessageInDb,
     deletePrivateMessageLink,
     getConversationMessages,
-    getPrivateMessages } from "../models/chat.private.model.mjs"
-
+    getPrivateMessages,
+    getAllPrivateChatsForUser,
+    getAllPrivateMessagesByUser
+} from "../models/chat.private.model.mjs";
 
 
 export class PrivateChatController {
@@ -61,19 +63,16 @@ export class PrivateChatController {
     }
 
 
-    /**
-     * cette methode static permet un suivi de l'historique des conversations privées entre deux amis à chaque fois 
-     */
     static async sendPrivateMessage(request, response) {
         try {
-            const userId = request.user.id;
+            const userIdNum = Number(request.user.id);
             const { messageContent, friendId, conversationName } = request.body;
 
-            if (!userId || !messageContent || !friendId || !conversationName) {
+            if (!userIdNum || !messageContent || !friendId || !conversationName) {
                 return response.status(400).json({ error: "Erreur données manquantes." });
             }
             console.log({
-                userId, messageContent, friendId, conversationName
+                userId: userIdNum, messageContent, friendId, conversationName
             });
 
             const MAX_MESSAGE_LENGTH = 2000;
@@ -85,14 +84,19 @@ export class PrivateChatController {
                 return response.status(400).json({ error: `Le message ne doit pas dépasser ${MAX_MESSAGE_LENGTH} caractères.` });
             }
 
-            const verifConversationExist = await findPrivateConversation(userId, friendId, conversationName);
-            console.log(verifConversationExist);
+            // Trie les IDs comme lors de la création de la conversation
+            const friendIdNum = Number(friendId);
+            const [id1, id2] = [userIdNum, friendIdNum].sort((a, b) => a - b);
+
+            // Recherche la conversation avec les IDs triés
+            const verifConversationExist = await findPrivateConversation(id1, id2, conversationName);
+            console.log("tetststtstt", verifConversationExist);
 
             if (!verifConversationExist) {
                 return response.status(404).json({ error: "Conversation introuvable." })
             }
 
-            const insertNewMessage = await createMessage(messageContent);
+            const insertNewMessage = await createMessagePrivate(messageContent);
 
             if (!insertNewMessage) {
                 console.error("impossible d'ajouter le message.");
@@ -102,18 +106,18 @@ export class PrivateChatController {
             let MessageID = insertNewMessage.dataValues.id;
             MessageID = JSON.stringify(MessageID)
 
-            const sendMessage = await saveMessageHistory(userId, friendId, verifConversationExist.id, MessageID);
+            const sendMessage = await saveMessageHistory(userIdNum, friendIdNum, verifConversationExist.id, MessageID);
 
             if (!sendMessage) {
-                const destroy = await deleteMessage(MessageID);
+                const destroy = await deleteMessagePrivate(MessageID);
                 return response.status(500).json({ error: "erreur impossible d'enregistrer ce message dans l'historique" })
             }
 
             return response.status(200).json({
                 message: "message bien envoyé, Historique à jour.",
                 body: {
-                    userId,
-                    friendId,
+                    userId: userIdNum,
+                    friendId: friendIdNum,
                     conversationName,
                     messageContent,
                     MessageID
@@ -124,7 +128,6 @@ export class PrivateChatController {
             console.error(error);
             response.status(500).json({ error: "Erreur serveur" });
         }
-
     }
 
 
@@ -204,7 +207,7 @@ export class PrivateChatController {
 
             const verifConversationExist = await deletePrivateMessageLink(userId, conversationID.dataValues.id, messageId);
 
-            const delMessage = await deleteMessage(messageId);
+            const delMessage = await deleteMessagePrivate(messageId);
 
             if (verifConversationExist === 0 || delMessage === 0) {
                 return response.status(500).json({ error: "Erreur lors de la suppression du message." });
@@ -258,8 +261,8 @@ export class PrivateChatController {
             return response.status(200).json({
                 message: "Voici votre historique",
                 body: {
-                    id : userId,
-                    conversation : conversationName,
+                    id: userId,
+                    conversation: conversationName,
                     references: getAllReferenced,
                     messages: getMessageContent
                 }

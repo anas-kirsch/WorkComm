@@ -1,8 +1,9 @@
 
 import express from "express";
 import { PrivateChatController } from "../controllers/chat.private.controller.mjs";
-import { getClientTokenAndVerifAccess } from "../controllers/getClientTokenAndVerifAccess.mjs";
-
+import { getClientTokenAndVerifAccess } from "../middlewares/getClientTokenAndVerifAccess.mjs";
+import multer from "multer";
+const upload = multer();
 
 const router = express.Router();
 
@@ -27,7 +28,7 @@ router.put("/update-private-message", getClientTokenAndVerifAccess, PrivateChatC
 /**
  * cette router permet à un utilisateur de supprimer un message avec actualisation en BDD
  */
-router.delete("/delete-private-message", getClientTokenAndVerifAccess, PrivateChatController.deletePrivateMessage);
+router.delete("/delete-private-message",upload.none(), getClientTokenAndVerifAccess, PrivateChatController.deletePrivateMessage);
 
 
 

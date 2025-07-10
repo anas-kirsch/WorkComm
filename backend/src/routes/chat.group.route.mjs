@@ -1,7 +1,9 @@
 
 import express from "express";
-import { getClientTokenAndVerifAccess } from "../controllers/getClientTokenAndVerifAccess.mjs";
+import { getClientTokenAndVerifAccess } from "../middlewares/getClientTokenAndVerifAccess.mjs";
 import { GroupChatController } from "../controllers/chat.group.controller.mjs";
+import multer from "multer";
+const upload = multer();
 
 
 const router = express.Router();
@@ -24,7 +26,7 @@ router.post("/add-group-member", getClientTokenAndVerifAccess, GroupChatControll
 /**
  * cette router permet à un utilisateur de quitter un groupe dans lequel il est présent
  */
-router.delete("/quit-group-member", getClientTokenAndVerifAccess, GroupChatController.quitGroup);
+router.delete("/quit-group-member", upload.none(), getClientTokenAndVerifAccess, GroupChatController.quitGroup);
 
 
 
@@ -46,7 +48,7 @@ router.put("/update-group-message", getClientTokenAndVerifAccess, GroupChatContr
 /**
  * cette route permet à un utilisateur de supprimer un de ses messages envoyé dans un groupe
  */
-router.delete("/delete-group-message", getClientTokenAndVerifAccess, GroupChatController.deleteGroupMessage);
+router.delete("/delete-group-message",  upload.none(), getClientTokenAndVerifAccess, GroupChatController.deleteGroupMessage);
 
 
 

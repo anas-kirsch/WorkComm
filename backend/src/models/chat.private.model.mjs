@@ -58,7 +58,7 @@ export async function findPrivateConversation(userId, friendId, conversationName
  * @param {string|number} content 
  * @returns {Promise<Message>}
  */
-export async function createMessage(content) {
+export async function createMessagePrivate(content) {
 
     return await Message.create({
         content: content,
@@ -93,7 +93,7 @@ export async function saveMessageHistory(userId, friendId, conversationId, messa
  * @param {number} messageId 
  * @returns {Promise<number>}
  */
-export async function deleteMessage(messageId) {
+export async function deleteMessagePrivate(messageId) {
 
     return await Message.destroy({
         where: { id: messageId }
@@ -103,7 +103,7 @@ export async function deleteMessage(messageId) {
 
 
 /**
- * 
+ * cette fonction trouve la reference d'un message avec un amis dans un conversation
  * @param {number} userId 
  * @param {number} conversationId 
  * @param {number} messageId 
@@ -124,7 +124,7 @@ export async function findPrivateMessage(userId, conversationId, messageId) {
 
 
 /**
- * 
+ * cette fonction met a jour un message 
  * @param {string|number} newMessage 
  * @param {number} messageId 
  * @returns {Promise<[number, any[]]>}
@@ -191,9 +191,34 @@ export async function getPrivateMessages(messageIds) {
 
 
 
+/**
+ * Récupère toutes les conversations privées où l'utilisateur apparaît (comme UserId ou friendId)
+ * @param {number} userId
+ * @returns {Promise<Array>}
+ */
+export async function getAllPrivateChatsForUser(userId) {
+    return await conversation.findAll({
+        where: {
+            [Op.or]: [
+                { UserId: userId },
+                { friendId: userId }
+            ]
+        }
+    });
+}
 
 
 
+/**
+ * Récupère tous les messages privés envoyés par un utilisateur (toutes conversations privées)
+ * @param {number} userId
+ * @returns {Promise<Array>}
+ */
+export async function getAllPrivateMessagesByUser(userId) {
+    return await privateMessage.findAll({
+        where: { SenderId: userId }
+    });
+}
 
 
 

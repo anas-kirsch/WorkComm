@@ -1,7 +1,9 @@
 
 import express from "express";
 import {UserController} from "../controllers/user.controller.mjs"
-import { getClientTokenAndVerifAccess } from "../controllers/getClientTokenAndVerifAccess.mjs";
+import { getClientTokenAndVerifAccess } from "../middlewares/getClientTokenAndVerifAccess.mjs";
+import multer from "multer";
+const upload = multer();
 
 const router = express.Router();
 
@@ -39,7 +41,7 @@ router.post("/confirm-friend-requests",getClientTokenAndVerifAccess,UserControll
 /**
  * cette route permet de supprimer un ami 
  */
-router.delete("/delete-friend",getClientTokenAndVerifAccess,UserController.deleteFriend);
+router.delete("/delete-friend",upload.none(),getClientTokenAndVerifAccess,UserController.deleteFriend);
 
 
 /**

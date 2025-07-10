@@ -37,6 +37,9 @@ import chatGroupRouter from "../routes/chat.group.route.mjs"
 import chatPrivateRouter from "../routes/chat.private.route.mjs"
 import navRouter from "../routes/nav.route.mjs"
 
+import path from "path";
+import { fileURLToPath } from "url";
+import formData from "@trojs/formdata-parser";
 
 /**
  * 
@@ -46,23 +49,48 @@ export function runServer(sequelize) {
     const app = express();
     const port = 4900;
     app.use(cors());
+
+    // Sert le dossier public/images sur /images
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+    app.use('/images', express.static(path.join(__dirname, '../../public/images')));
+
     app.use(express.static("../public"));
     app.use(express.json());
     app.use(fileUpload());
 
-
-   app.use("/api/user",userRouter);
-   app.use("/api/admin",adminRouter);
-   app.use("/api/auth",authRouter);
-   app.use("/api/chatGroup",chatGroupRouter);
-   app.use("/api/chatPrivate",chatPrivateRouter);
-   app.use("/api/nav",navRouter);
-
+    app.use("/api/user", userRouter);//ok
+    app.use("/api/admin", adminRouter);
+    app.use("/api/auth", authRouter);//ok
+    app.use("/api/chatGroup", chatGroupRouter);//ok
+    app.use("/api/chatPrivate", chatPrivateRouter);//ok
+    app.use("/api/nav", navRouter);
 
     app.listen(port, () => {
-
         console.log(`Server listen on port ${port}`)
     })
-
 }
+// export function runServer(sequelize) {
+//     const app = express();
+//     const port = 4900;
+//     app.use(cors());
+//     app.use(express.static("../public"));
+//     app.use(express.json());
+//     app.use(fileUpload());
+
+
+//    app.use("/api/user",userRouter);
+//    app.use("/api/admin",adminRouter);
+//    app.use("/api/auth",authRouter);
+//    app.use("/api/chatGroup",chatGroupRouter);
+//    app.use("/api/chatPrivate",chatPrivateRouter);
+//    app.use("/api/nav",navRouter);
+
+
+//     app.listen(port, () => {
+
+//         console.log(`Server listen on port ${port}`)
+//     })
+
+// }
 

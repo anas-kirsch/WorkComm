@@ -77,7 +77,8 @@ export class authController {
                             language: getUserConnect.dataValues.language,
                             bio: getUserConnect.dataValues.bio,
                             imagePath: profilPicture,
-                            token: newToken
+                            token: newToken,
+                            role: getUserConnect.dataValues.role
 
                         }
                         console.log(user)

@@ -109,7 +109,7 @@ export async function addUserToGroup(groupeId, newMemberId) {
 
 
 /**
- * 
+ * cette fonction supprime un membre d'un groupe
  * @param {number} groupeId 
  * @param {number} memberId 
  * @returns 
@@ -219,7 +219,7 @@ export async function findMessage(messageId) {
 
 
 /**
- * cette fonction supprime un message de la table Message 
+ * cette fonction detruit un message de la table Message 
  * @param {number} messageId 
  * @returns 
  */
@@ -261,4 +261,54 @@ export async function getGroupMessages(messageIds) {
     });
 
 }
+
+
+/**
+ * Récupère tous les groupes auxquels un utilisateur appartient
+ * @param {number} userId
+ * @returns {Promise<Array>}
+ */
+export async function getAllGroupsForUser(userId) {
+    return await groupMembers.findAll({
+        where: { UserId: userId },
+        attributes: ['groupNameId']
+    });
+}
+
+
+
+/**
+ * Récupère tous les messages envoyés par un utilisateur dans tous les groupes
+ * @param {number} userId
+ * @returns {Promise<Array>}
+ */
+export async function getAllGroupMessagesByUser(userId) {
+    return await GroupMessage.findAll({
+        where: { UserId: userId }
+    });
+}
+
+
+/**
+ * Supprime tous les messages dont l'id est dans le tableau messageIds
+ * @param {number[]|string[]} messageIds - Tableau d'IDs de messages
+ * @returns {Promise<number>} - Nombre de messages supprimés
+ */
+export async function deleteMessages(messageIds) {
+    return await Message.destroy({
+        where: { id: messageIds }
+    });
+}
+
+
+// /**
+//  * Supprime tous les messages privés dont l'id est dans le tableau messageIds
+//  * @param {number[]|string[]} messageIds - Tableau d'IDs de messages privés
+//  * @returns {Promise<number>} - Nombre de messages supprimés
+//  */
+// export async function deletePrivateMessages(messageIds) {
+//     return await Message.destroy({
+//         where: { id: messageIds }
+//     });
+// }
 
