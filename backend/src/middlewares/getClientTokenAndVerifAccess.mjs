@@ -42,11 +42,7 @@ export async function getClientTokenAndVerifAccess(request, response, next) {
                     break;
             }
         }
-        // else {
-        //     console.log("unauthorized, wrong token");
-        // }
-
-
+  
     } catch (error) {
         console.error("JWT error:", error); // Ajoute ceci
         response.status(401).json({
@@ -55,9 +51,6 @@ export async function getClientTokenAndVerifAccess(request, response, next) {
         });
         return;
     }
-
-    // next(); 
-
 
 
 }

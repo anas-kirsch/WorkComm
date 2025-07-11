@@ -33,6 +33,11 @@ export const User = sequelize.define("User", {
         allowNull: true,
         defaultValue: "..."
     },
+    resetToken: {
+        type : DataTypes.STRING,
+        unique : true,
+        allowNull : true
+    },
     role: {
         type: DataTypes.STRING,
         allowNull: false,

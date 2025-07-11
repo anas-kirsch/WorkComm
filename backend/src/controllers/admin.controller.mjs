@@ -120,104 +120,10 @@ export class adminController {
     }
 
 
-
-    // static async adminBanUser(request, response) {
-    //     try {
-    //         const banUserId = request.body.id;
-    //         if (!banUserId) {
-    //             return response.status(400).json({ error: "ID utilisateur manquant." });
-    //         }
-
-    //         // Récupérer l'utilisateur, sa photo de profil et ses amis
-    //         const getUserToDelete = await findUser(banUserId);
-    //         const getPicUser = await getUserProfilPicture(banUserId); // Correction ici
-    //         const getHisFriends = await getUserFriend(banUserId);
-    //         const getGroup = await getAllGroupsForUser(banUserId);
-    //         const getMessageIdofUserInAllGroup = await getAllGroupMessagesByUser(banUserId);
-    //         const AgetAllPrivateChatsForUser = await getAllPrivateChatsForUser(banUserId);
-    //         const AgetAllPrivateMessagesByUser = await getAllPrivateMessagesByUser(banUserId);
-
-
-
-
-
-
-    //         if (!getUserToDelete || !getPicUser || !getHisFriends || !getGroup || !getMessageIdofUserInAllGroup || !AgetAllPrivateChatsForUser || !AgetAllPrivateMessagesByUser) {
-    //             return response.status(500).json({ error: "erreur dans les requetes." })
-    //         } else {
-
-
-    //             console.log("1 getUserToDelete:", getUserToDelete);
-    //             console.log("2 getPicUser:", getPicUser);
-    //             console.log("3 getHisFriends:", getHisFriends);
-    //             console.log("4 getGroup:", getGroup);
-    //             console.log("5 getMessageIdofUserInAllGroup:", getMessageIdofUserInAllGroup);
-    //             console.log("6 getAllPrivateChatsForUser:", AgetAllPrivateChatsForUser);
-    //             console.log("7 getAllPrivateMessagesByUser:", AgetAllPrivateMessagesByUser);
-    //             // console.log({
-    //             //     getUserToDelete,
-    //             //     getPicUser,
-    //             //     getHisFriends,
-    //             //     getGroup,
-    //             //     getMessageIdofUserInAllGroup,
-    //             //     getAllPrivateChatsForUser,
-    //             //     getAllPrivateMessagesByUser
-
-    //             // })
-
-    //         }
-
-
-
-
-
-
-
-
-
-    // const deletePrivateMessages = await deletePrivateMessages("array");
-    // const destroyAllGroupMessage = await deleteMessages("array");
-
-
-
-    // if (!getUserToDelete) {
-    //     return response.status(404).json({ error: "Utilisateur introuvable." });
-    // }
-
-    // // Suppression des relations d'amitié
-    // if (getHisFriends && getHisFriends.length > 0) {
-    //     for (const friend of getHisFriends) {
-    //         await friend.destroy();
-    //     }
-    // }
-
-    // // Suppression de la photo de profil si elle existe
-    // if (getPicUser) {
-    //     const imagePath = getPicUser.imagePath;
-    //     const pathFile = "/images" + imagePath.split("/images").pop();
-    //     try {
-    //         await fs.unlink(`../public${pathFile}`);
-    //         console.log("Fichier supprimé :", pathFile);
-    //     } catch (err) {
-    //         console.error("Erreur lors de la suppression du fichier :", err);
-    //     }
-    //     await getPicUser.destroy();
-    // }
-
-    // // Suppression de l'utilisateur
-    // await getUserToDelete.destroy();
-
-    // return response.status(200).json({ message: "Utilisateur banni et supprimé avec succès." });
-
-    //     } catch (error) {
-    //         console.error(error);
-    //         return response.status(500).json({ error: "Erreur serveur lors du bannissement." });
-    //     }
-    // }
-
-
-
-
+    /**
+     * cette methode permet à un administrateur de ban un utilisateur 
+     * @returns 
+     */
     static async adminBanUser(request, response) {
         const t = await sequelize.transaction();
         try {

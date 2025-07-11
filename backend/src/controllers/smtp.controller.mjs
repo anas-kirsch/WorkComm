@@ -68,16 +68,63 @@ L'équipe WorkComm`,
         `
     })
 
-    // const send = await transporter.sendMail({
-    //     from: '"WorkComm" <workcomm831@gmail.com>',
-    //     to: mail,
-    //     subject: "Hello ✔",
-    //     text: `Bonjour ${username},\n\nVotre compte a bien été créé.\n\nIdentifiant: ${username}\n\nMerci de votre confiance.`,
-    //     html: `<b>Bonjour ${username},</b><br><br>Votre compte a bien été créé.<br><br><b>Identifiant:</b> ${username}<br><br>Merci de votre confiance.`
-    // })
-
-
     return send;
 
+}
 
+
+/**
+ * cette fonction envoie un mail de reinitisalisation du mot de passe d'un utilisateur 
+ * @param {string} username - Le nom d'utilisateur
+ * @param {string} mail - L'adresse email de l'utilisateur
+ * @param {string} resetLink - Le lien de réinitialisation du mot de passe
+ */
+export async function emailResetPassword(username, mail, resetLink) {
+
+    const transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        auth: {
+            user: "workcomm831@gmail.com",
+            pass: "khbb kbfs qwou srjk "
+        }
+    });
+
+    const send = await transporter.sendMail({
+        from: '"WorkComm" <workcomm831@gmail.com>',
+        to: mail,
+        subject: "Réinitialisation de votre mot de passe WorkComm",
+        text: `Bonjour ${username},
+
+Vous avez demandé la réinitialisation de votre mot de passe.
+
+Veuillez cliquer sur le lien suivant pour définir un nouveau mot de passe :
+${resetLink}
+
+Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.
+
+L'équipe WorkComm`,
+        html: `
+            <div style="font-family: Arial, sans-serif; color: #222;">
+                <div style="background: #4F8DFD; padding: 20px; border-radius: 8px 8px 0 0;">
+                    <h3 style="color: #fff; margin: 0; font-size: 1.3em; font-weight: 600;">
+                        Réinitialisation de votre mot de passe
+                    </h3>
+                </div>
+                <div style="background: #fff; padding: 24px; border-radius: 0 0 8px 8px;">
+                    <p>Bonjour <b>${username}</b>,</p>
+                    <p>Vous avez demandé la réinitialisation de votre mot de passe.</p>
+                    <p>
+                        <a href="${resetLink}" style="background: #4F8DFD; color: #fff; padding: 10px 18px; border-radius: 5px; text-decoration: none;">
+                            Réinitialiser mon mot de passe
+                        </a>
+                    </p>
+                    <p style="font-size: 13px; color: #888;">Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.</p>
+                </div>
+            </div>
+        `
+    });
+
+    return send;
 }

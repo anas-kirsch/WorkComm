@@ -14,3 +14,16 @@ export async function findUserByMail(userMail){
 
 }
 
+
+
+/**
+ * Met à jour le resetToken pour un utilisateur donné
+ * @param {number} userId 
+ * @param {string} token 
+ */
+export async function updateUserResetToken(userId, token) {
+    return await User.update(
+        { resetToken: token },
+        { where: { id: userId } }
+    );
+}

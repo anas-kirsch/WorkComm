@@ -1,11 +1,11 @@
 
 import getClientTokenAndVerifAccess from "../middlewares/getClientTokenAndVerifAccess.mjs"
-import { findUserByMail } from "../models/auth.model.mjs";
+import { findUserByMail, updateUserResetToken } from "../models/auth.model.mjs";
 import { getProfilPictureFromDataB } from "../controllers/getAndSaveProfilPicture.mjs"
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-
-
+import { generateResetLink } from "../controllers/generateResetLink.controller.mjs"
+import { emailResetPassword } from "../controllers/smtp.controller.mjs"
 
 const secret = process.env.JWT_SECRET || "secret-key"; // à adapter selon ton projet
 
@@ -102,25 +102,77 @@ export class authController {
     }
 
 
+    /**
+     * cette methode static permet à un utilisateur de demander la réinitialisation de son mot de passe 
+     */
+    static async resetPassword(request, response) {
+        try {
+            const { mail } = request.body;
+            if (!mail) {
+                return response.status(400).json({ error: "Email manquant." });
+            }
+
+            // Cherche l'utilisateur par email
+            const user = await findUserByMail(mail);
+            if (!user) {
+                return response.status(404).json({ error: "Utilisateur non trouvé." });
+            }
+
+            // Génère le token et le lien
+            const baseUrl = process.env.RESET_URL || "http://localhost:4900/reset-password";
+            const { token, link } = generateResetLink(baseUrl);
+
+            // Sauvegarde le token et la date d'expiration en BDD
+            await updateUserResetToken(user.dataValues.id, token);
+
+            // Envoie l'email
+            await emailResetPassword(user.dataValues.username, mail, link);
+
+            response.status(200).json({ message: "Email de réinitialisation envoyé." });
+        } catch (error) {
+            console.error(error);
+            response.status(500).json({ error: "Erreur lors de la demande de réinitialisation." });
+        }
+    }
 
 
 
+    /**
+     * cette methode static permet à un utilisateur d'entrer un mot de passe pour qui soit bien réinitialiser en bdd
+     * @returns 
+     */
+    static async passwordUpdater(request, response) {
+        try {
+            const { newPassword, newConfirmedPassword, token } = request.body;
 
+            if (!newPassword || !newConfirmedPassword || !token) {
+                return response.status(400).json({ error: "Données manquantes." });
+            }
+            if (newPassword !== newConfirmedPassword) {
+                return response.status(400).json({ error: "Les mots de passe ne correspondent pas." });
+            }
 
+            // Cherche l'utilisateur avec ce token
+            const user = await User.findOne({ where: { resetToken: token } });
+            if (!user) {
+                return response.status(400).json({ error: "Lien de réinitialisation invalide ou expiré." });
+            }
 
+            // Hash le nouveau mot de passe
+            const hashedPassword = await bcrypt.hash(newPassword, 10);
 
+            // Met à jour le mot de passe et supprime le resetToken
+            await User.update(
+                { password: hashedPassword, resetToken: null },
+                { where: { id: user.id } }
+            );
 
-
-
-
-
-
-
-
-
-
-
-
+            response.status(200).json({ message: "Mot de passe réinitialisé avec succès." });
+        } catch (error) {
+            console.error(error);
+            response.status(500).json({ error: "Erreur lors de la réinitialisation du mot de passe." });
+        }
+    }
 
 
 }
