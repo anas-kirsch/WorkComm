@@ -16,7 +16,9 @@ router.post("/admin-register",accessForAdminOnly,adminController.adminRegister);
 /**
  * cette route permet à un administrateur de ban un utilisateur 
  */
-router.delete("/admin-ban-user",adminController.adminBanUser)
+router.delete("/admin-ban-user",accessForAdminOnly, adminController.adminBanUser)
+
+
 
 
 
