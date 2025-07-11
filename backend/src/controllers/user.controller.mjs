@@ -11,7 +11,13 @@ import { getProfilPictureFromDataB } from "../controllers/getAndSaveProfilPictur
 import { getAndSaveProfilPicture } from "../controllers/getAndSaveProfilPicture.mjs"
 import { sequelize } from "../configs/dbConnect.mjs";
 import { getAllGroupsForUser, getAllGroupMessagesByUser } from "../models/chat.group.model.mjs"
-import { getAllPrivateChatsForUser, getAllPrivateMessagesByUser, getPrivateMessages } from "../models/chat.private.model.mjs"
+import { getAllPrivateChatsForUser, getAllPrivateMessagesByUser, getPrivateMessages, deletePrivateMessages } from "../models/chat.private.model.mjs"
+
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export class UserController {
 
@@ -132,73 +138,10 @@ export class UserController {
     }
 
 
-    // /**
-    //  * Cette methode static permet à un utilisateur de supprimer son compte 
-    //  */
-    // static async deleteUser(request, response) {
 
-    //     try {
-
-    //         // const { userId } = request.params;
-    //         const userId = request.user.id;
-
-    //         const getUserToDelete = await findUser(userId)
-    //         // console.log(getUserToDelete);c
-
-    //         const getPicUser = await getUserProfilPicture(userId);
-    //         // console.log("------>", getPicUser)
-
-    //         const getHisFriends = await getUserFriend(userId);
-
-
-    //         if (getUserToDelete && getPicUser) {
-    //             await getUserToDelete.destroy();
-    //             await getPicUser.destroy();
-
-    //             const imagePath = getPicUser.imagePath;
-    //             const pathFile = "/images" + imagePath.split("/images").pop();
-    //             console.log(pathFile);
-
-    //             try {
-    //                 await fs.unlink(`../public${pathFile}`);
-    //                 console.log("Fichier supprimé :", pathFile);
-    //             } catch (err) {
-    //                 console.error("Erreur lors de la suppression du fichier :", err);
-    //             }
-
-
-    //             if (getUserToDelete && getHisFriends.length > 0) {
-    //                 for (const friend of getHisFriends) {
-    //                     await friend.destroy();
-    //                 }
-    //                 response.status(200).json("Votre utilisateur a bien été supprimé")
-
-    //             } else {
-    //                 response.status(200).json("Votre utilisateur a bien été supprimé")
-
-    //             }
-    //         }
-
-
-
-    //     } catch (error) {
-
-    //         console.error(error);
-    //         response.status(500).json({ error: "Erreur serveur." });
-    //     }
-
-
-
-
-
-
-
-
-
-    // }
-
-
-
+    /**
+     * cette methode static permet à un utilisateur de supprimer son compte 
+     */
     static async deleteUser(request, response) {
         const t = await sequelize.transaction();
         try {
@@ -206,8 +149,10 @@ export class UserController {
 
             // Récupération des données nécessaires
             const userToDelete = await findUser(userId, { transaction: t });
-            const userPic = await getUserProfilPicture(userId, { transaction: t });
             const userFriends = await getUserFriend(userId, { transaction: t });
+            const userPic = await getUserProfilPicture(userId, { transaction: t });
+            const getConversation = await getAllPrivateChatsForUser(userId, { transaction: t });
+
 
             if (!userToDelete || !userPic) {
                 await t.rollback();
@@ -226,7 +171,7 @@ export class UserController {
 
             // Suppression des messages (si il y en a)
             if (messageIds.length > 0) {
-                const deleteMessage = await getPrivateMessages(messageIds, { transaction: t });
+                const deleteMessage = await deletePrivateMessages(messageIds, { transaction: t });
 
                 if (deleteMessage) {
                     for (const msg of groupMessages) {
@@ -246,26 +191,35 @@ export class UserController {
             }
 
             // Suppression de la photo de profil en base
-            await userPic.destroy({ transaction: t });
 
             // Suppression de l'utilisateur
-            await userToDelete.destroy({ transaction: t });
-
-            // Suppression du fichier image si ce n'est pas default.jpg
-            const imagePath = userPic.imagePath;
+            const imagePath = userPic.imagePath; // ex: http://localhost:4900/images/vscodedwwm_1752135614625.png
             const fileName = imagePath.split("/").pop();
             if (fileName && fileName !== "default.jpg") {
-                const pathFile = "/images" + imagePath.split("/images").pop();
+                // Chemin absolu vers le fichier à supprimer
+                const absolutePath = path.join(__dirname, '../../public/images', fileName);
                 try {
-                    await fs.unlink(`../public${pathFile}`);
-                    console.log("Fichier supprimé :", pathFile);
+                    await fs.unlink(absolutePath);
+                    console.log("Fichier supprimé :", absolutePath);
                 } catch (err) {
-                    // On rollback si la suppression du fichier échoue
-                    await t.rollback();
-                    console.error("Erreur lors de la suppression du fichier :", err);
-                    return response.status(500).json({ error: "Erreur lors de la suppression du fichier image." });
+                    if (err.code !== 'ENOENT') {
+                        await t.rollback();
+                        console.error("Erreur lors de la suppression du fichier :", err);
+                        return response.status(500).json({ error: "Erreur lors de la suppression du fichier image." });
+                    } else {
+                        console.warn("Fichier déjà absent :", absolutePath);
+                    }
                 }
             }
+
+            // await getConversation.destroy({ transaction: t });
+            if (getConversation && getConversation.length > 0) {
+                for (const conv of getConversation) {
+                    await conv.destroy({ transaction: t });
+                }
+            }
+            await userPic.destroy({ transaction: t });
+            await userToDelete.destroy({ transaction: t });
 
             await t.commit();
             return response.status(200).json({ message: "Votre utilisateur a bien été supprimé." });
@@ -275,106 +229,6 @@ export class UserController {
             return response.status(500).json({ error: "Erreur serveur lors de la suppression de l'utilisateur." });
         }
     }
-
-
-
-
-
-    // static async deleteUser(request, response) {
-
-    //     const t = await sequelize.transaction();
-
-
-    //     try {
-    //         const userId = request.user.id;
-
-    //         const getUserToDelete = await findUser(userId, { transaction: t },);
-    //         const getPicUser = await getUserProfilPicture(userId, { transaction: t },);
-    //         const getHisFriends = await getUserFriend(userId, { transaction: t });
-
-    //         if (!getUserToDelete || !getPicUser) {
-    //             // await t.rollback();
-    //             return response.status(404).json({ error: "Utilisateur ou photo non trouvée." });
-    //         }
-    //         const getAllGroupUser = await getAllGroupsForUser(userId, { transaction: t },);
-    //         const getAllPrivateConversation = await getAllPrivateChatsForUser(userId, { transaction: t });
-    //         const getAllMessageReferencedInGroup = await getAllGroupMessagesByUser(userId, { transaction: t });//1
-    //         const getAllMessageReferencedInPrivate = await getAllPrivateMessagesByUser(userId, { transaction: t },);//2
-
-
-    //         let arrayOdMessage = [];
-
-    //         for (const element of getAllMessageReferencedInGroup) {
-    //             // console.log(element.dataValues.MessageID)
-    //             arrayOdMessage.push(element.dataValues.MessageID)
-    //         }
-    //         for (const element of getAllMessageReferencedInPrivate) {
-    //             arrayOdMessage.push(element.dataValues.MessageId)
-    //         }
-    //         console.log(arrayOdMessage) // une seul requete supprimera tout les messages que ce soit de groupes ou conversation privées
-
-    //         const deleteAllMessage = await getPrivateMessages(arrayOdMessage, { transaction: t },);
-
-
-    //             await getUserToDelete.destroy({ transaction: t });
-
-    //         // Suppression de la photo de profil en base
-    //         await getPicUser.destroy({ transaction: t });
-
-    //         // Suppression des amis
-    //         if (getHisFriends.length > 0) {
-    //             for (const friend of getHisFriends) {
-    //                 await friend.destroy({ transaction: t });
-    //             }
-    //         }
-
-    //         // await t.commit();
-
-    //         // Suppression du fichier image si ce n'est pas default.jpg
-    //         const imagePath = getPicUser.imagePath;
-    //         const fileName = imagePath.split("/").pop();
-    //         if (fileName !== "default.jpg") {
-    //             const pathFile = "/images" + imagePath.split("/images").pop();
-    //             try {
-    //                 await fs.unlink(`../public${pathFile}`);
-    //                 console.log("Fichier supprimé :", pathFile);
-    //             } catch (err) {
-    //                 console.error("Erreur lors de la suppression du fichier :", err);
-    //             }
-    //         }
-    //         await t.commit();
-    //         // return response.status(200).json("Votre utilisateur a bien été supprimé");
-    //     } catch (error) {
-    //         if (t) await t.rollback();
-    //         console.error(error);
-    //         response.status(500).json({ error: "Erreur serveur." });
-    //     }
-    // }
-
-
-
-
-    // console.log({
-    //     getUserToDelete,
-    //     getPicUser,
-    //     getHisFriends,
-    //     getAllGroupUser,
-    //     getAllMessageReferencedInGroup,
-    //     getAllPrivateConversation,
-    //     getAllMessageReferencedInPrivate
-
-    // })
-
-
-
-
-
-
-
-
-
-
-
 
 
 

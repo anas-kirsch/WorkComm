@@ -192,6 +192,28 @@ export async function getPrivateMessages(messageIds) {
 
 
 /**
+ * Supprime tous les messages privés correspondant à une liste d'identifiants de messages.
+ * @param {Array<number>} messageIds - Tableau des IDs des messages à supprimer.
+ * @param {object} [options] - Options Sequelize (ex: transaction).
+ * @returns {Promise<number>} - Nombre de messages supprimés.
+ */
+export async function deletePrivateMessages(messageIds, options = {}) {
+    if (!Array.isArray(messageIds) || messageIds.length === 0) {
+        return 0;
+    }
+    return await Message.destroy({
+        where: { id: messageIds },
+        ...options
+    });
+}
+
+
+
+
+
+
+
+/**
  * Récupère toutes les conversations privées où l'utilisateur apparaît (comme UserId ou friendId)
  * @param {number} userId
  * @returns {Promise<Array>}
