@@ -1,0 +1,194 @@
+footer {
+    min-height: 10vh;
+    background-color: rgb(125, 152, 187);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 16px 0 8px 0;
+    /* position: relative; */
+    width: 100%;
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.footer-content {
+    width: 100%;
+    /* max-width: 1800px; */
+    display: flex;
+    flex-direction: row;
+    align-items: first baseline;
+    justify-content: space-around;
+    align-items: center;
+    gap: 300px;
+}
+
+
+.tets {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.footer-logo {
+    font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    letter-spacing: 2px;
+    background: linear-gradient(90deg, #7d98bb 0%, #4a6fa5 100%);
+    padding: 8px 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 2px solid #fff;
+    margin-right: 16px;
+    text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.12);
+}
+
+.icone {
+    display: flex;
+    gap: 18px;
+}
+
+.icone i {
+    color: #fff;
+    font-size: 2.2rem;
+    transition: color 0.2s, transform 0.2s;
+}
+
+.icone i:hover {
+    color: #4a6fa5;
+    transform: scale(1.15) rotate(-5deg);
+}
+
+.icone a {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.copyright-container {
+    /* display: flex; */
+    /* justify-content: center; */
+}
+
+.footer-copyright {
+    font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+    color: #fff;
+    font-size: 1rem;
+    margin: 0;
+    opacity: 0.85;
+    letter-spacing: 1px;
+}
+
+
+
+.contact p,
+.contact a {
+    color: #fff;
+    font-size: 1rem;
+    margin: 0;
+    letter-spacing: 0.5px;
+    font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+}
+
+.contact a {
+    text-decoration: underline;
+    transition: color 0.2s;
+}
+
+.contact a:hover {
+    color: #4a6fa5;
+}
+
+/* Newsletter style */
+.newsletter {
+    background: rgba(255, 255, 255, 0.07);
+    padding: 12px 18px;
+    border-radius: 10px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+    margin-top: 8px;
+}
+
+.newsletter form {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.newsletter input[type="email"] {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: none;
+    font-size: 1rem;
+    outline: none;
+}
+
+.newsletter button {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: none;
+    background: #4a6fa5;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+h4 {
+    color: white;
+    font-family: roboto;
+    display: flex;
+    justify-content: center;
+    margin: 10px;
+
+}
+
+.newsletter button:hover {
+    background: #2e4a6f;
+}
+
+/* Mentions légales style et agencement */
+.mentions-legales {
+    background: rgba(255, 255, 255, 0.07);
+    padding: 12px 18px;
+    border-radius: 10px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+    margin-top: 8px;
+    min-width: 180px;
+    text-align: center;
+
+}
+
+.mentions-legales h4 {
+    color: #fff;
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+}
+
+.mentions-legales ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.mentions-legales li {
+    margin-bottom: 4px;
+    font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+}
+
+.mentions-legales a {
+    color: #fff;
+    text-decoration: underline;
+    opacity: 0.9;
+    transition: opacity 0.2s;
+}
+
+.mentions-legales a:hover {
+    opacity: 1;
+}
