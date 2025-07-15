@@ -1,0 +1,100 @@
+header {
+    min-height: 8vh;
+    background-color: rgb(125, 152, 187);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 8px 0;
+    position: relative;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 40px;
+}
+
+h1 {
+    font-family: 'Roboto', 'Segoe UI', Arial, sans-serif; 
+    font-size: 2rem;
+    font-weight: bold;
+    color: #fff;
+    letter-spacing: 3px;
+    text-shadow: 1px 1px 6px rgba(0,0,0,0.18);
+    background: linear-gradient(90deg, #7d98bb 0%, #4a6fa5 100%);
+    padding: 10px 28px;
+    border-radius: 16px;
+    display: inline-block;
+    margin: 0 32px 0 0;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    border: 2px solid #fff;
+    transition: transform 0.2s;
+}
+
+h1:hover {
+    transform: scale(1.03) rotate(-1deg);
+    box-shadow: 0 10px 32px rgba(0,0,0,0.15);
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+nav ul {
+    display: flex;
+    gap: 24px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav li {
+    font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+    color: #fff;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+nav li:hover {
+    color: #4a6fa5;
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+}
+
+
+button.connection,
+button.inscription {
+    font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+    padding: 6px 18px;
+    border-radius: 8px;
+    border: none;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+button.connection {
+    background: #fff;
+    color: #4a6fa5;
+}
+
+button.connection:hover {
+    background: #e3eaf4;
+}
+
+button.inscription {
+    background: #4a6fa5;
+    color: #fff;
+}
+
+button.inscription:hover {
+    background: #35507a;
+}
