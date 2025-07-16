@@ -1,0 +1,62 @@
+<main>
+    <section class="inscription-form-container">
+        <h2>Inscription</h2>
+        <form [formGroup]="form" (ngSubmit)="onSubmitInscription()" class="inscription-form">
+
+            <div class="form-group">
+                <label for="username">Nom d'utilisateur</label>
+                <input type="text" id="username" formControlName="username" required>
+                <div class="error" *ngIf="form.get('username')?.touched && form.get('username')?.invalid">
+                    <span *ngIf="form.get('username')?.errors?.['required']">Ce champ est requis.</span>
+                    <span *ngIf="form.get('username')?.errors?.['minlength']">Minimum 3 caractères.</span>
+                    <span *ngIf="form.get('username')?.errors?.['pattern']">Caractères autorisés : lettres, chiffres, _</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Adresse mail</label>
+                <input type="email" id="email" formControlName="email" required>
+                <div class="error" *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
+                    <span *ngIf="form.get('email')?.errors?.['required']">Ce champ est requis.</span>
+                    <span *ngIf="form.get('email')?.errors?.['email']">Adresse mail invalide.</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="bio">Bio</label>
+                <textarea id="bio" formControlName="bio" rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" formControlName="password" required>
+                <div class="error" *ngIf="form.get('password')?.touched && form.get('password')?.invalid">
+                    <span *ngIf="form.get('password')?.errors?.['required']">Ce champ est requis.</span>
+                    <span *ngIf="form.get('password')?.errors?.['pattern']">
+                        Minimum 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre.
+                    </span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmpassword">Confirmer le mot de passe</label>
+                <input type="password" id="confirmpassword" formControlName="confirmpassword" required>
+                <div class="error" *ngIf="form.get('confirmpassword')?.touched && form.get('confirmpassword')?.invalid">
+                    <span *ngIf="form.get('confirmpassword')?.errors?.['required']">Ce champ est requis.</span>
+                </div>
+                <div class="error" *ngIf="form.touched && form.errors?.['notSame']">
+                    <span>Les mots de passe ne correspondent pas.</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="picture">Photo de profil</label>
+                <input type="file" id="picture" formControlName="picture" accept="image/*">
+            </div>
+
+            <button type="submit" class="cta" [disabled]="form.invalid">S'inscrire</button>
+        </form>
+    </section>
+</main>
+
+<app-footer-component></app-footer-component>

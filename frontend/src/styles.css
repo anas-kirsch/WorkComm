@@ -14,10 +14,3 @@ body {
 main, .main-content {
     flex: 1 0 auto;
 }
-
-app-root {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    height: 100%;
-}

@@ -16,7 +16,7 @@ export const User = sequelize.define("User", {
         type: DataTypes.STRING,
         unique: true
     },
-    mail: {
+    mail: { 
         type: DataTypes.STRING,
         unique: true,
         validate: {

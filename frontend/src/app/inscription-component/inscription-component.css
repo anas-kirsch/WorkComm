@@ -1,0 +1,113 @@
+main {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(120deg, #18181b 0%, #23232a 60%, #0f0f0f 100%);
+    font-family: 'Inter', 'Roboto', sans-serif;
+}
+
+.inscription-form-container {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.13) 0%, rgba(168, 85, 247, 0.09) 100%);
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(139, 92, 246, 0.12);
+    padding: 40px 60px;
+    max-width: 420px;
+    width: 100%;
+    margin: auto;
+    text-align: center;
+    margin-top: 5vh;
+    margin-bottom: 5vh;
+}
+
+.inscription-form-container h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, #8B5CF6 0%, #a855f7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 28px;
+    letter-spacing: 2px;
+}
+
+.inscription-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.form-group label {
+    color: #cfcfff;
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 94%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    resize: vertical;
+    border: none;
+    max-height: 10vh;
+    background: #23232a;
+    color: #fff;
+    font-size: 1rem;
+    transition: box-shadow 0.2s, border 0.2s;
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.08);
+    outline: none;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    box-shadow: 0 0 0 2px #8B5CF6;
+    border: 1px solid #8B5CF6;
+}
+
+.form-group input[type="file"] {
+    background: none;
+    color: #cfcfff;
+    padding: 0;
+    box-shadow: none;
+}
+
+.cta {
+    padding: 12px 28px;
+    border-radius: 14px;
+    border: none;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: linear-gradient(120deg, #8B5CF6 0%, #a855f7 100%);
+    color: #fff;
+    box-shadow: 0 2px 16px rgba(139, 92, 246, 0.25);
+    transition: background 0.2s, transform 0.2s;
+    letter-spacing: 0.5px;
+    margin-top: 12px;
+}
+
+.cta:hover {
+    background: linear-gradient(120deg, #a855f7 0%, #c084fc 100%);
+    transform: translateY(-2px) scale(1.05);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .inscription-form-container {
+        padding: 24px 8px;
+        max-width: 98vw;
+    }
+
+    .inscription-form h2 {
+        font-size: 1.4rem;
+    }
+}

@@ -1,11 +1,35 @@
 header {
-    min-height: 8vh;
-    background-color: rgb(125, 152, 187);
+    min-height: 10vh;
+    background: linear-gradient(120deg, #18181b 0%, #23232a 60%, #0f0f0f 100%);
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding: 8px 0;
+    padding: 12px 0;
     position: relative;
+    border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+    animation: gradientMove 8s ease-in-out infinite;
+    background-size: 200% 200%;
+}
+
+@keyframes gradientMove {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, #8B5CF6 50%, transparent 100%);
 }
 
 .header-content {
@@ -14,87 +38,237 @@ header {
     justify-content: space-between;
     width: 100%;
     padding: 0 40px;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
 h1 {
-    font-family: 'Roboto', 'Segoe UI', Arial, sans-serif; 
-    font-size: 2rem;
-    font-weight: bold;
+    font-family: 'Inter', 'Roboto', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 700;
     color: #fff;
-    letter-spacing: 3px;
-    text-shadow: 1px 1px 6px rgba(0,0,0,0.18);
-    background: linear-gradient(90deg, #7d98bb 0%, #4a6fa5 100%);
-    padding: 10px 28px;
-    border-radius: 16px;
-    display: inline-block;
+    letter-spacing: 2px;
+    background: linear-gradient(135deg, #8B5CF6 0%, #a855f7 50%, #c084fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative;
     margin: 0 32px 0 0;
-    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
-    border: 2px solid #fff;
-    transition: transform 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
+}
+
+h1::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #8B5CF6, #a855f7);
+    transition: width 0.3s ease;
+    border-radius: 2px;
 }
 
 h1:hover {
-    transform: scale(1.03) rotate(-1deg);
-    box-shadow: 0 10px 32px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+    text-shadow: 0 0 40px rgba(139, 92, 246, 0.5);
+}
+
+h1:hover::after {
+    width: 100%;
 }
 
 nav {
     display: flex;
     align-items: center;
-    gap: 32px;
+    gap: 40px;
 }
 
 nav ul {
     display: flex;
-    gap: 24px;
+    gap: 32px;
     list-style: none;
     margin: 0;
     padding: 0;
 }
 
 nav li {
-    font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
-    color: #fff;
+    font-family: 'Inter', 'Roboto', sans-serif;
+    color: #cfcfff;
     font-size: 1.1rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: color 0.2s;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 8px 16px;
+    border-radius: 8px;
+
+}
+
+nav li::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(168, 85, 247, 0.1));
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 nav li:hover {
-    color: #4a6fa5;
+    color: #8B5CF6;
+    transform: translateY(-2px);
+}
+
+nav li:hover::before {
+    opacity: 1;
 }
 
 .actions {
     display: flex;
-    gap: 12px;
+    gap: 16px;
+    align-items: center;
 }
-
 
 button.connection,
 button.inscription {
-    font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
-    padding: 6px 18px;
-    border-radius: 8px;
+    font-family: 'Inter', 'Roboto', sans-serif;
+    padding: 12px 28px;
+    border-radius: 14px;
     border: none;
-    font-size: 1rem;
-    font-weight: 500;
+    font-size: 1.05rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s, color 0.2s;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    outline: none;
 }
+
 button.connection {
-    background: #fff;
-    color: #4a6fa5;
+    background: linear-gradient(90deg, #23232a 0%, #18181b 100%);
+    color: #8B5CF6;
+    border: 2px solid #8B5CF6;
+    box-shadow: 0 2px 12px rgba(139, 92, 246, 0.15);
+}
+
+button.connection::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(139,92,246,0.15) 0%, rgba(139,92,246,0.25) 100%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 0;
 }
 
 button.connection:hover {
-    background: #e3eaf4;
+    color: #fff;
+    background: linear-gradient(90deg, #8B5CF6 0%, #a855f7 100%);
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 8px 32px rgba(139, 92, 246, 0.25);
+}
+
+button.connection:hover::after {
+    opacity: 1;
 }
 
 button.inscription {
-    background: #4a6fa5;
+    background: linear-gradient(120deg, #8B5CF6 0%, #a855f7 100%);
     color: #fff;
+    box-shadow: 0 2px 16px rgba(139, 92, 246, 0.25);
+    border: 2px solid transparent;
+}
+
+button.inscription::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, #a855f7 0%, #c084fc 100%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 0;
 }
 
 button.inscription:hover {
-    background: #35507a;
+    background: linear-gradient(120deg, #a855f7 0%, #c084fc 100%);
+    color: #fff;
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 10px 36px rgba(139, 92, 246, 0.35);
+}
+
+button.inscription:hover::after {
+    /* opacity: 1; */
+}
+
+button.connection span,
+button.inscription span {
+    position: relative;
+    z-index: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header-content {
+        padding: 0 20px;
+    }
+    
+    h1 {
+        font-size: 1.8rem;
+        margin-right: 16px;
+    }
+    
+    nav ul {
+        gap: 20px;
+    }
+    
+    nav li {
+        font-size: 1rem;
+    }
+    
+    .actions {
+        gap: 12px;
+    }
+    
+    button.connection,
+    button.inscription {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+}   
+
+
+/*dark mode button*/
+
+button.dark-mode-toggle {
+    background: linear-gradient(120deg, #23232a 0%, #18181b 100%);
+    color: #8B5CF6;
+    border: 2px solid #8B5CF6;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    cursor: pointer;
+    margin-left: 8px;
+    box-shadow: 0 2px 12px rgba(139, 92, 246, 0.12);
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+
+button.dark-mode-toggle:hover {
+    background: linear-gradient(120deg, #8B5CF6 0%, #a855f7 100%);
+    color: #fff;
+    transform: scale(1.08);
+}
+
+.icon-moon {
+    pointer-events: none;
 }

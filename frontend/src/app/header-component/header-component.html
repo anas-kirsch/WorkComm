@@ -1,16 +1,19 @@
-
 <header>
   <div class="header-content">
     <h1>WorkComm</h1>
     <nav>
       <ul>
-        <li>Accueil</li>
+        <li (click)="accueil()">Accueil</li>
         <li>Tarifs</li>
         <li>Contact</li>
+        <li class="dev-page">À venir (en développement)</li>
       </ul>
       <div class="actions">
         <button class="connection">Connexion</button>
-        <button class="inscription">Inscription</button>
+        <button (click)="inscription()" class="inscription">Inscription</button>
+        <button  class="dark-mode-toggle" title="Activer/Désactiver le mode sombre">
+          <span class="icon-moon">&#9789;</span>
+        </button>
       </div>
     </nav>
   </div>
