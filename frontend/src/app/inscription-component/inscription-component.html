@@ -51,7 +51,8 @@
 
             <div class="form-group">
                 <label for="picture">Photo de profil</label>
-                <input type="file" id="picture" formControlName="picture" accept="image/*">
+                <!-- <input type="file" id="picture" formControlName="picture" accept="image/*"> -->
+                <input type="file" (change)="onFileSelected($event)" />
             </div>
 
             <button type="submit" class="cta" [disabled]="form.invalid">S'inscrire</button>

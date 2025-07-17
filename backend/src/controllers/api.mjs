@@ -48,7 +48,10 @@ export function runServer(sequelize) {
     app.use("/api/chatPrivate", chatPrivateRouter);//ok
     app.use("/api/nav", navRouter);
 
-    app.listen(port, () => {
+    // app.listen(port, () => {
+    //     console.log(`Server listen on port ${port}`)
+    // })
+        app.listen(port, "0.0.0.0", () => {
         console.log(`Server listen on port ${port}`)
     })
 }
