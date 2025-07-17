@@ -4,6 +4,7 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators, A
 // import { visitAll } from '@angular/compiler';
 import { CommonModule } from '@angular/common'; // <-- Ajoute cette ligne
 import { AuthService } from '../service/auth/auth-service';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -13,6 +14,8 @@ import { AuthService } from '../service/auth/auth-service';
   styleUrl: './inscription-component.css'
 })
 export class InscriptionComponent {
+
+  router : Router = new Router()
 
   selectedFile: File | null = null;
 
@@ -80,7 +83,11 @@ export class InscriptionComponent {
     AuthService.fetchInscription(this.form)
       .then(result => {
         console.log('Inscription réussie:', result);
+        this.form.reset();
+        this.selectedFile = null;
         // Ajoute ici le traitement en cas de succès (affichage, navigation, etc.)
+        this.router.navigate(["information"]);
+
       })
       .catch(error => {
         console.error('Erreur inscription:', error);

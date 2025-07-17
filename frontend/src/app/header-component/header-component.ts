@@ -18,5 +18,9 @@ export class HeaderComponent {
     this.router.navigate(["inscription"]);
   }
 
+  connexion(){
+    this.router.navigate(["connexion"]);
+  }
+
 
 }
