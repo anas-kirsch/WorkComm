@@ -87,15 +87,16 @@ nav {
 
 nav ul {
     display: flex;
-    gap: 18px;
+    align-items: center; /* Ajouté pour aligner verticalement les <li> */
+    gap: 32px;
     list-style: none;
     margin: 0;
     padding: 0;
-    align-items: center;
-
 }
 
 nav li {
+    display: flex; /* Ajouté pour que le contenu interne soit bien centré */
+    align-items: center; /* Ajouté pour centrer verticalement le contenu */
     font-family: 'Inter', 'Roboto', sans-serif;
     color: #cfcfff;
     font-size: 1.1rem;
@@ -105,7 +106,7 @@ nav li {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     padding: 8px 16px;
     border-radius: 8px;
-
+    min-height: 44px; /* Pour uniformiser la hauteur */
 }
 
 nav li::before {
@@ -130,123 +131,115 @@ nav li:hover::before {
     opacity: 1;
 }
 
+/* Chat bouton dans la nav */
+.chat-li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+}
+
+.chat-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: linear-gradient(135deg, #8B5CF6 0%, #a855f7 100%);
+    border-radius: 50%;
+    margin-right: 2px;
+    box-shadow: 0 0 8px #8B5CF680;
+    border: 2px solid #23232a;
+}
+
+/* Actions à droite */
 .actions {
     display: flex;
     gap: 16px;
     align-items: center;
 }
 
-button.connection,
-button.inscription {
+/* Bouton profil */
+.profil-btn {
     font-family: 'Inter', 'Roboto', sans-serif;
-    padding: 12px 28px;
+    padding: 12px 24px 12px 18px;
     border-radius: 14px;
-    border: none;
+    border: 2px solid #8B5CF6;
+    background: linear-gradient(90deg, #23232a 0%, #18181b 100%);
+    color: #8B5CF6;
     font-size: 1.05rem;
     font-weight: 600;
     cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    outline: none;
-}
-
-button.connection {
-    background: linear-gradient(90deg, #23232a 0%, #18181b 100%);
-    color: #8B5CF6;
-    border: 2px solid #8B5CF6;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s, color 0.2s, transform 0.2s;
     box-shadow: 0 2px 12px rgba(139, 92, 246, 0.15);
 }
 
-button.connection::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, rgba(139,92,246,0.15) 0%, rgba(139,92,246,0.25) 100%);
-    opacity: 0;
-    transition: opacity 0.3s;
-    z-index: 0;
-}
-
-button.connection:hover {
-    color: #fff;
+.profil-btn:hover {
     background: linear-gradient(90deg, #8B5CF6 0%, #a855f7 100%);
+    color: #fff;
     transform: translateY(-2px) scale(1.04);
     box-shadow: 0 8px 32px rgba(139, 92, 246, 0.25);
 }
 
-button.connection:hover::after {
-    opacity: 1;
+.icon-user {
+    font-size: 1.3rem;
+    pointer-events: none;
 }
 
-button.inscription {
-    background: linear-gradient(120deg, #8B5CF6 0%, #a855f7 100%);
+/* Bouton déconnexion */
+.logout-btn {
+    font-family: 'Inter', 'Roboto', sans-serif;
+    padding: 12px 22px 12px 18px;
+    border-radius: 14px;
+    border: 2px solid #ef4444;
+    background: linear-gradient(90deg, #23232a 0%, #18181b 100%);
+    color: #ef4444;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+    box-shadow: 0 2px 12px rgba(239, 68, 68, 0.15);
+}
+
+.logout-btn:hover {
+    background: linear-gradient(90deg, #ef4444 0%, #f87171 100%);
     color: #fff;
-    box-shadow: 0 2px 16px rgba(139, 92, 246, 0.25);
-    border: 2px solid transparent;
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 8px 32px rgba(239, 68, 68, 0.25);
 }
 
-button.inscription::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(120deg, #a855f7 0%, #c084fc 100%);
-    opacity: 0;
-    transition: opacity 0.3s;
-    z-index: 0;
+.icon-logout {
+    font-size: 1.2rem;
+    pointer-events: none;
 }
 
-button.inscription:hover {
-    background: linear-gradient(120deg, #a855f7 0%, #c084fc 100%);
-    color: #fff;
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 10px 36px rgba(139, 92, 246, 0.35);
+/* Photo de profil ronde */
+.profile-photo {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-left: 8px;
+    box-shadow: 0 2px 12px rgba(139, 92, 246, 0.18);
+    border: 2px solid #8B5CF6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #18181b;
 }
 
-/* button.inscription:hover::after {
-} */
-
-button.connection span,
-button.inscription span {
-    position: relative;
-    z-index: 1;
+.profile-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .header-content {
-        padding: 0 20px;
-    }
-    
-    h1 {
-        font-size: 1.8rem;
-        margin-right: 16px;
-    }
-    
-    nav ul {
-        gap: 20px;
-    }
-    
-    nav li {
-        font-size: 1rem;
-    }
-    
-    .actions {
-        gap: 12px;
-    }
-    
-    button.connection,
-    button.inscription {
-        padding: 10px 20px;
-        font-size: 0.9rem;
-    }
-}   
-
-
-/*dark mode button*/
-
+/* Bouton dark mode */
 button.dark-mode-toggle {
     background: linear-gradient(120deg, #23232a 0%, #18181b 100%);
     color: #8B5CF6;
@@ -272,4 +265,35 @@ button.dark-mode-toggle:hover {
 
 .icon-moon {
     pointer-events: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header-content {
+        padding: 0 20px;
+    }
+    h1 {
+        font-size: 1.8rem;
+        margin-right: 16px;
+    }
+    nav ul {
+        gap: 20px;
+    }
+    nav li {
+        font-size: 1rem;
+    }
+    .actions {
+        gap: 12px;
+    }
+    .profil-btn,
+    .logout-btn {
+        padding: 10px 14px 10px 10px;
+        font-size: 0.9rem;
+    }
+    .profile-photo,
+    button.dark-mode-toggle {
+        width: 36px;
+        height: 36px;
+        font-size: 1.1rem;
+    }
 }

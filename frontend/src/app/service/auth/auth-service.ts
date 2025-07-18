@@ -5,6 +5,7 @@ import { FormGroup } from '@angular/forms';
   providedIn: 'root'
 })
 export class AuthService {
+  isConnected = false;
 
   /**
    * Envoie les données d'inscription au backend
@@ -65,24 +66,38 @@ export class AuthService {
 
 
 
-
-
-
   /**
-   * Enregistre le token JWT, l'id utilisateur et le rôle dans un seul cookie sous forme d'objet JSON
-   * @param authData Objet contenant { token, id, role }
+   * Enregistre le token JWT, l'id utilisateur, le rôle et d'autres infos dans un seul cookie sous forme d'objet JSON
+   * @param authData Objet contenant { token, id, role, bio, username, imagePath, mail, language }
    */
-  static saveAuthToCookies(authData: { token: string, id: string, role: string }): void {
+  static saveAuthToCookies(authData: {
+    token: string,
+    id: string,
+    role: string,
+    bio: string,
+    username: string,
+    imagePath: string,
+    mail: string,
+    language: string
+  }): void {
     const data = {
       token: authData.token,
       id: authData.id,
-      role: authData.role
+      role: authData.role,
+      bio: authData.bio,
+      username: authData.username,
+      imagePath: authData.imagePath,
+      mail: authData.mail,
+      language: authData.language
     };
-    document.cookie = `auth=${encodeURIComponent(JSON.stringify(data))}; path=/;`;
+    document.cookie = `auth=${encodeURIComponent(JSON.stringify(data))}; path=/; SameSite=None; Secure`;
   }
 
 
 
+
+
+  // a voir 
 
   /**
  * Récupère le token JWT, l'id utilisateur et le rôle depuis le cookie
@@ -107,6 +122,16 @@ export class AuthService {
       }
     }
     return { token: null, id: null, role: null };
+  }
+
+
+
+
+
+
+  static isConnected(): boolean {
+    const auth = this.getAuthFromCookies();
+    return !!auth.token && auth.token !== 'null' && auth.token !== '';
   }
 
 

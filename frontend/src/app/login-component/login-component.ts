@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FooterComponent } from '../footer-component/footer-component';
 import { Router } from '@angular/router';
 // import { FormControl, FormGroup, Validators } from '@angular/forms';
@@ -14,6 +14,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './login-component.css'
 })
 export class LoginComponent {
+  authService = inject(AuthService)
 
   router: Router = new Router();
 
@@ -29,29 +30,38 @@ export class LoginComponent {
 
   })
 
-
-    onSubmitConnexion() {
-      if (this.form.invalid) {
-        return;
-      }
-      AuthService.fetchConnexion(this.form)
-        .then(result => {
-          console.log('connexion réussie:', result);
-          // Créer l'objet authData
-          const authData = {
-            token: result.body.token,
-            id: result.body.id.toString(),
-            role: result.body.role
-          };
-          // Stocker dans le cookie
-          AuthService.saveAuthToCookies(authData);
-          this.form.reset();
-          this.router.navigate([""]);
-        })
-        .catch(error => {
-          console.error("Erreur dans la connexion: ", error);
-        });
+  onSubmitConnexion() {
+    if (this.form.invalid) {
+      return;
     }
-
-
+    AuthService.fetchConnexion(this.form)
+      .then(result => {
+        console.log('connexion réussie:', result);
+        // Créer l'objet authData avec les champs supplémentaires
+        const authData = {
+          token: result.body.token,
+          id: result.body.id.toString(),
+          role: result.body.role,
+          bio: result.body.bio,
+          username: result.body.username,
+          imagePath: result.body.imagePath?.imagePath || '', // si imagePath est un objet
+          mail: result.body.mail,
+          language: result.body.language
+        };
+        // Stocker dans le cookie
+        AuthService.saveAuthToCookies(authData);
+        
+        this.form.reset();
+        this.authService.isConnected = true;
+        this.router.navigate([""]);
+        
+      })
+      .catch(error => {
+        console.error("Erreur dans la connexion: ", error);
+      });
   }
+
+  
+
+
+}

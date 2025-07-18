@@ -7,8 +7,14 @@
         <p>La plateforme collaborative pour les professionnels, étudiants et entreprises qui veulent communiquer,
             partager et avancer ensemble.</p>
         <div class="hero-actions">
+
             <!-- <button class="cta">Découvrir</button> -->
+            @if (!this.authService.isConnected) {
             <button (click)="inscription()" class="cta secondary">S'inscrire</button>
+            }@else {
+            <button class="cta secondary"> Profil </button>
+            }
+
         </div>
     </section>
 
