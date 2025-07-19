@@ -32,7 +32,7 @@ export class AuthService {
       body: formdata
     };
 
-    return fetch("http://192.168.10.125:4900/api/user/register", requestOptions)
+    return fetch("http://0.0.0.0:4900/api/user/register", requestOptions)
       .then((response) => response.json());
   }
 
@@ -45,7 +45,7 @@ export class AuthService {
    * @param formulaire FormGroup du formulaire de connexion
    * @returns
    */
-  static fetchConnexion(formulaire: FormGroup): Promise<any> {
+  static async fetchConnexion(formulaire: FormGroup): Promise<any> {
 
     const formdata = new FormData();
 
@@ -58,7 +58,7 @@ export class AuthService {
       body: formdata
     }
 
-    return fetch("http://192.168.10.125:4900/api/auth/login", requestOptions)
+    return fetch("http://0.0.0.0:4900/api/auth/login", requestOptions)
       .then((response) => response.json());
 
   };
