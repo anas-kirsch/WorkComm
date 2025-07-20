@@ -8,6 +8,8 @@ import { InformationComponent } from './information-component/information-compon
 import { HeaderConnectedComponent } from './header-connected-component/header-connected-component';
 import { AuthGuard } from './service/auth/authGuard';
 import { ConnectedGuard } from './service/auth/authGuard';
+import { Component } from '@angular/core';
+import { ProfilComponent } from './profil-component/profil-component';
 
 
 
@@ -18,4 +20,8 @@ export const routes: Routes = [
     { path: "inscription", component: InscriptionComponent, canActivate: [ConnectedGuard] },
     { path: "information", component: InformationComponent },
     { path: "connexion", component: LoginComponent, canActivate: [ConnectedGuard] },
-    { path: "connected", component: HeaderConnectedComponent, canActivate: [AuthGuard] }];
+    { path: "connected", component: HeaderConnectedComponent, canActivate: [AuthGuard] },
+    { path: "profil", component: ProfilComponent}
+
+
+]

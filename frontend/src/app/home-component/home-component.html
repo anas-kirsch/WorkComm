@@ -12,7 +12,7 @@
             @if (!this.authService.isConnected) {
             <button (click)="inscription()" class="cta secondary">S'inscrire</button>
             }@else {
-            <button class="cta secondary"> Profil </button>
+            <button (click)="showProfil()" class="cta secondary"> Profil </button>
             }
 
         </div>

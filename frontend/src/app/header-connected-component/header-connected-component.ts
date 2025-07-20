@@ -23,6 +23,9 @@ export class HeaderConnectedComponent {
 
   }
 
+   accueil(){
+    this.router.navigate([""]);
+  }
 
   ngOnInit() {
     // console.log(this.getProfilPicture())
@@ -54,9 +57,6 @@ export class HeaderConnectedComponent {
     }
   }
 
-
-
-
   deconnexion() {
     // Supprime le cookie 'auth'
     document.cookie = "auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=None; Secure";
@@ -65,10 +65,17 @@ export class HeaderConnectedComponent {
     this.authService.isConnected = false;
     console.log("Cookie 'auth' supprimé");
 
-    // Redirection vers la
-
+    this.router.navigate([""]);
 
   }
+
+
+  showProfil(){
+    this.router.navigate(["profil"]);
+  }
+
+
+
 
 
 }

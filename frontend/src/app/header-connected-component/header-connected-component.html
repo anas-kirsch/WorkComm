@@ -4,7 +4,7 @@
         <h1>WorkComm</h1>
         <nav>
             <ul>
-                <li>Accueil</li>
+                <li (click)="accueil()" >Accueil</li>
                 <!-- <li (click)="accueil()">Accueil</li> -->
                 <li>Tarifs</li>
                 <li>Contact</li>
@@ -16,7 +16,7 @@
                 <li class="dev-page">À venir (en développement)</li>
             </ul>
             <div class="actions">
-                <button class="profil-btn">
+                <button (click)="showProfil()" class="profil-btn">
                     <i class="fa fa-user"></i> Profil
                 </button>
                 <button (click)="deconnexion()" class="logout-btn">
