@@ -38,7 +38,8 @@ header::before {
     justify-content: space-between;
     width: 100%;
     padding: 0 40px;
-    max-width: 1400px;
+    /* max-width: 1400px; */
+    max-width: 1600px;
     margin: 0 auto;
 }
 

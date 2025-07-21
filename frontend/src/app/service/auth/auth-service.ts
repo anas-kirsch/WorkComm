@@ -11,7 +11,7 @@ export class AuthService {
    * Envoie les données d'inscription au backend
    * @param formulaire FormGroup du formulaire d'inscription
    */
-  static fetchInscription(formulaire: FormGroup): Promise<any> {
+  static async fetchInscription(formulaire: FormGroup): Promise<any> {
     const formdata = new FormData();
 
     formdata.append("username", formulaire.get('username')?.value);

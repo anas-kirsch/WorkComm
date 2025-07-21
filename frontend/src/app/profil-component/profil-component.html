@@ -1,9 +1,9 @@
 <main class="profil-main">
     <section class="profil-hero">
         <div class="profil-avatar">
-            <img src="assets/default-avatar.png" alt="Avatar utilisateur">
+            <img [src]="userService.getUserData()?.imagePath" alt="Avatar utilisateur">
         </div>
-        <h1 class="profil-name">Nom Prénom</h1>
+        <h1 class="profil-name">s</h1>
         <p class="profil-role">Rôle</p>
         <div class="profil-actions">
             <button class="cta">Modifier le profil</button>

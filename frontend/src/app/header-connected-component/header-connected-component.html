@@ -23,7 +23,7 @@
                     <i class="fa fa-sign-out-alt icon-logout"></i> Déconnexion
                 </button>
                 <div class="profile-photo">
-                    <img [src]="this.getProfilPicture()?.imagePath" alt="Photo de profil" />
+                    <img [src]="userService.getUserData()?.imagePath" alt="Photo de profil" />
                 </div>
                 <button class="dark-mode-toggle" title="Activer/Désactiver le mode sombre">
                     <span class="icon-moon">&#9789;</span>
