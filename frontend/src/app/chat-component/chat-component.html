@@ -1,59 +1,78 @@
+<!-- ...existing code... -->
 <main class="chat-main">
   <section class="chat-search-bar">
-    <input (input)="onInput($event)" type="text" placeholder="Rechercher un ami ..." />
-    <!-- <input (input)="this.onInput()" type="text" placeholder="Rechercher un ami ..." /> -->
+    <input class="chat-search-input" (input)="onInput($event)" type="text" placeholder="Rechercher un ami ..." />
     <button class="chat-search-btn">Rechercher</button>
   </section>
-  <!-- 
-  @for (user of foundUsers; track $index) {
-    <p>{{user.username}}</p>
-  } -->
-
 
   @if (foundUsers.length >=0) {
-
   <div class="search-results" *ngIf="foundUsers.length > 0">
     @for (user of foundUsers; track $index) {
-    <p>{{user.username}}</p>
+    <p class="search-results-item" (click)="showUserProfil(user)">{{user.username}}</p>
     }
   </div>
   }@else {
   <div class="search-results">
-    <p>...</p>
+    <p class="search-results-item">...</p>
   </div>
   }
 
   <section class="chat-content">
+
+    <section class="profil-other-user">
+      <main class="profil-main">
+        <section class="profil-hero">
+          <div class="profil-avatar">
+            <img [src]="" alt="Avatar utilisateur">
+          </div>
+          <h1 class="profil-name">username</h1>
+        </section>
+        <section class="profil-details">
+          <h2>Informations personnelles</h2>
+          <ul>
+            <li><strong>Email :</strong> balbalajgmail.com </li>
+            <li><strong>Langue :</strong> french</li>
+            <li><strong>Bio :</strong>
+              <ng-container>
+                bio
+              </ng-container>
+              <ng-template #noBio>Aucune bio renseignée.</ng-template>
+            </li>
+            <li><strong>ID utilisateur :</strong> 56</li>
+          </ul>
+        </section>
+
+      </main>
+    </section>
+
+
+
     <aside class="chat-sidebar">
       <div class="chat-friends">
-        <h2>Mes amis</h2>
-        <!-- Liste des amis ici -->
+        <h2 class="chat-sidebar-title">Mes amis</h2>
         <ul class="friends-list">
-          <!-- <li>Nom Ami</li> -->
+          <!-- <li class="friends-list-item">Nom Ami</li> -->
         </ul>
       </div>
       <div class="chat-requests">
-        <h2>Demandes d'amis</h2>
-        <!-- Liste des demandes ici -->
+        <h2 class="chat-sidebar-title">Demandes d'amis</h2>
         <ul class="requests-list">
-          <!-- <li>Demande d'ami</li> -->
+          <!-- <li class="requests-list-item">Demande d'ami</li> -->
         </ul>
       </div>
     </aside>
     <section class="chat-messages">
       <div class="messages-header">
-        <h2 id="chat-text">Chat</h2>
-        <!-- Infos du chat ou nom de l'ami sélectionné -->
+        <h2 class="messages-header-title" id="chat-text">Chat</h2>
       </div>
       <div class="messages-list">
         <!-- Messages ici -->
       </div>
       <div class="messages-input">
-        <input type="text" placeholder="Écrire un message..." />
+        <input class="messages-input-field" type="text" placeholder="Écrire un message..." />
         <button class="send-btn">Envoyer</button>
       </div>
     </section>
   </section>
 </main>
-
-<!-- <app-footer-component></app-footer-component> -->
+<!-- ...existing code... -->

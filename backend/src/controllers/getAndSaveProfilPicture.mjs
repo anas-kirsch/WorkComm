@@ -72,9 +72,7 @@ export async function getAndSaveProfilPicture(picture, userId) {
  * @param {number} id l'id de l'user 
  */
 export async function getProfilPictureFromDataB(id) {
-
     try {
-
         console.log(id);
         const getProfilPicture = await profilPicture.findOne({ where: { UserId: id } })
 
@@ -89,11 +87,5 @@ export async function getProfilPictureFromDataB(id) {
     } catch (error) {
         console.error(error);
     }
-
-
-
-
-
-
 
 }
