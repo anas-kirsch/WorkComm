@@ -136,6 +136,15 @@ export class AuthService {
 
 
 
+  insertTokeninHeader() {
+    const auth = AuthService.getAuthFromCookies();
+    if (auth.token) {
+      return {
+        Authorization: `Bearer ${auth.token}`
+      };
+    }
+    return {};
+  }
 
 
 }

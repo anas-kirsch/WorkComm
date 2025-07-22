@@ -3,6 +3,7 @@ import express from "express";
 import {UserController} from "../controllers/user.controller.mjs"
 import { getClientTokenAndVerifAccess } from "../middlewares/getClientTokenAndVerifAccess.mjs";
 import multer from "multer";
+import { User } from "../models/database.mjs";
 const upload = multer();
 
 const router = express.Router();
@@ -49,6 +50,12 @@ router.delete("/delete-friend",upload.none(),getClientTokenAndVerifAccess,UserCo
  */
 router.get("/myfriend", getClientTokenAndVerifAccess, UserController.getMyfriends);
 
+
+
+/**
+ * cette route permet à un utilisateur d'en chercher d'autre dans la table User
+ */
+router.post("/getUser",getClientTokenAndVerifAccess, UserController.getUserFromUserTable);
 
 
 

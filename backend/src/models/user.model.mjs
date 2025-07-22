@@ -65,6 +65,8 @@ export async function getUserProfilPicture(userId){
 
 }
 
+
+
 /**
  * cette fonction recupere les données des amis d'un utilisateur (ex : nom, photo de profil)
  * @param {number} userId 
@@ -77,11 +79,20 @@ export async function getUserData(userId) {
 
 
 
-
-
-
-
-
+/**
+ * Récupère tous les utilisateurs dont le username commence par les caractères donnés
+ * @param {string} usernamePart
+ * @returns {Promise<Array>} Liste des utilisateurs correspondants
+ */
+export async function getUserByUsername(usernamePart) {
+    return await User.findAll({
+        where: {
+            username: {
+                [Op.like]: `${usernamePart}%`
+            }
+        }
+    });
+}
 
 
 

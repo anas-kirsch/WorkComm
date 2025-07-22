@@ -1,0 +1,59 @@
+<main class="chat-main">
+  <section class="chat-search-bar">
+    <input (input)="onInput($event)" type="text" placeholder="Rechercher un ami ..." />
+    <!-- <input (input)="this.onInput()" type="text" placeholder="Rechercher un ami ..." /> -->
+    <button class="chat-search-btn">Rechercher</button>
+  </section>
+  <!-- 
+  @for (user of foundUsers; track $index) {
+    <p>{{user.username}}</p>
+  } -->
+
+
+  @if (foundUsers.length >=0) {
+
+  <div class="search-results" *ngIf="foundUsers.length > 0">
+    @for (user of foundUsers; track $index) {
+    <p>{{user.username}}</p>
+    }
+  </div>
+  }@else {
+  <div class="search-results">
+    <p>...</p>
+  </div>
+  }
+
+  <section class="chat-content">
+    <aside class="chat-sidebar">
+      <div class="chat-friends">
+        <h2>Mes amis</h2>
+        <!-- Liste des amis ici -->
+        <ul class="friends-list">
+          <!-- <li>Nom Ami</li> -->
+        </ul>
+      </div>
+      <div class="chat-requests">
+        <h2>Demandes d'amis</h2>
+        <!-- Liste des demandes ici -->
+        <ul class="requests-list">
+          <!-- <li>Demande d'ami</li> -->
+        </ul>
+      </div>
+    </aside>
+    <section class="chat-messages">
+      <div class="messages-header">
+        <h2 id="chat-text">Chat</h2>
+        <!-- Infos du chat ou nom de l'ami sélectionné -->
+      </div>
+      <div class="messages-list">
+        <!-- Messages ici -->
+      </div>
+      <div class="messages-input">
+        <input type="text" placeholder="Écrire un message..." />
+        <button class="send-btn">Envoyer</button>
+      </div>
+    </section>
+  </section>
+</main>
+
+<!-- <app-footer-component></app-footer-component> -->

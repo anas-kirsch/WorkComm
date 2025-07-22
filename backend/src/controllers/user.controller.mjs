@@ -1,6 +1,6 @@
 
 import express from "express"
-import { findUser, findUserByUsernameOrMail, findUserOrCreate, getUserProfilPicture, getUserData } from "../models/user.model.mjs";
+import { findUser, findUserByUsernameOrMail, findUserOrCreate, getUserProfilPicture, getUserData, getUserByUsername } from "../models/user.model.mjs";
 // import { findUserOrCreate } from "../models/user.model.mjs";
 // import { getUserToDestroy } from "../models/user.model.mjs";
 import nodemailer from 'nodemailer';
@@ -443,7 +443,45 @@ export class UserController {
     }
 
 
+    // ...existing code...
 
+
+    /**
+     *  ce controller permet de recuperer les users recherchés
+     */
+    static async getUserFromUserTable(request, response) {
+
+        try {
+            const userId = request.user.id;
+            const { search } = request.body;
+            console.log({ userId, search });
+
+            const ifUserExist = await findUser(userId);
+
+            if (!ifUserExist) {
+                return response.status(404).json({ error: "Utilisateur non trouvé." });
+            }
+
+            const users = await getUserByUsername(search);
+
+            // On filtre les propriétés à retourner
+            const filteredUsers = users.map(user => ({
+                id: user.id,
+                username: user.username,
+                mail: user.mail,
+                bio: user.bio,
+                language: user.language
+            }));
+
+            console.log(filteredUsers)
+
+            return response.status(200).json({ users: filteredUsers });
+
+        } catch (error) {
+            console.error(error); // pour le voir dans la console
+            response.status(500).json({ error: "Erreur serveur." });
+        }
+    }
 
 
 

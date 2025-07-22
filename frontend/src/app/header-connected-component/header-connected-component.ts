@@ -57,6 +57,11 @@ export class HeaderConnectedComponent {
     this.router.navigate(["profil"]);
   }
 
+  goChat(){
+
+    this.router.navigate(["chat"]);
+  }
+
 
 
 
