@@ -1,6 +1,6 @@
 <main>
     <section class="chat-search-bar">
-        <input class="chat-search-input" (input)="onInput($event)" type="text" placeholder="Rechercher un ami ..." />
+        <input class="chat-search-input"  (input)="onInput($event)" type="text" placeholder="Rechercher un ami ..." />
         <button class="chat-search-btn">Rechercher</button>
     </section>
 
@@ -8,7 +8,7 @@
     @if (foundUsers.length >=0) {
     <div class="search-results" *ngIf="foundUsers.length > 0">
         @for (user of foundUsers; track $index) {
-        <p class="search-results-item" (click)="this.friendService.showUserProfil(user)">{{user.username}}</p>
+        <p class="search-results-item" (click)="vide()" (click)="this.friendService.showUserProfil(user)">{{user.username}}</p>
         }
     </div>
     }@else {

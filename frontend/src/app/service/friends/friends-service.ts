@@ -3,6 +3,8 @@ import { AuthService } from "../../service/auth/auth-service"
 import { Friends, responseObject } from '../../interfaces/user';
 import { Route, Router } from '@angular/router';
 
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -83,8 +85,7 @@ export class FriendsService {
   showUserProfil(dataOfUser: Friends) {
     console.log(dataOfUser);
     this.router.navigate(["user", dataOfUser.username]);
+  
+
   }
-
-
-
 }
