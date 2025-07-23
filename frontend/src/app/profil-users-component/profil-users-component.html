@@ -1,0 +1,62 @@
+<main>
+    <section class="chat-search-bar">
+        <input class="chat-search-input" (input)="onInput($event)" type="text" placeholder="Rechercher un ami ..." />
+        <button class="chat-search-btn">Rechercher</button>
+    </section>
+
+
+    @if (foundUsers.length >=0) {
+    <div class="search-results" *ngIf="foundUsers.length > 0">
+        @for (user of foundUsers; track $index) {
+        <p class="search-results-item" (click)="this.friendService.showUserProfil(user)">{{user.username}}</p>
+        }
+    </div>
+    }@else {
+    <div class="search-results">
+        <p class="search-results-item">...</p>
+    </div>
+    }
+
+
+
+    <section class="profil-other-user">
+        <main class="profil-main">
+            <section class="profil-hero">
+                <section>
+                    <div class="profil-avatar">
+                        <img [src]="" alt="Avatar utilisateur">
+                    </div>
+                    <h1 class="profil-name">username</h1>
+                </section>
+
+                <div class="profil-actions">                                
+                    <button class="profil-btn">Ajouter</button>
+                    <button class="profil-btn">Refuser</button>
+                    <!-- <button class="profil-btn">amis</button> -->
+                </div>
+            </section>
+
+
+
+            <section class="profil-details">
+                <h2>Informations personnelles</h2>
+                <ul>
+                    <li><strong>Email :</strong> balbalajgmail.com </li>
+                    <li><strong>Langue :</strong> french</li>
+                    <li><strong>Bio :</strong>
+                        <ng-container>
+                            bio
+                        </ng-container>
+                        <ng-template #noBio>Aucune bio renseignée.</ng-template>
+                    </li>
+                    <li><strong>ID utilisateur :</strong> 56</li>
+                </ul>
+            </section>
+
+        </main>
+    </section>
+
+
+
+
+</main>

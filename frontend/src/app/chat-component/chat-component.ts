@@ -19,7 +19,6 @@ export class ChatComponent {
   foundUsers: Friends[] = []; // Ajoute cette propriété
 
   constructor(private cdr: ChangeDetectorRef) { }
-  // ...
   searchValue: string = '';
 
   async onInput(event: Event) {
@@ -35,11 +34,6 @@ export class ChatComponent {
     }
   }
 
-
-  showUserProfil(dataOfUser : Friends){
-
-    console.log(dataOfUser)
-  }
 
 
 
