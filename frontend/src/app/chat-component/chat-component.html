@@ -1,14 +1,19 @@
 <!-- ...existing code... -->
 <main class="chat-main">
   <section class="chat-search-bar">
-    <input class="chat-search-input" (input)="onInput($event)" type="text" placeholder="Rechercher un ami ..." />
+    <input [formControl]="this.friendService.searchInput" (input)="this.friendService.onInput()" placeholder="Rechercher..." />
+    
+    <!-- <input  formControlName="searchInput" class="chat-search-input" (input)="this.friendService.onInput()" type="text" placeholder="Rechercher un ami ..." /> -->
     <button class="chat-search-btn">Rechercher</button>
   </section>
 
-  @if (foundUsers.length >=0) {
-  <div class="search-results" *ngIf="foundUsers.length > 0">
-    @for (user of foundUsers; track $index) {
-    <p class="search-results-item" (click)="showUserProfil(user)">{{user.username}}</p>
+  
+  @if (this.friendService.foundUsers.length  >= 0) {
+  <!-- @if (foundUsers.length >=0) { -->
+  <div class="search-results" *ngIf="this.friendService.foundUsers.length > 0">
+    @for (user of this.friendService.foundUsers; track $index) {
+    <!-- <p class="search-results-item" (click)="showUserProfil(user)">{{user.username}}</p> -->
+    <p class="search-results-item" (click)="this.friendService.showUserProfil(user)">{{user.username}}</p>
     }
   </div>
   }@else {
@@ -18,34 +23,6 @@
   }
 
   <section class="chat-content">
-
-    <section class="profil-other-user">
-      <main class="profil-main">
-        <section class="profil-hero">
-          <div class="profil-avatar">
-            <img [src]="" alt="Avatar utilisateur">
-          </div>
-          <h1 class="profil-name">username</h1>
-        </section>
-        <section class="profil-details">
-          <h2>Informations personnelles</h2>
-          <ul>
-            <li><strong>Email :</strong> balbalajgmail.com </li>
-            <li><strong>Langue :</strong> french</li>
-            <li><strong>Bio :</strong>
-              <ng-container>
-                bio
-              </ng-container>
-              <ng-template #noBio>Aucune bio renseignée.</ng-template>
-            </li>
-            <li><strong>ID utilisateur :</strong> 56</li>
-          </ul>
-        </section>
-
-      </main>
-    </section>
-
-
 
     <aside class="chat-sidebar">
       <div class="chat-friends">
@@ -75,4 +52,3 @@
     </section>
   </section>
 </main>
-<!-- ...existing code... -->

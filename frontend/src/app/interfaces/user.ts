@@ -18,7 +18,7 @@ export interface Friends {
     username : string,
     bio : string,
     mail : string,
-    // imagePath : string,
+    imagePath : string,
     language : string,
     id : number
     

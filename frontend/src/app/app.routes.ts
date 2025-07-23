@@ -11,6 +11,7 @@ import { ConnectedGuard } from './service/auth/authGuard';
 import { Component } from '@angular/core';
 import { ProfilComponent } from './profil-component/profil-component';
 import { ChatComponent } from './chat-component/chat-component';
+import { ProfilUsersComponent } from './profil-users-component/profil-users-component';
 
 
 
@@ -23,7 +24,8 @@ export const routes: Routes = [
     { path: "connexion", component: LoginComponent, canActivate: [ConnectedGuard] },
     { path: "connected", component: HeaderConnectedComponent, canActivate: [AuthGuard] },
     { path: "profil", component: ProfilComponent, canActivate: [AuthGuard]  },
-    { path: "chat", component: ChatComponent, canActivate: [AuthGuard]  }
+    { path: "chat", component: ChatComponent, canActivate: [AuthGuard]  },
+    { path: "profil-users", component: ProfilUsersComponent, canActivate: [AuthGuard]  }
 
 
 ]
