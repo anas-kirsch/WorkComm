@@ -47,36 +47,49 @@ export class FriendsService {
       fetch("http://0.0.0.0:4900/api/user/getUser", requestOptions)
         .then(data => data.json())
         .then(data => {
-          console.log("dans le service :", data)
+          // console.log("dans le service :", data)
           resolve(data)
         })
         .catch(error => reject(error))
     })
   }
 
-  // async onInput() {
-  //   const value = this.searchInput?.value ?? '';
-  //   this.searchValue = value;
 
-  //   if (value !== "") {
-  //     const data = await this.fetchInputSearch(value);
-  //     this.ngZone.run(() => {
-  //       if (Array.isArray(data)) {
-  //         this.foundUsers = [...data];
-  //       } else if (data && Array.isArray(data.users)) {
-  //         this.foundUsers = [...data.users];
-  //       } else {
-  //         this.foundUsers = [];
-  //       }
-  //       this.appRef.tick();
-  //     });
-  //   } else {
-  //     this.ngZone.run(() => {
-  //       this.foundUsers = [];
-  //       this.appRef.tick();
-  //     });
-  //   }
-  // }
+/**
+ * fetch qui cherche un user par son username 
+ * @param search 
+ */
+fetchDataByUsername(search: string): Promise<Friends> {
+  const tokenHeader = this.authService.insertTokeninHeader();
+
+  const myHeaders = new Headers();
+  if (tokenHeader.Authorization) {
+    myHeaders.append("Authorization", tokenHeader.Authorization);
+  }
+  myHeaders.append("Content-Type", "application/json");
+
+  const raw = JSON.stringify({
+    "search": search
+  });
+
+  const requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    // redirect: "follow"
+  };
+
+  return fetch("http://0.0.0.0:4900/api/user/getByUsername", requestOptions)
+    .then(response => response.json())
+    .then(data => data as Friends);
+}
+
+
+  
+
+
+
+
 
   /**
    * cette fonction permet de naviguer vers le component qui affiche le profil d'un utlisateur 
@@ -85,7 +98,6 @@ export class FriendsService {
   showUserProfil(dataOfUser: Friends) {
     console.log(dataOfUser);
     this.router.navigate(["user", dataOfUser.username]);
-  
 
   }
 }

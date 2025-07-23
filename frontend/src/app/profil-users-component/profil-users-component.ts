@@ -17,16 +17,20 @@ export class ProfilUsersComponent implements OnInit {
   foundUsers: Friends[] = [];
   searchValue: string = '';
 
+  dataOfUser: Friends | null = null;
   constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) { }
 
-  ngOnInit() {
-    this.username = this.route.snapshot.paramMap.get('username');
-    console.log(this.username);
-
-    this.friendService.fetchInputSearch(this.username!)
-      .then(data => console.log(data))
-
-  }
+  async ngOnInit() {
+  this.route.paramMap.subscribe(async params => {
+    this.username = params.get('username');
+    if (this.username) {
+      const data = await this.friendService.fetchDataByUsername(this.username);
+      this.dataOfUser = data;
+      console.log("tets", data)
+      this.cdr.detectChanges();
+    }
+  });
+}
 
   async onInput(event: Event) {
     const value = (event.target as HTMLInputElement).value;
@@ -42,10 +46,12 @@ export class ProfilUsersComponent implements OnInit {
 
   }
 
- vide() {
-  this.searchValue = '';
-  this.foundUsers = [];
-}
+  async vide() {
+
+    this.searchValue = '';
+    this.foundUsers = [];
+
+  }
 
 
 

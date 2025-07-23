@@ -1,6 +1,6 @@
 
 import express from "express"
-import { findUser, findUserByUsernameOrMail, findUserOrCreate, getUserProfilPicture, getUserData, getUserByUsername } from "../models/user.model.mjs";
+import { findUser, findUserByUsernameOrMail, findUserOrCreate, getUserProfilPicture, getUserData, getUserByUsername, getByUsernameModel } from "../models/user.model.mjs";
 // import { findUserOrCreate } from "../models/user.model.mjs";
 // import { getUserToDestroy } from "../models/user.model.mjs";
 import nodemailer from 'nodemailer';
@@ -448,8 +448,136 @@ export class UserController {
     /**
      *  ce controller permet de recuperer les users recherchés
      */
-    // static async getUserFromUserTable(request, response) {
+    static async getUserFromUserTable(request, response) {
 
+        try {
+            const userId = request.user.id;
+            const { search } = request.body;
+            console.log({ userId, search });
+
+            const ifUserExist = await findUser(userId);
+
+            if (!ifUserExist) {
+                return response.status(404).json({ error: "Utilisateur non trouvé." });
+            }
+
+            const users = await getUserByUsername(search);
+
+            console.log(users);
+
+            // On filtre les propriétés à retourner
+            const filteredUsers = users.map(user => ({
+                id: user.id,
+                username: user.username,
+                mail: user.mail,
+                bio: user.bio,
+                language: user.language
+            }));
+
+            // console.log(filteredUsers)
+
+            return response.status(200).json({ users: filteredUsers });
+
+        } catch (error) {
+            console.error(error); // pour le voir dans la console
+            response.status(500).json({ error: "Erreur serveur." });
+        }
+    }
+
+
+
+//     /**
+//      * recupere un utilisateur par son username
+//      */
+//     static async getByUsername(request, response) {
+//     try {
+//         const userId = request.user.id;
+//         const { search } = request.body;
+//         console.log({ userId, search });
+
+//         const ifUserExist = await findUser(userId);
+
+//         if (!ifUserExist) {
+//             return response.status(404).json({ error: "Utilisateur non trouvé." });
+//         }
+
+//         const user = await getByUsernameModel(search);
+
+//         console.log(user);
+
+//         if (!user) {
+//             return response.status(404).json({ error: "Aucun utilisateur trouvé." });
+//         }
+
+//         // On filtre les propriétés à retourner
+//         const filteredUser = {
+//             id: user.id,
+//             username: user.username,
+//             mail: user.mail,
+//             bio: user.bio,
+//             language: user.language
+//         };
+
+//         return response.status(200).json(filteredUser);
+
+//     } catch (error) {
+//         console.error(error); // pour le voir dans la console
+//         response.status(500).json({ error: "Erreur serveur." });
+//     }
+// }
+
+
+
+
+/**
+     * recupere un utilisateur par son username
+     */
+    static async getByUsername(request, response) {
+        try {
+            const userId = request.user.id;
+            const { search } = request.body;
+            console.log({ userId, search });
+
+            const ifUserExist = await findUser(userId);
+
+            if (!ifUserExist) {
+                return response.status(404).json({ error: "Utilisateur non trouvé." });
+            }
+
+            const user = await getByUsernameModel(search);
+
+            console.log(user);
+
+            if (!user) {
+                return response.status(404).json({ error: "Aucun utilisateur trouvé." });
+            }
+
+            // Récupérer la photo de profil de l'utilisateur trouvé
+            const profilPicture = await getUserProfilPicture(user.id);
+
+            // On filtre les propriétés à retourner et on ajoute la photo de profil
+            const filteredUser = {
+                id: user.id,
+                username: user.username,
+                mail: user.mail,
+                bio: user.bio,
+                language: user.language,
+                imagePath: profilPicture?.dataValues?.imagePath || "http://localhost:4900/images/default.jpg"
+            };
+
+            return response.status(200).json(filteredUser);
+
+        } catch (error) {
+            console.error(error); // pour le voir dans la console
+            response.status(500).json({ error: "Erreur serveur." });
+        }
+    }
+// ...existing code...
+
+
+
+
+    //     static async getUserFromUserTable(request, response) {
     //     try {
     //         const userId = request.user.id;
     //         const { search } = request.body;
@@ -463,64 +591,26 @@ export class UserController {
 
     //         const users = await getUserByUsername(search);
 
-    //         console.log(users);
-
-    //         // On filtre les propriétés à retourner
-    //         const filteredUsers = users.map(user => ({
-    //             id: user.id,
-    //             username: user.username,
-    //             mail: user.mail,
-    //             bio: user.bio,
-    //             language: user.language
+    //         // On filtre les propriétés à retourner et ajoute la photo de profil
+    //         const filteredUsers = await Promise.all(users.map(async user => {
+    //             const profilPicture = await getProfilPictureFromDataB(user.id);
+    //             return {
+    //                 id: user.id,
+    //                 username: user.username,
+    //                 mail: user.mail,
+    //                 bio: user.bio,
+    //                 language: user.language,
+    //                 imagePath: profilPicture?.dataValues?.imagePath || "http://localhost:4900/images/default.jpg"
+    //             };
     //         }));
-
-    //         // console.log(filteredUsers)
 
     //         return response.status(200).json({ users: filteredUsers });
 
     //     } catch (error) {
-    //         console.error(error); // pour le voir dans la console
+    //         console.error(error);
     //         response.status(500).json({ error: "Erreur serveur." });
     //     }
     // }
-
-
-
-
-    static async getUserFromUserTable(request, response) {
-    try {
-        const userId = request.user.id;
-        const { search } = request.body;
-        console.log({ userId, search });
-
-        const ifUserExist = await findUser(userId);
-
-        if (!ifUserExist) {
-            return response.status(404).json({ error: "Utilisateur non trouvé." });
-        }
-
-        const users = await getUserByUsername(search);
-
-        // On filtre les propriétés à retourner et ajoute la photo de profil
-        const filteredUsers = await Promise.all(users.map(async user => {
-            const profilPicture = await getProfilPictureFromDataB(user.id);
-            return {
-                id: user.id,
-                username: user.username,
-                mail: user.mail,
-                bio: user.bio,
-                language: user.language,
-                imagePath: profilPicture?.dataValues?.imagePath || "http://localhost:4900/images/default.jpg"
-            };
-        }));
-
-        return response.status(200).json({ users: filteredUsers });
-
-    } catch (error) {
-        console.error(error);
-        response.status(500).json({ error: "Erreur serveur." });
-    }
-}
 
 
 

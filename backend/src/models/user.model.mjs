@@ -96,3 +96,18 @@ export async function getUserByUsername(usernamePart) {
 
 
 
+/**
+ * recupere un user par son username
+ * @param {string} username 
+ */
+export async function getByUsernameModel(username) {
+    
+    return await User.findOne({
+        where: {
+            username: username
+        }
+    });
+}
+
+
+

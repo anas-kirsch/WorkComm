@@ -59,6 +59,13 @@ router.post("/getUser",getClientTokenAndVerifAccess, UserController.getUserFromU
 
 
 
+/**
+ * recupere uniquement les données d'un utilisateurs à partir de son username 
+ */
+router.post('/getByUsername',getClientTokenAndVerifAccess, UserController.getByUsername)
+
+
+
 
 
 export default router;

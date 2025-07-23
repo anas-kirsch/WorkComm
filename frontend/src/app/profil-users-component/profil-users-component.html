@@ -1,6 +1,6 @@
 <main>
     <section class="chat-search-bar">
-        <input class="chat-search-input"  (input)="onInput($event)" type="text" placeholder="Rechercher un ami ..." />
+        <input class="chat-search-input"  (input)="onInput($event)" type="text" placeholder="Rechercher un utilisateur..." />
         <button class="chat-search-btn">Rechercher</button>
     </section>
 
@@ -24,9 +24,11 @@
             <section class="profil-hero">
                 <section>
                     <div class="profil-avatar">
-                        <img [src]="" alt="Avatar utilisateur">
+                        <img [src]="dataOfUser?.imagePath" alt="Avatar utilisateur">
+                        <!-- <img [src]="" alt="Avatar utilisateur"> -->
                     </div>
-                    <h1 class="profil-name">username</h1>
+                    <!-- <h1 class="profil-name">atest</h1> -->
+                    <h1 class="profil-name">{{ dataOfUser?.username }}</h1>
                 </section>
 
                 <div class="profil-actions">                                
@@ -41,15 +43,15 @@
             <section class="profil-details">
                 <h2>Informations personnelles</h2>
                 <ul>
-                    <li><strong>Email :</strong> balbalajgmail.com </li>
-                    <li><strong>Langue :</strong> french</li>
+                    <li><strong>Email :</strong> {{dataOfUser?.mail}}</li>
+                    <li><strong>Langue :</strong> {{dataOfUser?.language}}</li>
                     <li><strong>Bio :</strong>
                         <ng-container>
-                            bio
+                            {{dataOfUser?.bio}}
                         </ng-container>
                         <ng-template #noBio>Aucune bio renseignée.</ng-template>
                     </li>
-                    <li><strong>ID utilisateur :</strong> 56</li>
+                    <li><strong>ID utilisateur :</strong> {{dataOfUser?.id}}</li>
                 </ul>
             </section>
 
