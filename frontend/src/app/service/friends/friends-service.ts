@@ -1,12 +1,21 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, NgZone, ApplicationRef } from '@angular/core';
 import { AuthService } from "../../service/auth/auth-service"
 import { Friends, responseObject } from '../../interfaces/user';
+import { Route, Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FriendsService {
-  authService = inject(AuthService)
+  authService = inject(AuthService);
+  ngZone = inject(NgZone);
+  appRef = inject(ApplicationRef);
+
+  router: Router = new Router();
+
+  foundUsers: Friends[] = [];
+  searchValue: string = '';
+  searchInput: any;
 
   /**
    * fetch qui cherche des utilisateurs selon les caractères tapés dans la barre 
@@ -36,20 +45,34 @@ export class FriendsService {
       fetch("http://0.0.0.0:4900/api/user/getUser", requestOptions)
       .then(data=>data.json())
       .then(data=>{
-
         console.log("dans le service :",data)
         resolve(data)
       })
       .catch(error=>reject(error))
     })
-    // const response = await fetch("http://0.0.0.0:4900/api/user/getUser", requestOptions);
-    // const result = await response.json();
-    // return result; // 
-
   }
 
+  async onInput() {
+    const value = this.searchInput?.value ?? '';
+    this.searchValue = value;
 
-
-
-
+    if (value !== "") {
+      const data = await this.fetchInputSearch(value);
+      this.ngZone.run(() => {
+        if (Array.isArray(data)) {
+          this.foundUsers = [...data];
+        } else if (data && Array.isArray(data.users)) {
+          this.foundUsers = [...data.users];
+        } else {
+          this.foundUsers = [];
+        }
+        this.appRef.tick();
+      });
+    } else {
+      this.ngZone.run(() => {
+        this.foundUsers = [];
+        this.appRef.tick();
+      });
+    }
+  }
 }
