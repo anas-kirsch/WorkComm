@@ -137,40 +137,6 @@ export class FriendsService {
   }
 
 
-  // /**
-  //  * cette fonction verifie la relation enre deux utilisateur 
-  //  * @param friendId 
-  //  * @returns 
-  //  */
-  // async checkFriendRequestStatus(friendId: number): Promise<{ status: string }> {
-  //   const tokenHeader = this.authService.insertTokeninHeader();
-
-  //   const myHeaders = new Headers();
-  //   if (tokenHeader.Authorization) {
-  //     myHeaders.append("Authorization", tokenHeader.Authorization);
-  //   }
-  //   myHeaders.append("Content-Type", "application/json");
-
-  //   const raw = JSON.stringify({ friendId });
-
-  //   const requestOptions = {
-  //     method: "POST",
-  //     headers: myHeaders,
-  //     body: raw
-  //   };
-
-  //   try {
-  //     const response = await fetch("http://0.0.0.0:4900/api/user/checkFriendRequestStatus", requestOptions);
-  //     const data = await response.json();
-  //     if (!response.ok) throw new Error(data.error || "Erreur lors de la vérification du statut d'ami");
-  //     return data; // { status: "pending" | "accepted" | "none" }
-  //   } catch (error) {
-  //     console.error(error);
-  //     throw error;
-  //   }
-  // }
-
-
   /**
    * verifie l'etat d'une demande d'amis
    * @param friendId 
@@ -205,10 +171,10 @@ export class FriendsService {
   }
 
 
-
-
-
-
+  /**
+   * recupere des demande d'amis .// a voir
+   * @returns 
+   */
   async getFriendRequests(): Promise<any[]> {
     const tokenHeader = this.authService.insertTokeninHeader();
 
@@ -268,6 +234,42 @@ export class FriendsService {
       throw error;
     }
   }
+
+
+
+
+  /**
+ * Supprime un ami (relation d'amitié)
+ * @param friendId ID de l'ami à supprimer
+ */
+  async deleteFriend(friendId: number): Promise<any> {
+    const tokenHeader = this.authService.insertTokeninHeader();
+
+    const myHeaders = new Headers();
+    if (tokenHeader.Authorization) {
+      myHeaders.append("Authorization", tokenHeader.Authorization);
+    }
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify({ friendId });
+
+    const requestOptions = {
+      method: "DELETE",
+      headers: myHeaders,
+      body: raw
+    };
+
+    try {
+      const response = await fetch("http://0.0.0.0:4900/api/user/delete-friend", requestOptions);
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Erreur lors de la suppression de l'ami");
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
 
 
 

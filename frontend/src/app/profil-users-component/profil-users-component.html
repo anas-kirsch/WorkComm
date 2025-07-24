@@ -49,9 +49,14 @@
                             </div>
                         </section>
                     </ng-container>
-                    <p *ngIf="isFriend" class="profil-btn friend" style="pointer-events:none;cursor:default;">
-                        Amis
-                    </p>
+                    <ng-container *ngIf="isFriend">
+                        <p class="profil-btn friend" style="pointer-events:none;cursor:default;">
+                            Amis
+                        </p>
+                        <button (click)="deleteFriend()" class="profil-btn delete">
+                            Supprimer l'ami
+                        </button>
+                    </ng-container>
                 </div>
             </section>
 

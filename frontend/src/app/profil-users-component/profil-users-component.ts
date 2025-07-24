@@ -15,8 +15,8 @@ export class ProfilUsersComponent implements OnInit {
 
   isFriend = false;
   authService = inject(AuthService);
-  username: string | null = null;
   friendService = inject(FriendsService);
+  username: string | null = null;
   foundUsers: Friends[] = [];
   searchValue: string = '';
   isFriendRequestPending = false;
@@ -106,7 +106,7 @@ export class ProfilUsersComponent implements OnInit {
       this.isFriendRequestPending = false;
       this.cdr.markForCheck();
     }
-  } 
+  }
 
 
   /**
@@ -154,6 +154,22 @@ export class ProfilUsersComponent implements OnInit {
   }
 
 
+  /**
+ * Cette fonction permet de supprimer un ami
+ */
+  async deleteFriend() {
+    const friendId = this.dataOfUser?.id;
+    if (!friendId) return;
+    try {
+      await this.friendService.deleteFriend(friendId);
+      this.isFriend = false;
+      this.cdr.detectChanges();
+      console.log("Ami supprimé avec succès.");
+    } catch (error) {
+      console.error(error);
+      console.log("Erreur lors de la suppression de l'ami.");
+    }
+  }
 
 
 

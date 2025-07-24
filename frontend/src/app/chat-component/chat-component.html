@@ -1,38 +1,80 @@
-<!-- ...existing code... -->
 <main class="chat-main">
   <section class="chat-search-bar">
-    <input class="chat-search-input" (input)="onInput($event)" type="text" placeholder="Rechercher un utilisateur ..." />
+    <input class="chat-search-input" (input)="onInput($event)" type="text"
+      placeholder="Rechercher un utilisateur ..." />
     <button class="chat-search-btn">Rechercher</button>
   </section>
 
-  @if (foundUsers.length >=0) {
   <div class="search-results" *ngIf="foundUsers.length > 0">
-    @for (user of foundUsers; track $index) {
-    <p class="search-results-item" (click)="this.friendService.showUserProfil(user)">{{user.username}}</p>
-    }
+    <ng-container *ngFor="let user of foundUsers; let i = index">
+      <p class="search-results-item" (click)="friendService.showUserProfil(user)">
+        {{ user.username }}
+      </p>
+    </ng-container>
   </div>
-  }@else {
-  <div class="search-results">
-    <p class="search-results-item">...</p>
+  <div class="search-results" *ngIf="foundUsers.length === 0">
   </div>
-  }
+
+
+
 
   <section class="chat-content">
-
     <aside class="chat-sidebar">
-      <div class="chat-friends">
-        <h2 class="chat-sidebar-title">Mes amis</h2>
-        <ul class="friends-list">
-          <!-- <li class="friends-list-item">Nom Ami</li> -->
+      <div class="sidebar-section" [class.open]="openSection === 'amis'">
+        <div class="sidebar-header" (click)="openSection = openSection === 'amis' ? null : 'amis'">
+          <span>Mes amis</span>
+          <span class="arrow" [class.down]="openSection === 'amis'">&#9660;</span>
+        </div>
+        <ul class="sidebar-list" *ngIf="openSection === 'amis'">
+          <!-- <li class="sidebar-list-item">Nom Ami</li> -->
         </ul>
       </div>
-      <div class="chat-requests">
-        <h2 class="chat-sidebar-title">Demandes d'amis</h2>
-        <ul class="requests-list">
-          <!-- <li class="requests-list-item">Demande d'ami</li> -->
+
+      <div class="sidebar-section" [class.open]="openSection === 'groupes'">
+        <div class="sidebar-header" (click)="openSection = openSection === 'groupes' ? null : 'groupes'">
+          <span>Mes groupes</span>
+          <span class="arrow" [class.down]="openSection === 'groupes'">&#9660;</span>
+        </div>
+        <ul class="sidebar-list" *ngIf="openSection === 'groupes'">
+          <!-- <li class="sidebar-list-item">Nom Groupe</li> -->
+        </ul>
+      </div>
+
+
+
+      <div class="sidebar-section" [class.open]="openSection === 'recues'">
+        <div class="sidebar-header" (click)="openSection = openSection === 'recues' ? null : 'recues'">
+          <span>Demandes d'amis reçues</span>
+          <span class="arrow" [class.down]="openSection === 'recues'">&#9660;</span>
+        </div>
+        <ul class="sidebar-list" *ngIf="openSection === 'recues'">
+          <li class="sidebar-list-item" *ngFor="let request of friendRequests"
+            style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center;">
+              <img *ngIf="request.imagePath?.imagePath" [src]="request.imagePath.imagePath" alt="Photo de profil"
+                class="profile-picture" width="28" height="28"
+                style="border-radius:50%;margin-right:8px;vertical-align:middle;" />
+              {{ request.username }}
+            </div>
+            <div>
+              <button class="btn-accept" (click)="acceptRequest(request.id)">Accepter</button>
+              <button class="btn-decline" (click)="refuseRequest(request.id)">Refuser</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="sidebar-section" [class.open]="openSection === 'envoyees'">
+        <div class="sidebar-header" (click)="openSection = openSection === 'envoyees' ? null : 'envoyees'">
+          <span>Demandes d'amis envoyées</span>
+          <span class="arrow" [class.down]="openSection === 'envoyees'">&#9660;</span>
+        </div>
+        <ul class="sidebar-list" *ngIf="openSection === 'envoyees'">
+          <!-- <li class="sidebar-list-item">Demande envoyée</li> -->
         </ul>
       </div>
     </aside>
+
     <section class="chat-messages">
       <div class="messages-header">
         <h2 class="messages-header-title" id="chat-text">Chat</h2>
@@ -47,4 +89,3 @@
     </section>
   </section>
 </main>
-<!-- ...existing code... -->

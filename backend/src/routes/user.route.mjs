@@ -11,6 +11,7 @@ const router = express.Router();
 
 /**
  * Cette route permet à un client du site de se créer un compte utilisateur 
+ * upload a voir
  */
 router.post("/register",UserController.register);
 
