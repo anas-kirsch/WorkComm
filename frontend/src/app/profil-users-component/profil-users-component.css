@@ -467,3 +467,24 @@ input {
   color: #fff;
   transform: scale(1.04);
 }
+
+
+.profil-btn.pending {
+  background-color: #ccc;
+  color: #ffffff;
+  cursor: not-allowed;
+}
+
+
+
+.choice-request-friend{
+  /* gap: 30px; */
+
+}
+
+
+#container-choice{
+display: flex;
+  justify-content: space-evenly;
+
+}

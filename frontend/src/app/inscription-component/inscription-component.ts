@@ -5,7 +5,7 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators, A
 import { CommonModule } from '@angular/common'; // <-- Ajoute cette ligne
 import { AuthService } from '../service/auth/auth-service';
 import { Router } from '@angular/router';
-
+import { core } from '@angular/compiler';
 
 @Component({
   selector: 'app-inscription-component',
@@ -16,8 +16,8 @@ import { Router } from '@angular/router';
 export class InscriptionComponent {
 
   router : Router = new Router()
-
   selectedFile: File | null = null;
+
 
   form: FormGroup = new FormGroup({
     username: new FormControl('', [
@@ -45,6 +45,9 @@ export class InscriptionComponent {
     const confirmPassword = group.get('confirmpassword')?.value;
     return password === confirmPassword ? null : { notSame: true };
   }
+
+
+
 
 
 
@@ -85,13 +88,11 @@ export class InscriptionComponent {
         console.log('Inscription réussie:', result);
         this.form.reset();
         this.selectedFile = null;
-        // Ajoute ici le traitement en cas de succès (affichage, navigation, etc.)
         this.router.navigate(["information"]);
 
       })
       .catch(error => {
         console.error('Erreur inscription:', error);
-        // Ajoute ici le traitement en cas d'erreur (affichage, etc.)
       });
   }
 }

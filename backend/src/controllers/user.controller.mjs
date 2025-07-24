@@ -138,7 +138,6 @@ export class UserController {
     }
 
 
-
     /**
      * cette methode static permet à un utilisateur de supprimer son compte 
      */
@@ -233,12 +232,12 @@ export class UserController {
 
 
     /**
-     * Cette methode static permet à un utilisateur d'envoyer une demande d'ami
+     * cette methode static permet à un utilisateur d'envoyer une demande d'ami à un autre utilisateur 
      */
     static async sendFriendRequest(request, response) {
         try {
             const { userId, friendId } = request.body;
-
+            console.log("route de la demande d'ami")
             if (!userId || !friendId) {
                 return response.status(400).json({ error: "Données manquantes." });
             }
@@ -265,13 +264,13 @@ export class UserController {
                 return response.status(400).json({ error: "Impossible d'ajouter l'ami." });
             }
 
-            response.status(200).json({
+            return response.status(200).json({
                 message: "La demande d'ami a bien été envoyée."
             });
 
         } catch (error) {
             console.error(error);
-            response.status(500).json({ error: "Erreur serveur lors de l'envoi de la demande d'ami." });
+            return response.status(500).json({ error: "Erreur serveur lors de l'envoi de la demande d'ami." });
         }
     }
 
@@ -486,52 +485,52 @@ export class UserController {
 
 
 
-//     /**
-//      * recupere un utilisateur par son username
-//      */
-//     static async getByUsername(request, response) {
-//     try {
-//         const userId = request.user.id;
-//         const { search } = request.body;
-//         console.log({ userId, search });
+    //     /**
+    //      * recupere un utilisateur par son username
+    //      */
+    //     static async getByUsername(request, response) {
+    //     try {
+    //         const userId = request.user.id;
+    //         const { search } = request.body;
+    //         console.log({ userId, search });
 
-//         const ifUserExist = await findUser(userId);
+    //         const ifUserExist = await findUser(userId);
 
-//         if (!ifUserExist) {
-//             return response.status(404).json({ error: "Utilisateur non trouvé." });
-//         }
+    //         if (!ifUserExist) {
+    //             return response.status(404).json({ error: "Utilisateur non trouvé." });
+    //         }
 
-//         const user = await getByUsernameModel(search);
+    //         const user = await getByUsernameModel(search);
 
-//         console.log(user);
+    //         console.log(user);
 
-//         if (!user) {
-//             return response.status(404).json({ error: "Aucun utilisateur trouvé." });
-//         }
+    //         if (!user) {
+    //             return response.status(404).json({ error: "Aucun utilisateur trouvé." });
+    //         }
 
-//         // On filtre les propriétés à retourner
-//         const filteredUser = {
-//             id: user.id,
-//             username: user.username,
-//             mail: user.mail,
-//             bio: user.bio,
-//             language: user.language
-//         };
+    //         // On filtre les propriétés à retourner
+    //         const filteredUser = {
+    //             id: user.id,
+    //             username: user.username,
+    //             mail: user.mail,
+    //             bio: user.bio,
+    //             language: user.language
+    //         };
 
-//         return response.status(200).json(filteredUser);
+    //         return response.status(200).json(filteredUser);
 
-//     } catch (error) {
-//         console.error(error); // pour le voir dans la console
-//         response.status(500).json({ error: "Erreur serveur." });
-//     }
-// }
-
-
+    //     } catch (error) {
+    //         console.error(error); // pour le voir dans la console
+    //         response.status(500).json({ error: "Erreur serveur." });
+    //     }
+    // }
 
 
-/**
-     * recupere un utilisateur par son username
-     */
+
+
+    /**
+         * recupere un utilisateur par son username
+         */
     static async getByUsername(request, response) {
         try {
             const userId = request.user.id;
@@ -572,7 +571,6 @@ export class UserController {
             response.status(500).json({ error: "Erreur serveur." });
         }
     }
-// ...existing code...
 
 
 
@@ -613,6 +611,40 @@ export class UserController {
     // }
 
 
+
+
+    /**
+ * Vérifie le statut d'une demande d'ami entre deux utilisateurs
+ * @param {number} req.user.id - L'utilisateur connecté (expéditeur)
+ * @param {number} req.body.friendId - L'utilisateur cible (destinataire)
+ * @returns { status: "pending" | "accepted" | "none" }
+ */
+    static async checkFriendRequestStatus(request, response) {
+        try {
+            const userId = request.user.id;
+            const { friendId } = request.body;
+
+            if (!userId || !friendId) {
+                return response.status(400).json({ error: "Données manquantes." });
+            }
+
+            // Cherche la relation d'amitié dans la BDD
+            const relation = await getFriendship(userId, friendId);
+
+
+            if (!relation) {
+                // Pas de relation trouvée
+                return response.status(200).json(null);
+            }
+
+            // Retourne tout l'objet relation trouvé
+            return response.status(200).json(relation);
+
+        } catch (error) {
+            console.error(error);
+            return response.status(500).json({ error: "Erreur serveur lors de la vérification du statut d'ami." });
+        }
+    }
 
 
 

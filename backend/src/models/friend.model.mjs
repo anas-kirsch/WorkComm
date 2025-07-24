@@ -79,11 +79,14 @@ export async function frienshipCreate(userId, friendId) {
  * @returns 
  */
 export async function getFriendship(userId, friendId) {
-
     return await Friends.findOne({
-        where: { UserId: friendId, friendId: userId }
+        where: {
+            [Op.or]: [
+                { UserId: userId, friendId: friendId },
+                { UserId: friendId, friendId: userId }
+            ]
+        }
     });
-
 }
 
 

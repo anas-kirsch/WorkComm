@@ -13,7 +13,8 @@ export class FriendsService {
   ngZone = inject(NgZone);
   appRef = inject(ApplicationRef);
 
-  router: Router = new Router();
+  // router: Router = new Router();
+  router = inject(Router);
 
   foundUsers: Friends[] = [];
   searchValue: string = '';
@@ -55,39 +56,34 @@ export class FriendsService {
   }
 
 
-/**
- * fetch qui cherche un user par son username 
- * @param search 
- */
-fetchDataByUsername(search: string): Promise<Friends> {
-  const tokenHeader = this.authService.insertTokeninHeader();
+  /**
+   * fetch qui cherche un user par son username 
+   * @param search 
+   */
+  async fetchDataByUsername(search: string): Promise<Friends> {
+    const tokenHeader = this.authService.insertTokeninHeader();
 
-  const myHeaders = new Headers();
-  if (tokenHeader.Authorization) {
-    myHeaders.append("Authorization", tokenHeader.Authorization);
+    const myHeaders = new Headers();
+    if (tokenHeader.Authorization) {
+      myHeaders.append("Authorization", tokenHeader.Authorization);
+    }
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify({
+      "search": search
+    });
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      // redirect: "follow"
+    };
+
+    return fetch("http://0.0.0.0:4900/api/user/getByUsername", requestOptions)
+      .then(response => response.json())
+      .then(data => data as Friends);
   }
-  myHeaders.append("Content-Type", "application/json");
-
-  const raw = JSON.stringify({
-    "search": search
-  });
-
-  const requestOptions = {
-    method: "POST",
-    headers: myHeaders,
-    body: raw,
-    // redirect: "follow"
-  };
-
-  return fetch("http://0.0.0.0:4900/api/user/getByUsername", requestOptions)
-    .then(response => response.json())
-    .then(data => data as Friends);
-}
-
-
-  
-
-
 
 
 
@@ -100,4 +96,184 @@ fetchDataByUsername(search: string): Promise<Friends> {
     this.router.navigate(["user", dataOfUser.username]);
 
   }
+
+
+
+  /**
+   * cette fonction requete le backend pour envoyer une demande d'ami
+   * @param userId 
+   * @param friendId 
+   * @returns 
+   */
+  async sendFriendRequest(userId: number, friendId: number): Promise<object> {
+    const tokenHeader = this.authService.insertTokeninHeader();
+
+    const myHeaders = new Headers();
+    if (tokenHeader.Authorization) {
+      myHeaders.append("Authorization", tokenHeader.Authorization);
+    }
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify({
+      userId,
+      friendId
+    });
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw
+    };
+
+    try {
+      const response = await fetch("http://0.0.0.0:4900/api/user/send-friend-requests", requestOptions);
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Erreur lors de l'envoi de la demande d'ami");
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+
+  // /**
+  //  * cette fonction verifie la relation enre deux utilisateur 
+  //  * @param friendId 
+  //  * @returns 
+  //  */
+  // async checkFriendRequestStatus(friendId: number): Promise<{ status: string }> {
+  //   const tokenHeader = this.authService.insertTokeninHeader();
+
+  //   const myHeaders = new Headers();
+  //   if (tokenHeader.Authorization) {
+  //     myHeaders.append("Authorization", tokenHeader.Authorization);
+  //   }
+  //   myHeaders.append("Content-Type", "application/json");
+
+  //   const raw = JSON.stringify({ friendId });
+
+  //   const requestOptions = {
+  //     method: "POST",
+  //     headers: myHeaders,
+  //     body: raw
+  //   };
+
+  //   try {
+  //     const response = await fetch("http://0.0.0.0:4900/api/user/checkFriendRequestStatus", requestOptions);
+  //     const data = await response.json();
+  //     if (!response.ok) throw new Error(data.error || "Erreur lors de la vérification du statut d'ami");
+  //     return data; // { status: "pending" | "accepted" | "none" }
+  //   } catch (error) {
+  //     console.error(error);
+  //     throw error;
+  //   }
+  // }
+
+
+  /**
+   * verifie l'etat d'une demande d'amis
+   * @param friendId 
+   * @returns 
+   */
+  async checkFriendRequestStatus(friendId: number): Promise<any> {
+    const tokenHeader = this.authService.insertTokeninHeader();
+
+    const myHeaders = new Headers();
+    if (tokenHeader.Authorization) {
+      myHeaders.append("Authorization", tokenHeader.Authorization);
+    }
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify({ friendId });
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw
+    };
+
+    try {
+      const response = await fetch("http://0.0.0.0:4900/api/user/checkFriendRequestStatus", requestOptions);
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Erreur lors de la vérification du statut d'ami");
+      return data; // data peut être null ou un objet relation
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+
+
+
+
+
+  async getFriendRequests(): Promise<any[]> {
+    const tokenHeader = this.authService.insertTokeninHeader();
+
+    const myHeaders = new Headers();
+    if (tokenHeader.Authorization) {
+      myHeaders.append("Authorization", tokenHeader.Authorization);
+    }
+
+    const requestOptions = {
+      method: "GET",
+      headers: myHeaders
+    };
+
+    try {
+      const response = await fetch("http://0.0.0.0:4900/api/user/friend-requests", requestOptions);
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Erreur lors de la récupération des demandes d'amis");
+      return data; // Tableau d'utilisateurs ayant envoyé une demande d'ami
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+
+
+
+  /**
+   * Répond à une demande d'ami (accepter ou refuser)
+   * @param friendId ID de l'utilisateur ayant envoyé la demande
+   * @param action "accept" ou "refuse"
+   */
+  async respondToFriendRequest(friendId: number, action: "accept" | "refuse"): Promise<any> {
+    const tokenHeader = this.authService.insertTokeninHeader();
+
+    const myHeaders = new Headers();
+    if (tokenHeader.Authorization) {
+      myHeaders.append("Authorization", tokenHeader.Authorization);
+    }
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify({ friendId, action });
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw
+    };
+
+    try {
+      const response = await fetch("http://0.0.0.0:4900/api/user/confirm-friend-requests", requestOptions);
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Erreur lors de la réponse à la demande d'ami");
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+
+
+
+
+
+
+
 }

@@ -66,6 +66,17 @@ router.post('/getByUsername',getClientTokenAndVerifAccess, UserController.getByU
 
 
 
+/**
+ * cette router verifie l'etat d'une demande d'ami
+ */
+router.post("/checkFriendRequestStatus", getClientTokenAndVerifAccess, UserController.checkFriendRequestStatus);
+
+
+
+
+
+
+
 
 
 export default router;
