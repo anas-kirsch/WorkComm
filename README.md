@@ -59,9 +59,9 @@ Dans un environnement de travail de plus en plus décentralisé, la collaboratio
 
 ```bash
 # Back-end
-cd back
+cd backend
 npm install
-npm run dev
+nodemon src/app.mjs
 
 # Front-end
 cd front
