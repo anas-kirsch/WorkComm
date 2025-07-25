@@ -98,17 +98,37 @@
 
     </aside>
 
+    <!-- <section class="chat-messages">
+      <div class="messages-header">
+        <h2 class="messages-header-title" id="chat-text">Chat</h2>
+      </div>
+      <div class="messages-list">
+      </div>
+      <div class="messages-input">
+        <input class="messages-input-field" type="text" placeholder="Écrire un message..." />
+        <button class="send-btn">Envoyer</button>
+      </div>
+    </section> -->
+
     <section class="chat-messages">
       <div class="messages-header">
         <h2 class="messages-header-title" id="chat-text">Chat</h2>
       </div>
       <div class="messages-list">
-        <!-- Messages ici -->
+        <!-- Affichage conditionnel : si pas de messages -->
+        <div class="no-messages">
+          <p>Aucun message pour l’instant.<br>Commence la conversation !</p>
+        </div>
+        <!-- Sinon, afficher les messages ici -->
+        <!-- <div class="message">...</div> -->
       </div>
       <div class="messages-input">
         <input class="messages-input-field" type="text" placeholder="Écrire un message..." />
         <button class="send-btn">Envoyer</button>
       </div>
     </section>
+
+
+
   </section>
 </main>

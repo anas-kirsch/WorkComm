@@ -38,7 +38,9 @@ export class ChatComponent implements OnInit {
       this.friendRequests = await this.friendService.getFriendRequests();
       // recupere les amis
       await this.getMyFriend();
+      // recupere les groupes dans lesquels l'utilisateur se trouver
       await this.getGroupUser();
+      // recupere les demandes d'amis que l'utilisateur a envoyé et qui sont encore en attente 
       await this.getPendingSentFriendRequests();
       this.cdr.detectChanges();
     } catch (error) {
@@ -114,7 +116,7 @@ export class ChatComponent implements OnInit {
     try {
       this.myFriends = await this.friendService.getMyFriend();
       this.cdr.detectChanges();
-      console.log('Liste de mes amis :', this.myFriends);
+      // console.log('Liste de mes amis :', this.myFriends);
     } catch (error) {
       console.error('Erreur lors de la récupération de la liste des amis', error);
     }
@@ -140,7 +142,7 @@ export class ChatComponent implements OnInit {
     try {
       const res = await this.groupService.fetchGetGroupUser();
       this.groups = res.groups; // Assure-toi que la réponse a bien la forme { groups: [...] }
-      console.log("success : ", this.groups);
+      // console.log("success : ", this.groups);
     } catch (error) {
       console.error("Erreur lors de la récupération des groupes de l'utilisateur ", error);
     }
@@ -152,7 +154,7 @@ export class ChatComponent implements OnInit {
     try {
       const res = await this.friendService.fetchGetPendingSentFriendRequests();
       this.arrayOfSentFriendRequests = res.pendingRequests;
-      console.log("succes : getPendingSentFriendRequests : ",this.arrayOfSentFriendRequests)
+      // console.log("succes : getPendingSentFriendRequests : ",this.arrayOfSentFriendRequests)
     } catch (error) {
       console.error("Erreur lors de la récupération des demandes en attentes", error);
     }

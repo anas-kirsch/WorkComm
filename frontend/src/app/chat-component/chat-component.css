@@ -11,15 +11,8 @@
 }
 
 @keyframes gradientMove {
-
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
 #chat-text {
@@ -78,7 +71,7 @@ h2 {
   transform: scale(1.04);
 }
 
-/* --- Sidebar réécrite --- */
+/* --- Sidebar --- */
 .chat-sidebar {
   width: 340px;
   background: linear-gradient(120deg, #23232a 0%, #18181b 100%);
@@ -130,31 +123,37 @@ h2 {
 .sidebar-list {
   list-style: none;
   margin: 0;
-  /* padding: 0 0 10px 0; */
-  padding: 0 0 0 0;
+  padding: 0;
   animation: slideDown 0.3s;
 }
 
 @keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-10px);}
+  to { opacity: 1; transform: translateY(0);}
 }
 
 .sidebar-list-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   padding: 10px 25px;
   color: #fff;
-  border-radius: -7px;
   margin: 4px 0px;
   background: #23232a;
   transition: background 0.2s, color 0.2s;
   cursor: pointer;
+  font-family: "roboto", 'Times New Roman', Times, serif;
+  font-size: 1.05rem;
+}
+
+.sidebar-list-item img {
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  margin-right: 10px;
+  border: 2px solid #8B5CF6;
+  background: #18181b;
 }
 
 .sidebar-list-item:hover {
@@ -209,6 +208,16 @@ h2 {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  align-items: center;
+  justify-content: center;
+}
+
+.no-messages {
+  color: #888;
+  text-align: center;
+  font-style: italic;
+  font-size: 1.1rem;
+  padding: 40px 0;
 }
 
 .messages-input {
@@ -227,6 +236,8 @@ h2 {
   font-size: 1.1rem;
   background: #23232a;
   color: #fff;
+  border: #a855f7 1px solid;
+  outline: #8B5CF6;
 }
 
 .send-btn {
@@ -293,7 +304,6 @@ h2 {
     padding: 0 12px;
     gap: 18px;
   }
-
   .chat-sidebar {
     width: 100%;
     min-width: 0;
@@ -301,7 +311,6 @@ h2 {
     gap: 12px;
     padding: 18px 8px;
   }
-
   .chat-messages {
     width: 100%;
     min-width: 0;
@@ -313,36 +322,25 @@ h2 {
   .chat-search-bar {
     padding: 16px 8px 10px 8px;
   }
-
   .chat-content {
     padding: 0 4px;
     gap: 8px;
   }
-
   .chat-sidebar,
   .chat-messages {
     padding: 10px 2px;
     border-radius: 10px;
   }
-
   .sidebar-header {
     padding: 10px 8px;
     font-size: 1rem;
   }
-
   .sidebar-list-item {
     padding: 8px 10px;
-
-
-
   }
 }
 
-
-
-
-
-
+/* --- Boutons d'action --- */
 .btn-accept {
   background-color: #4caf50;
   color: white;
@@ -370,38 +368,4 @@ h2 {
 
 .btn-decline:hover {
   background-color: #b71c1c;
-}
-
-
-
-
-/* Affichage des amis dans la sidebar */
-.sidebar-list-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 25px;
-  color: #fff;
-  /* border-radius: 7px; */
-  margin: 4px 0px;
-  background: #23232a;
-  transition: background 0.2s, color 0.2s;
-  cursor: pointer;
-  font-family: "roboto", 'Times New Roman', Times, serif;
-  font-size: 1.05rem;
-}
-
-.sidebar-list-item img {
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  object-fit: cover;
-  margin-right: 10px;
-  border: 2px solid #8B5CF6;
-  background: #18181b;
-}
-
-.sidebar-list-item:hover {
-  background: #8B5CF6;
-  color: #fff;
 }
