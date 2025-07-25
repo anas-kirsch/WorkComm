@@ -1,46 +1,62 @@
-// import { Component, inject } from '@angular/core';
 import { FriendsService } from '../service/friends/friends-service';
 import { Friends } from '../interfaces/user';
-import { Component, inject, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef } from '@angular/core';
 import { GroupeService } from '../service/groupe/groupe-service';
+import { SocketPrivateService } from '../service/socket-private/socket-private-service';
+import { AuthService } from '../service/auth/auth-service';
+import { FormsModule } from '@angular/forms';
+import { ChangeDetectionStrategy } from '@angular/core';
 
 
 @Component({
   selector: 'app-chat-component',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './chat-component.html',
-  styleUrl: './chat-component.css'
+  styleUrl: './chat-component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
+
 })
+
 export class ChatComponent implements OnInit {
 
+  selectedFriendUsername: string = '';
+  newMessage: string = '';
+
+  chatActivate = false;
   openSection: string | null = null;
   friendService = inject(FriendsService)
   groupService = inject(GroupeService)
-  foundUsers: Friends[] = [];
+  authService = inject(AuthService)
 
-  constructor(private cdr: ChangeDetectorRef) { }
+  foundUsers: Friends[] = [];
   searchValue: string = '';
   friendRequests: any[] = [];
   myFriends: Friends[] = [];
   groups: any[] = [];
-  arrayOfSentFriendRequests:  any[] =[];
-
+  arrayOfSentFriendRequests: any[] = [];
   isIncomingFriendRequest = false;
   isFriendRequestPending = false;
   isFriend = false;
 
+  messages: any[] = [];
+  myUserId: number = 0;
+  selectedFriendId: number | null = null;
+
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private socketPrivateService: SocketPrivateService
+  ) { }
+
   async ngOnInit() {
     try {
-      // recupere les demandes d'amis recu 
+      const auth = AuthService.getAuthFromCookies();
+      if (auth && auth.id) {
+        this.myUserId = Number(auth.id);
+      }
       this.friendRequests = await this.friendService.getFriendRequests();
-      // recupere les amis
       await this.getMyFriend();
-      // recupere les groupes dans lesquels l'utilisateur se trouver
       await this.getGroupUser();
-      // recupere les demandes d'amis que l'utilisateur a envoyé et qui sont encore en attente 
       await this.getPendingSentFriendRequests();
       this.cdr.detectChanges();
     } catch (error) {
@@ -48,85 +64,56 @@ export class ChatComponent implements OnInit {
     }
   }
 
-
   async onInput(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.searchValue = value;
     if (value != "") {
       const data = await this.friendService.fetchInputSearch(value);
       this.foundUsers = data.users;
-      this.cdr.detectChanges();
     } else {
       this.foundUsers = [];
-      this.cdr.detectChanges();
     }
+    this.cdr.detectChanges();
   }
 
-
-
-  /**
-   * cette fonction permet d'accepter une demande d'ami provenant d'un utilisateur 
-   * @returns 
-   */
   acceptRequest(friendId: number) {
     if (!friendId) return;
     this.friendService.respondToFriendRequest(friendId, "accept")
-      .then(response => {
-        // Retirer la demande acceptée de la liste
+      .then(() => {
         this.friendRequests = this.friendRequests.filter(req => req.id !== friendId);
         this.isIncomingFriendRequest = false;
         this.isFriendRequestPending = false;
         this.isFriend = true;
         this.cdr.detectChanges();
-        console.log("Demande d'ami acceptée !");
       })
       .catch(error => {
         console.error(error);
-        console.log("Erreur lors de l'acceptation de la demande d'ami.");
       });
   }
 
-
-  /**
-   * Refuse une demande d'ami et met à jour la liste immédiatement
-   */
   refuseRequest(friendId: number) {
     if (!friendId) return;
     this.friendService.respondToFriendRequest(friendId, "refuse")
-      .then(response => {
-        // Retirer la demande refusée de la liste
+      .then(() => {
         this.friendRequests = this.friendRequests.filter(req => req.id !== friendId);
         this.isIncomingFriendRequest = false;
         this.isFriendRequestPending = false;
         this.cdr.detectChanges();
-        console.log("Demande d'ami refusée.");
       })
       .catch(error => {
         console.error(error);
-        console.log("Erreur lors du refus de la demande d'ami.");
       });
   }
 
-
-  /**
-   * Cette fonction récupère la liste des amis de l'utilisateur
-   * et met à jour le front.
-   */
   async getMyFriend() {
     try {
       this.myFriends = await this.friendService.getMyFriend();
       this.cdr.detectChanges();
-      // console.log('Liste de mes amis :', this.myFriends);
     } catch (error) {
       console.error('Erreur lors de la récupération de la liste des amis', error);
     }
   }
 
-
-
-  /**
-   * // commentaire
-   */
   getFriendImage(friend: any): string | null {
     if (!friend.imagePath) return null;
     if (typeof friend.imagePath === 'string') return friend.imagePath;
@@ -134,37 +121,81 @@ export class ChatComponent implements OnInit {
     return null;
   }
 
-
-  /**
-   * recupere les groupes d'un utilisateur
-   */
   async getGroupUser() {
     try {
       const res = await this.groupService.fetchGetGroupUser();
-      this.groups = res.groups; // Assure-toi que la réponse a bien la forme { groups: [...] }
-      // console.log("success : ", this.groups);
+      this.groups = res.groups;
     } catch (error) {
       console.error("Erreur lors de la récupération des groupes de l'utilisateur ", error);
     }
   }
 
-
-
   async getPendingSentFriendRequests() {
     try {
       const res = await this.friendService.fetchGetPendingSentFriendRequests();
       this.arrayOfSentFriendRequests = res.pendingRequests;
-      // console.log("succes : getPendingSentFriendRequests : ",this.arrayOfSentFriendRequests)
     } catch (error) {
       console.error("Erreur lors de la récupération des demandes en attentes", error);
     }
   }
 
+async startPrivateChat(friendUserId: number) {
+  this.selectedFriendId = friendUserId;
+  // Récupère le pseudo de l'ami sélectionné
+  const friend = this.myFriends.find(f => f.id === friendUserId);
+  this.selectedFriendUsername = friend ? friend.username : 'Ami';
+  this.messages = [];
+  this.cdr.markForCheck(); // Force la détection dès le changement d'ami
 
+  try {
+    const tokenHeader = this.authService.insertTokeninHeader();
+    const myHeaders = new Headers();
+    if (tokenHeader.Authorization) {
+      myHeaders.append("Authorization", tokenHeader.Authorization);
+    }
+    myHeaders.append("Content-Type", "application/json");
+
+    const response = await fetch('http://0.0.0.0:4900/api/chatPrivate/private-chat', {
+      method: 'POST',
+      headers: myHeaders,
+      body: JSON.stringify({ friendUserId })
+    });
+
+    if (!response.ok) throw new Error('Erreur serveur');
+    const data = await response.json();
+    console.log(data);
+
+    // Connecte le socket à la room
+    this.socketPrivateService.connectSocket(this.myUserId, friendUserId);
+
+    // Nettoie l'ancien listener avant d'en ajouter un nouveau
+    if (this.socketPrivateService.socket) {
+      this.socketPrivateService.socket.off('chat message');
+      this.socketPrivateService.socket.on('chat message', (msg: any) => {
+        this.messages = [...this.messages, msg]; // Nouvelle référence pour OnPush
+        this.cdr.markForCheck();
+      });
+    }
+    this.cdr.markForCheck();
+  } catch (error) {
+    console.error('Erreur lors de la connexion au chat privé', error);
+  }
 }
 
-// const result: {
-//     id: any;
-//     username: any;
-//     profilePicture: any;
-// }[]
+  sendChatMessage(message: string) {
+    if (this.selectedFriendId) {
+      this.socketPrivateService.sendMessage(this.myUserId, this.selectedFriendId, message);
+    }
+  }
+
+  ngOnDestroy() {
+    this.socketPrivateService.disconnect();
+  }
+
+
+
+
+  trackByMsgId(index: number, msg: any) {
+    return msg.id;
+  }
+}

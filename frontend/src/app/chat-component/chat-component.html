@@ -5,16 +5,17 @@
     <button class="chat-search-btn">Rechercher</button>
   </section>
 
-  <div class="search-results" *ngIf="foundUsers.length > 0">
-    <ng-container *ngFor="let user of foundUsers; let i = index">
-      <p class="search-results-item" (click)="friendService.showUserProfil(user)">
-        {{ user.username }}
-      </p>
-    </ng-container>
+  @if (foundUsers.length > 0) {
+  <div class="search-results">
+    @for (user of foundUsers; track user.id) {
+    <p class="search-results-item" (click)="friendService.showUserProfil(user)">
+      {{ user.username }}
+    </p>
+    }
   </div>
-  <div class="search-results" *ngIf="foundUsers.length === 0">
-  </div>
-
+  } @else {
+  <div class="search-results"></div>
+  }
 
   <section class="chat-content">
     <aside class="chat-sidebar">
@@ -23,16 +24,17 @@
           <span>Mes amis</span>
           <span class="arrow" [class.down]="openSection === 'amis'">&#9660;</span>
         </div>
-
-        <ul class="sidebar-list" *ngIf="openSection === 'amis'">
-          <li class="sidebar-list-item" *ngFor="let friend of myFriends">
+        @if (openSection === 'amis') {
+        <ul class="sidebar-list">
+          @for (friend of myFriends; track friend.id) {
+          <li class="sidebar-list-item" (click)="startPrivateChat(friend.id)">
             <img *ngIf="getFriendImage(friend)" [src]="getFriendImage(friend)" alt="Photo" width="32" height="32"
               style="border-radius:50%;margin-right:8px;">
             {{ friend.username }}
           </li>
+          }
         </ul>
-
-
+        }
       </div>
 
       <div class="sidebar-section" [class.open]="openSection === 'groupes'">
@@ -40,27 +42,30 @@
           <span>Mes groupes</span>
           <span class="arrow" [class.down]="openSection === 'groupes'">&#9660;</span>
         </div>
-        <ul class="sidebar-list" *ngIf="openSection === 'groupes'">
-          @if (groups.length >0) {
-          <li class="sidebar-list-item" *ngFor="let group of groups">
+        @if (openSection === 'groupes') {
+        <ul class="sidebar-list">
+          @if (groups.length > 0) {
+          @for (group of groups; track group.id) {
+          <li class="sidebar-list-item">
             {{ group.name }}
           </li>
-          }@else {
-          <li class="sidebar-list-item"> aucun groupe </li>
+          }
+          } @else {
+          <li class="sidebar-list-item">aucun groupe</li>
           }
         </ul>
+        }
       </div>
-
-
 
       <div class="sidebar-section" [class.open]="openSection === 'recues'">
         <div class="sidebar-header" (click)="openSection = openSection === 'recues' ? null : 'recues'">
           <span>Demandes d'amis reçues</span>
           <span class="arrow" [class.down]="openSection === 'recues'">&#9660;</span>
         </div>
-        <ul class="sidebar-list" *ngIf="openSection === 'recues'">
-          <li class="sidebar-list-item" *ngFor="let request of friendRequests"
-            style="display: flex; align-items: center; justify-content: space-between;">
+        @if (openSection === 'recues') {
+        <ul class="sidebar-list">
+          @for (request of friendRequests; track request.id) {
+          <li class="sidebar-list-item" style="display: flex; align-items: center; justify-content: space-between;">
             <div style="display: flex; align-items: center;">
               <img *ngIf="request.imagePath?.imagePath" [src]="request.imagePath.imagePath" alt="Photo de profil"
                 class="profile-picture" width="28" height="28"
@@ -72,7 +77,9 @@
               <button class="btn-decline" (click)="refuseRequest(request.id)">Refuser</button>
             </div>
           </li>
+          }
         </ul>
+        }
       </div>
 
       <div class="sidebar-section" [class.open]="openSection === 'envoyees'">
@@ -80,9 +87,10 @@
           <span>Demandes d'amis envoyées</span>
           <span class="arrow" [class.down]="openSection === 'envoyees'">&#9660;</span>
         </div>
-        <ul class="sidebar-list" *ngIf="openSection === 'envoyees'">
-          @if (this.arrayOfSentFriendRequests.length > 0) {
-          @for (user of this.arrayOfSentFriendRequests; track user.id) {
+        @if (openSection === 'envoyees') {
+        <ul class="sidebar-list">
+          @if (arrayOfSentFriendRequests.length > 0) {
+          @for (user of arrayOfSentFriendRequests; track user.id) {
           <li class="sidebar-list-item">
             <img *ngIf="user.profilePicture" [src]="user.profilePicture" alt="Photo de profil" class="avatar" />
             <span>{{ user.username }}</span>
@@ -92,43 +100,38 @@
           <li class="sidebar-list-item">aucune demande d'ami envoyée</li>
           }
         </ul>
+        }
       </div>
-
-
-
     </aside>
 
-    <!-- <section class="chat-messages">
+    <section class="chat-messages" *ngIf="selectedFriendId !== null">
       <div class="messages-header">
         <h2 class="messages-header-title" id="chat-text">Chat</h2>
       </div>
       <div class="messages-list">
-      </div>
-      <div class="messages-input">
-        <input class="messages-input-field" type="text" placeholder="Écrire un message..." />
-        <button class="send-btn">Envoyer</button>
-      </div>
-    </section> -->
-
-    <section class="chat-messages">
-      <div class="messages-header">
-        <h2 class="messages-header-title" id="chat-text">Chat</h2>
-      </div>
-      <div class="messages-list">
-        <!-- Affichage conditionnel : si pas de messages -->
-        <div class="no-messages">
+        <div *ngIf="messages.length === 0" class="no-messages">
           <p>Aucun message pour l’instant.<br>Commence la conversation !</p>
         </div>
-        <!-- Sinon, afficher les messages ici -->
-        <!-- <div class="message">...</div> -->
+        <div *ngFor="let msg of messages; trackBy: trackByMsgId" class="message"
+          [ngClass]="{'me': msg.userId === myUserId, 'friend': msg.userId !== myUserId}">
+          <span class="sender">
+            {{ msg.userId === myUserId ? 'Moi' : selectedFriendUsername }}
+          </span>
+          {{ msg.message }}
+        </div>
       </div>
       <div class="messages-input">
-        <input class="messages-input-field" type="text" placeholder="Écrire un message..." />
-        <button class="send-btn">Envoyer</button>
+        <input class="messages-input-field" type="text" placeholder="Écrire un message..." [(ngModel)]="newMessage"
+          (keyup.enter)="sendChatMessage(newMessage); newMessage=''" />
+        <button class="send-btn" (click)="sendChatMessage(newMessage); newMessage=''">Envoyer</button>
       </div>
     </section>
-
-
-
+    @if (selectedFriendId === null) {
+    <section class="chat-messages">
+      <div class="no-messages">
+        <p>Sélectionne un ami pour commencer à discuter.</p>
+      </div>
+    </section>
+    }
   </section>
 </main>
