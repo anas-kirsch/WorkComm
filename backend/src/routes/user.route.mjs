@@ -75,6 +75,11 @@ router.post("/checkFriendRequestStatus", getClientTokenAndVerifAccess, UserContr
 
 
 
+/**
+ * cette route permet à un utilisateur de récuperer toute les demandes d'amis qu'il à envoyer encore en attente 
+ */
+router.get("/getPendingSentFriendRequests", getClientTokenAndVerifAccess, UserController.getPendingSentFriendRequests);
+
 
 
 

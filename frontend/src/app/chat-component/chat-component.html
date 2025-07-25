@@ -41,7 +41,13 @@
           <span class="arrow" [class.down]="openSection === 'groupes'">&#9660;</span>
         </div>
         <ul class="sidebar-list" *ngIf="openSection === 'groupes'">
-          <!-- <li class="sidebar-list-item">Nom Groupe</li> -->
+          @if (groups.length >0) {
+          <li class="sidebar-list-item" *ngFor="let group of groups">
+            {{ group.name }}
+          </li>
+          }@else {
+          <li class="sidebar-list-item"> aucun groupe </li>
+          }
         </ul>
       </div>
 
@@ -75,9 +81,21 @@
           <span class="arrow" [class.down]="openSection === 'envoyees'">&#9660;</span>
         </div>
         <ul class="sidebar-list" *ngIf="openSection === 'envoyees'">
-          <!-- <li class="sidebar-list-item">Demande envoyée</li> -->
+          @if (this.arrayOfSentFriendRequests.length > 0) {
+          @for (user of this.arrayOfSentFriendRequests; track user.id) {
+          <li class="sidebar-list-item">
+            <img *ngIf="user.profilePicture" [src]="user.profilePicture" alt="Photo de profil" class="avatar" />
+            <span>{{ user.username }}</span>
+          </li>
+          }
+          } @else {
+          <li class="sidebar-list-item">aucune demande d'ami envoyée</li>
+          }
         </ul>
       </div>
+
+
+
     </aside>
 
     <section class="chat-messages">

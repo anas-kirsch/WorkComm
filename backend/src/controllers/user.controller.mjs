@@ -5,7 +5,7 @@ import { findUser, findUserByUsernameOrMail, findUserOrCreate, getUserProfilPict
 // import { getUserToDestroy } from "../models/user.model.mjs";
 import nodemailer from 'nodemailer';
 import { emailSender } from "./smtp.controller.mjs";
-import { friendRequest, getUserFriend, getFriendRequest, getInverseFriendship, frienshipCreate, getFriendship, findAllFriendship } from "../models/friend.model.mjs"
+import { friendRequest, getUserFriend, getFriendRequest, getInverseFriendship, frienshipCreate, getFriendship, findAllFriendship, pendingSentFriendRequests, getUsernameById } from "../models/friend.model.mjs"
 import fs from 'fs/promises';
 import { getProfilPictureFromDataB } from "../controllers/getAndSaveProfilPicture.mjs"
 import { getAndSaveProfilPicture } from "../controllers/getAndSaveProfilPicture.mjs"
@@ -484,50 +484,6 @@ export class UserController {
     }
 
 
-
-    //     /**
-    //      * recupere un utilisateur par son username
-    //      */
-    //     static async getByUsername(request, response) {
-    //     try {
-    //         const userId = request.user.id;
-    //         const { search } = request.body;
-    //         console.log({ userId, search });
-
-    //         const ifUserExist = await findUser(userId);
-
-    //         if (!ifUserExist) {
-    //             return response.status(404).json({ error: "Utilisateur non trouvé." });
-    //         }
-
-    //         const user = await getByUsernameModel(search);
-
-    //         console.log(user);
-
-    //         if (!user) {
-    //             return response.status(404).json({ error: "Aucun utilisateur trouvé." });
-    //         }
-
-    //         // On filtre les propriétés à retourner
-    //         const filteredUser = {
-    //             id: user.id,
-    //             username: user.username,
-    //             mail: user.mail,
-    //             bio: user.bio,
-    //             language: user.language
-    //         };
-
-    //         return response.status(200).json(filteredUser);
-
-    //     } catch (error) {
-    //         console.error(error); // pour le voir dans la console
-    //         response.status(500).json({ error: "Erreur serveur." });
-    //     }
-    // }
-
-
-
-
     /**
          * recupere un utilisateur par son username
          */
@@ -573,46 +529,6 @@ export class UserController {
     }
 
 
-
-
-    //     static async getUserFromUserTable(request, response) {
-    //     try {
-    //         const userId = request.user.id;
-    //         const { search } = request.body;
-    //         console.log({ userId, search });
-
-    //         const ifUserExist = await findUser(userId);
-
-    //         if (!ifUserExist) {
-    //             return response.status(404).json({ error: "Utilisateur non trouvé." });
-    //         }
-
-    //         const users = await getUserByUsername(search);
-
-    //         // On filtre les propriétés à retourner et ajoute la photo de profil
-    //         const filteredUsers = await Promise.all(users.map(async user => {
-    //             const profilPicture = await getProfilPictureFromDataB(user.id);
-    //             return {
-    //                 id: user.id,
-    //                 username: user.username,
-    //                 mail: user.mail,
-    //                 bio: user.bio,
-    //                 language: user.language,
-    //                 imagePath: profilPicture?.dataValues?.imagePath || "http://localhost:4900/images/default.jpg"
-    //             };
-    //         }));
-
-    //         return response.status(200).json({ users: filteredUsers });
-
-    //     } catch (error) {
-    //         console.error(error);
-    //         response.status(500).json({ error: "Erreur serveur." });
-    //     }
-    // }
-
-
-
-
     /**
  * Vérifie le statut d'une demande d'ami entre deux utilisateurs
  * @param {number} req.user.id - L'utilisateur connecté (expéditeur)
@@ -649,6 +565,42 @@ export class UserController {
 
 
 
+    /**
+     * cette methode static permet de récuperer tout les demandes d'amis encore en attente qu'un utilisateur a envoyé
+     */
+    static async getPendingSentFriendRequests(request, response) {
+        try {
+            const userId = request.user.id;
+            const pendingRequests = await pendingSentFriendRequests(userId);
+            console.log('pendingRequests:', pendingRequests);
+
+            const friendIds = pendingRequests.map(req => req.friendId);
+            console.log('friendIds:', friendIds);
+
+            if (friendIds.length === 0) {
+                return response.status(200).json({ pendingRequests: [] });
+            }
+
+            const users = await getUsernameById(friendIds);
+            console.log('users:', users);
+
+            const result = await Promise.all(users.map(async user => {
+                const profilePic = await getUserProfilPicture(user.id);
+                return {
+                    id: user.id,
+                    username: user.username,
+                    profilePicture: profilePic ? profilePic.imagePath : null
+                };
+            }));
+
+            console.log('result:', result);
+
+            return response.status(200).json({ pendingRequests: result });
+        } catch (error) {
+            console.error(error);
+            return response.status(500).json({ error: "Erreur serveur lors de la récupération des demandes d'amis envoyées en attente" });
+        }
+    }
 
 
 }

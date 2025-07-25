@@ -294,7 +294,7 @@ export class FriendsService {
     try {
       const response = await fetch("http://0.0.0.0:4900/api/user/myfriend", requestOptions);
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Erreur lors de la suppression de l'ami");
+      if (!response.ok) throw new Error(data.error || "Erreur lors de la recuperation des amis");
       return data;
     } catch (error) {
       console.error(error);
@@ -305,9 +305,32 @@ export class FriendsService {
 
 
 
+async fetchGetPendingSentFriendRequests(): Promise<any> {
+  const tokenHeader = this.authService.insertTokeninHeader();
 
+  const myHeaders = new Headers();
+  if (tokenHeader.Authorization) {
+    myHeaders.append("Authorization", tokenHeader.Authorization);
+  }
+  myHeaders.append("Content-Type", "application/json");
 
-  
+  const requestOptions = {
+    method: "GET",
+    headers: myHeaders,
+  };
+
+  try {
+    const response = await fetch("http://0.0.0.0:4900/api/user/getPendingSentFriendRequests", requestOptions);
+    const data = await response.json();
+    // console.log("test de reponse",data)
+    if (!response.ok) throw new Error(data.error || "Erreur lors de la récupération des demandes");
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 
 
 

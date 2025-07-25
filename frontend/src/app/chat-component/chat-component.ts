@@ -25,7 +25,8 @@ export class ChatComponent implements OnInit {
   searchValue: string = '';
   friendRequests: any[] = [];
   myFriends: Friends[] = [];
-
+  groups: any[] = [];
+  arrayOfSentFriendRequests:  any[] =[];
 
   isIncomingFriendRequest = false;
   isFriendRequestPending = false;
@@ -38,6 +39,7 @@ export class ChatComponent implements OnInit {
       // recupere les amis
       await this.getMyFriend();
       await this.getGroupUser();
+      await this.getPendingSentFriendRequests();
       this.cdr.detectChanges();
     } catch (error) {
       console.error("Erreur lors de la récupération des demandes d'amis", error);
@@ -81,6 +83,7 @@ export class ChatComponent implements OnInit {
         console.log("Erreur lors de l'acceptation de la demande d'ami.");
       });
   }
+
 
   /**
    * Refuse une demande d'ami et met à jour la liste immédiatement
@@ -133,10 +136,11 @@ export class ChatComponent implements OnInit {
   /**
    * recupere les groupes d'un utilisateur
    */
-  async getGroupUser(){
+  async getGroupUser() {
     try {
-      const groupe = await this.groupService.fetchGetGroupUser();
-      console.log("success : ", groupe)
+      const res = await this.groupService.fetchGetGroupUser();
+      this.groups = res.groups; // Assure-toi que la réponse a bien la forme { groups: [...] }
+      console.log("success : ", this.groups);
     } catch (error) {
       console.error("Erreur lors de la récupération des groupes de l'utilisateur ", error);
     }
@@ -144,6 +148,21 @@ export class ChatComponent implements OnInit {
 
 
 
+  async getPendingSentFriendRequests() {
+    try {
+      const res = await this.friendService.fetchGetPendingSentFriendRequests();
+      this.arrayOfSentFriendRequests = res.pendingRequests;
+      console.log("succes : getPendingSentFriendRequests : ",this.arrayOfSentFriendRequests)
+    } catch (error) {
+      console.error("Erreur lors de la récupération des demandes en attentes", error);
+    }
+  }
 
 
 }
+
+// const result: {
+//     id: any;
+//     username: any;
+//     profilePicture: any;
+// }[]

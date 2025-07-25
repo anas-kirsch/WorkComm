@@ -102,6 +102,34 @@ export async function findAllFriendship(userId) {
         where: { UserId: userId, status: "accepted" },
     });
 
+
+
 }
 
+
+/**
+ * Récupérer les demandes d'amis envoyées et en attente
+ * @param {number} userId 
+ * @returns 
+ */
+export async function pendingSentFriendRequests(userId) {
+    return await Friends.findAll({ where: { UserId: userId, status: 'pending' } });
+}
+
+
+
+
+/**
+ * 
+ * @param {Array} friendIds 
+ * @returns 
+ */
+export async function getUsernameById(friendIds){
+
+   return await User.findAll({
+        where: { id: friendIds },
+        attributes: ['id', 'username']
+    });
+    
+}
 
