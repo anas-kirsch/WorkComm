@@ -273,7 +273,41 @@ export class FriendsService {
 
 
 
+  /**
+   * cette fonction requete le backend pour qu'un utilisateur recupere ses amis 
+   * @returns 
+   */
+  async getMyFriend(): Promise<any> {
 
+    const tokenHeader = this.authService.insertTokeninHeader();
+
+    const myHeaders = new Headers();
+    if (tokenHeader.Authorization) {
+      myHeaders.append("Authorization", tokenHeader.Authorization);
+    }
+    myHeaders.append("Content-Type", "application/json");
+
+    const requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+    };
+    try {
+      const response = await fetch("http://0.0.0.0:4900/api/user/myfriend", requestOptions);
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Erreur lors de la suppression de l'ami");
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+
+
+
+
+
+  
 
 
 

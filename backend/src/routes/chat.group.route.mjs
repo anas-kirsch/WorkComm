@@ -60,6 +60,16 @@ router.post("/getAll-group-message", getClientTokenAndVerifAccess, GroupChatCont
 
 
 
+/**
+ * cette route permet à un utilisateur de récupérer tout les groupes dans lequel il est (id des groupes et nom);
+ */
+router.get("/get-all-group-user", getClientTokenAndVerifAccess, GroupChatController.getUserGroups)
+
+
+
+
+
+
 
 export default router;
 

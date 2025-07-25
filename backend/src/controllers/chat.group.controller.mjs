@@ -16,7 +16,9 @@ import {
     findMessage,
     deleteMessage,
     findAllGroupMessagesByGroupId,
-    getGroupMessages
+    getGroupMessages,
+    getManyGroupName,
+    getAllGroupsForUser
 } from "../models/chat.group.model.mjs"
 
 export class GroupChatController {
@@ -363,7 +365,7 @@ export class GroupChatController {
         }
     }
 
-    
+
 
     /**
      * cette methode static permet de recuperer tout les messages d'un groupe, renvoie un array[] vide si aucun message
@@ -416,6 +418,44 @@ export class GroupChatController {
         }
 
     }
+
+
+    /**
+     * cette methode static permet de recuperer tout les groupes d'un utilisateur  
+     */
+    static async getUserGroups(request, response) {
+        try {
+            const userId = request.user.id;
+
+            const getAllGroupsForUsers = await getAllGroupsForUser(userId);
+
+            if (!getAllGroupsForUsers) {
+                return response.status(500).json({ error: "erreur serveur impossible de récupérer les groupes de l'utilisateur " })
+            }
+            console.log("success : ", getAllGroupsForUsers)
+
+            // Récupérer tous les groupNameId
+            const groupNameIds = getAllGroupsForUsers.map(g => g.groupNameId);
+            const groups = [];
+            for (const groupNameId of groupNameIds) {
+                const group = await getManyGroupName(groupNameId);
+                if (group) {
+                    groups.push({
+                        id: group.id,
+                        name: group.group_name
+                    });
+                }
+            }
+            return response.status(200).json({ groups });
+        } catch (error) {
+            console.error(error);
+            response.status(500).json({ error: "Erreur serveur" });
+        }
+    }
+
+
+
+
 
 
 

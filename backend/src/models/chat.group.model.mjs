@@ -255,7 +255,7 @@ export async function findAllGroupMessagesByGroupId(groupId) {
  * @returns {Promise<Array>} 
  */
 export async function getGroupMessages(messageIds) {
-    
+
     return await Message.findAll({
         where: { id: messageIds }
     });
@@ -311,4 +311,18 @@ export async function deleteMessages(messageIds) {
 //         where: { id: messageIds }
 //     });
 // }
+
+
+/**
+ * cette fonction permet de recuperer un nom de groupe avec son id 
+ * @param {number} groupeId 
+ * @returns 
+ */
+export async function getManyGroupName(groupeId) {
+
+    return await groupName.findOne({
+        where : {id : groupeId},
+    })
+
+}
 

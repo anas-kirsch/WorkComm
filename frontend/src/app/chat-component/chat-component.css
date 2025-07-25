@@ -130,7 +130,8 @@ h2 {
 .sidebar-list {
   list-style: none;
   margin: 0;
-  padding: 0 0 10px 0;
+  /* padding: 0 0 10px 0; */
+  padding: 0 0 0 0;
   animation: slideDown 0.3s;
 }
 
@@ -369,4 +370,38 @@ h2 {
 
 .btn-decline:hover {
   background-color: #b71c1c;
+}
+
+
+
+
+/* Affichage des amis dans la sidebar */
+.sidebar-list-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 25px;
+  color: #fff;
+  /* border-radius: 7px; */
+  margin: 4px 0px;
+  background: #23232a;
+  transition: background 0.2s, color 0.2s;
+  cursor: pointer;
+  font-family: "roboto", 'Times New Roman', Times, serif;
+  font-size: 1.05rem;
+}
+
+.sidebar-list-item img {
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  margin-right: 10px;
+  border: 2px solid #8B5CF6;
+  background: #18181b;
+}
+
+.sidebar-list-item:hover {
+  background: #8B5CF6;
+  color: #fff;
 }

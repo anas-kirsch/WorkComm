@@ -16,8 +16,6 @@
   </div>
 
 
-
-
   <section class="chat-content">
     <aside class="chat-sidebar">
       <div class="sidebar-section" [class.open]="openSection === 'amis'">
@@ -25,9 +23,16 @@
           <span>Mes amis</span>
           <span class="arrow" [class.down]="openSection === 'amis'">&#9660;</span>
         </div>
+
         <ul class="sidebar-list" *ngIf="openSection === 'amis'">
-          <!-- <li class="sidebar-list-item">Nom Ami</li> -->
+          <li class="sidebar-list-item" *ngFor="let friend of myFriends">
+            <img *ngIf="getFriendImage(friend)" [src]="getFriendImage(friend)" alt="Photo" width="32" height="32"
+              style="border-radius:50%;margin-right:8px;">
+            {{ friend.username }}
+          </li>
         </ul>
+
+
       </div>
 
       <div class="sidebar-section" [class.open]="openSection === 'groupes'">
