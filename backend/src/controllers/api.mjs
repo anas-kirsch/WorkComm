@@ -30,7 +30,15 @@ import formData from "@trojs/formdata-parser";
 export function runServer(sequelize) {
     const app = express();
     const port = 4900;
-    app.use(cors());
+    // Autorise l'accès CORS depuis l'IP du front
+    app.use(cors({
+        origin: 'http://192.168.10.125:4200',
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization']
+    }));
+
+    
 
     // Sert le dossier public/images sur /images
     const __filename = fileURLToPath(import.meta.url);

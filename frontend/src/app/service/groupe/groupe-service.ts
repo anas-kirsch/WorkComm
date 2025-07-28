@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { AuthService } from '../auth/auth-service';
 import { Router } from '@angular/router';
 import { responseObject } from '../../interfaces/user';
+import { environment } from '../../../environments/environment.development';
 
 
 @Injectable({
@@ -11,7 +12,7 @@ export class GroupeService {
 
   authService = inject(AuthService);
   router = inject(Router);
-
+  apiURL = environment.apiURL
 
   /**
    * recupere les groupes d'un utilisateur 
@@ -32,14 +33,13 @@ export class GroupeService {
     };
 
     return new Promise((resolve, reject) => {
-      fetch("http://0.0.0.0:4900/api/chatGroup/get-all-group-user", requestOptions)
+      fetch(`${this.apiURL}/api/chatGroup/get-all-group-user`, requestOptions)
         .then(data => data.json())
         .then(data => {
           // console.log("dans le service :", data)
           resolve(data)
         })
         .catch(error => reject(error))
-
     })
 
   }

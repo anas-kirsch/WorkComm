@@ -106,8 +106,12 @@
 
     <section class="chat-messages" *ngIf="selectedFriendId !== null">
       <div class="messages-header">
-        <h2 class="messages-header-title" id="chat-text">Chat</h2>
+        <h2 class="messages-header-title" id="chat-text">
+         {{ selectedFriendUsername }}
+        </h2>
       </div>
+
+      
       <div class="messages-list">
         <div *ngIf="messages.length === 0" class="no-messages">
           <p>Aucun message pour l’instant.<br>Commence la conversation !</p>

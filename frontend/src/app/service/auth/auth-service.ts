@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { environment } from '../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   isConnected = false;
+  // apiURL = environment.apiURL;
+  static apiURL = environment.apiURL;
 
   /**
    * Envoie les données d'inscription au backend
@@ -32,7 +35,7 @@ export class AuthService {
       body: formdata
     };
 
-    return fetch("http://0.0.0.0:4900/api/user/register", requestOptions)
+    return fetch(`${AuthService.apiURL}/api/user/register`, requestOptions)
       .then((response) => response.json());
   }
 
@@ -53,12 +56,12 @@ export class AuthService {
     formdata.append("password", formulaire.get("password")?.value);
 
     const requestOptions = {
-
       method: "POST",
       body: formdata
+        
     }
 
-    return fetch("http://0.0.0.0:4900/api/auth/login", requestOptions)
+    return fetch(`${AuthService.apiURL}/api/auth/login`, requestOptions)
       .then((response) => response.json());
 
   };
@@ -90,7 +93,8 @@ export class AuthService {
       mail: authData.mail,
       language: authData.language
     };
-    document.cookie = `auth=${encodeURIComponent(JSON.stringify(data))}; path=/; SameSite=None; Secure`;
+    document.cookie = `auth=${encodeURIComponent(JSON.stringify(data))}; path=/; httpOnly : true`;
+    // document.cookie = `auth=${encodeURIComponent(JSON.stringify(data))}; path=/; SameSite=None; Secure`;
   }
 
 

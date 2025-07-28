@@ -2,6 +2,7 @@ import { inject, Injectable, NgZone, ApplicationRef } from '@angular/core';
 import { AuthService } from "../../service/auth/auth-service"
 import { Friends, responseObject } from '../../interfaces/user';
 import { Route, Router } from '@angular/router';
+import { environment } from '../../../environments/environment.development';
 
 
 
@@ -12,6 +13,8 @@ export class FriendsService {
   authService = inject(AuthService);
   ngZone = inject(NgZone);
   appRef = inject(ApplicationRef);
+  static apiURL = environment.apiURL;
+
 
   // router: Router = new Router();
   router = inject(Router);
@@ -20,6 +23,7 @@ export class FriendsService {
   searchValue: string = '';
   searchInput: any;
 
+  apiURL = environment.apiURL;
   /**
    * fetch qui cherche des utilisateurs selon les caractères tapés dans la barre 
    * @param search 
@@ -45,7 +49,7 @@ export class FriendsService {
     };
 
     return new Promise((resolve, reject) => {
-      fetch("http://0.0.0.0:4900/api/user/getUser", requestOptions)
+      fetch(`${AuthService.apiURL}/api/user/getUser`, requestOptions)
         .then(data => data.json())
         .then(data => {
           // console.log("dans le service :", data)
@@ -80,7 +84,7 @@ export class FriendsService {
       // redirect: "follow"
     };
 
-    return fetch("http://0.0.0.0:4900/api/user/getByUsername", requestOptions)
+    return fetch(`${AuthService.apiURL}/api/user/getByUsername`, requestOptions)
       .then(response => response.json())
       .then(data => data as Friends);
   }
@@ -126,7 +130,7 @@ export class FriendsService {
     };
 
     try {
-      const response = await fetch("http://0.0.0.0:4900/api/user/send-friend-requests", requestOptions);
+      const response = await fetch(`${AuthService.apiURL}/api/user/send-friend-requests`, requestOptions);
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Erreur lors de l'envoi de la demande d'ami");
       return data;
@@ -160,7 +164,7 @@ export class FriendsService {
     };
 
     try {
-      const response = await fetch("http://0.0.0.0:4900/api/user/checkFriendRequestStatus", requestOptions);
+      const response = await fetch(`${AuthService.apiURL}/api/user/checkFriendRequestStatus`, requestOptions);
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Erreur lors de la vérification du statut d'ami");
       return data; // data peut être null ou un objet relation
@@ -189,7 +193,7 @@ export class FriendsService {
     };
 
     try {
-      const response = await fetch("http://0.0.0.0:4900/api/user/friend-requests", requestOptions);
+      const response = await fetch(`${AuthService.apiURL}/api/user/friend-requests`, requestOptions);
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Erreur lors de la récupération des demandes d'amis");
       return data; // Tableau d'utilisateurs ayant envoyé une demande d'ami
@@ -225,7 +229,7 @@ export class FriendsService {
     };
 
     try {
-      const response = await fetch("http://0.0.0.0:4900/api/user/confirm-friend-requests", requestOptions);
+      const response = await fetch(`${AuthService.apiURL}/api/user/confirm-friend-requests`, requestOptions);
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Erreur lors de la réponse à la demande d'ami");
       return data;
@@ -260,7 +264,7 @@ export class FriendsService {
     };
 
     try {
-      const response = await fetch("http://0.0.0.0:4900/api/user/delete-friend", requestOptions);
+      const response = await fetch(`${AuthService.apiURL}/api/user/delete-friend`, requestOptions);
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Erreur lors de la suppression de l'ami");
       return data;
@@ -292,7 +296,7 @@ export class FriendsService {
       headers: myHeaders,
     };
     try {
-      const response = await fetch("http://0.0.0.0:4900/api/user/myfriend", requestOptions);
+      const response = await fetch(`${AuthService.apiURL}/api/user/myfriend`, requestOptions);
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Erreur lors de la recuperation des amis");
       return data;
@@ -320,7 +324,7 @@ async fetchGetPendingSentFriendRequests(): Promise<any> {
   };
 
   try {
-    const response = await fetch("http://0.0.0.0:4900/api/user/getPendingSentFriendRequests", requestOptions);
+    const response = await fetch(`${AuthService.apiURL}/api/user/getPendingSentFriendRequests`, requestOptions);
     const data = await response.json();
     // console.log("test de reponse",data)
     if (!response.ok) throw new Error(data.error || "Erreur lors de la récupération des demandes");

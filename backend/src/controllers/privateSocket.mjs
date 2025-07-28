@@ -9,16 +9,15 @@ const server = createServer(app);
 // Ajoute l'option cors ici :
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:4200", // Mets ici l'URL de ton front Angular
+    origin: ["http://localhost:4200","http://localhost:4200","http://192.168.10.125:4200"],
     methods: ["GET", "POST"],
     credentials: true
   }
 });
 const PORT = 10000;
 
-// Optionnel : garde aussi ce middleware pour les routes REST si besoin
 app.use(cors({
-  origin: "http://localhost:4200",
+  origin: ["http://localhost:4200","http://192.168.10.125:4200"],
   credentials: true
 }));
 

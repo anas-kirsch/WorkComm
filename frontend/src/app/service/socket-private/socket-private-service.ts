@@ -10,6 +10,7 @@ export class SocketPrivateService {
 
   constructor() {}
 
+
   connectSocket(myUserId: number, friendUserId: number) {
     this.socket = io('http://localhost:10000');
     this.socket.emit('join chat', { myUserId, friendUserId });
