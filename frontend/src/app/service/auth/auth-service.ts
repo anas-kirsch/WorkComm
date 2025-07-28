@@ -93,8 +93,10 @@ export class AuthService {
       mail: authData.mail,
       language: authData.language
     };
-    document.cookie = `auth=${encodeURIComponent(JSON.stringify(data))}; path=/; httpOnly : true`;
     // document.cookie = `auth=${encodeURIComponent(JSON.stringify(data))}; path=/; SameSite=None; Secure`;
+    document.cookie = `auth=${encodeURIComponent(JSON.stringify(data))}; path=/;`;
+    // document.cookie = `auth=${encodeURIComponent(JSON.stringify(data))}; path=/; `;
+    // document.cookie = `auth=${encodeURIComponent(JSON.stringify(data))}; path=/; httpOnly : true`;
   }
 
 

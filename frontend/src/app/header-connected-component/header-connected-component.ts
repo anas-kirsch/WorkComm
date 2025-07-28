@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../service/auth/auth-service';
 import { UserService } from '../service/user/user-service';
 
+
 @Component({
   selector: 'app-header-connected-component',
   imports: [],
@@ -39,14 +40,13 @@ export class HeaderConnectedComponent {
 
   
   deconnexion() {
-    // Supprime le cookie 'auth'
-    document.cookie = "auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=None; Secure";
-    // Met à jour l'état d'authentification
+    // document.cookie = "auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=None; Secure";
+    document.cookie = "auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     this.isAuthenticated = false;
     this.authService.isConnected = false;
     console.log("Cookie 'auth' supprimé");
-
     this.router.navigate([""]);
+
 
   }
 

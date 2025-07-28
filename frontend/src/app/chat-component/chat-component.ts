@@ -163,8 +163,21 @@ export class ChatComponent implements OnInit {
   }
 
 
+  // private chatMessageListener = (msg: any) => {
+  //   this.messages = [...this.messages, msg];
+  //   this.cdr.markForCheck();
+  //   setTimeout(() => {
+  //     const list = document.querySelector('.messages-list');
+  //     if (list) list.scrollTop = list.scrollHeight;
+  //   }, 0);
+  // };
+
+
 
   async startPrivateChat(friendUserId: number) {
+    if (this.selectedFriendId === friendUserId) {
+      return; // Déjà sur ce chat, on ne refait rien
+    }
     this.selectedFriendId = friendUserId;
     localStorage.setItem('selectedFriendId', friendUserId.toString());
     // Récupère le pseudo de l'ami sélectionné
@@ -194,6 +207,10 @@ export class ChatComponent implements OnInit {
       // Connecte le socket à la room
       this.socketPrivateService.connectSocket(this.myUserId, friendUserId);
 
+      // if (this.socketPrivateService.socket) {
+      //   this.socketPrivateService.socket.off('chat message', this.chatMessageListener);
+      //   this.socketPrivateService.socket.on('chat message', this.chatMessageListener);
+      // }
       // Nettoie l'ancien listener avant d'en ajouter un nouveau
       if (this.socketPrivateService.socket) {
         this.socketPrivateService.socket.off('chat message');
@@ -215,7 +232,7 @@ export class ChatComponent implements OnInit {
 
 
   sendChatMessage(message: string) {
-    if (this.selectedFriendId) {
+    if (this.selectedFriendId && message.trim() !== "") {
       this.socketPrivateService.sendMessage(this.myUserId, this.selectedFriendId, message);
     }
   }
