@@ -12,9 +12,6 @@ Dans un environnement de travail de plus en plus décentralisé, la collaboratio
 
 - ✅ **Messagerie en temps réel** entre utilisateurs et groupes.
 - ✅ **Création de compte** avec gestion de profil : nom, email, langue, bio, photo de profil.
-- ✅ **Ajout d'autres utilisateurs** à son espace de travail.
-- ✅ **Traduction automatique** des messages (prévu via intégration d'une API).
-- ✅ **Espace collaboratif** (notes partagées, documents, à venir).
 - ✅ **Système d'authentification sécurisé** avec mot de passe hashé.
 - ✅ **Interface intuitive** responsive pour desktop et mobile.
 
@@ -46,7 +43,6 @@ Dans un environnement de travail de plus en plus décentralisé, la collaboratio
 
 ## 📌 Fonctionnalités à venir / Améliorations possibles
 
-- 🌐 Intégration complète d'une **API de traduction** (DeepL, Google Translate…).
 - 📄 Ajout d’un **éditeur de notes collaboratives** (type Notion léger).
 - 📎 Système de **partage et téléchargement de documents**.
 - 🔔 Système de **notifications en temps réel** (nouveaux messages, ajouts…).
