@@ -247,6 +247,7 @@ export class PrivateChatController {
             }
 
             const getAllReferenced = await getConversationMessages(conversationID.id);
+            console.log("test 900:",getAllReferenced)
 
             if (!getAllReferenced || getAllReferenced.length === 0) {
                 return response.status(200).json({
@@ -259,6 +260,7 @@ export class PrivateChatController {
 
             // Récupère tous les messages d'un coup, triés par date si possible
             const getMessageContent = await getPrivateMessages(messageIds);
+            console.log("test 1000:",getMessageContent)
 
             return response.status(200).json({
                 message: "Voici votre historique",

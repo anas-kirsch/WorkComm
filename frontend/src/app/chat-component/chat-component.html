@@ -27,6 +27,7 @@
         @if (openSection === 'amis') {
         <ul class="sidebar-list">
           @for (friend of myFriends; track friend.id) {
+          <!-- <li class="sidebar-list-item" (click)="startPrivateChat(friend.id)"> -->
           <li class="sidebar-list-item" (click)="startPrivateChat(friend.id)">
             <img *ngIf="getFriendImage(friend)" [src]="getFriendImage(friend)" alt="Photo" width="32" height="32"
               style="border-radius:50%;margin-right:8px;">

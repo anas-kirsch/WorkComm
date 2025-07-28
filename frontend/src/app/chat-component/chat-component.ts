@@ -41,6 +41,7 @@ export class ChatComponent implements OnInit {
   isIncomingFriendRequest = false;
   isFriendRequestPending = false;
   isFriend = false;
+  conversationName: string = "";
 
   messages: any[] = [];
   myUserId: number = 0;
@@ -48,8 +49,9 @@ export class ChatComponent implements OnInit {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private socketPrivateService: SocketPrivateService
+    private socketPrivateService: SocketPrivateService,
   ) { }
+
 
 
 
@@ -66,6 +68,12 @@ export class ChatComponent implements OnInit {
       const savedId = localStorage.getItem('selectedFriendId');
       if (savedId) {
         this.startPrivateChat(Number(savedId));
+        const conversationName = localStorage.getItem("conversation_name");
+        console.log('9000: ', conversationName)
+        if (conversationName) {
+          const getHistorique = await this.socketPrivateService.getPrivateHistoriqueOfMessage(conversationName.toString());
+          console.log("voici l'historique des messages : ", getHistorique)
+        }
       }
       this.cdr.detectChanges();
     } catch (error) {
@@ -163,24 +171,14 @@ export class ChatComponent implements OnInit {
   }
 
 
-  // private chatMessageListener = (msg: any) => {
-  //   this.messages = [...this.messages, msg];
-  //   this.cdr.markForCheck();
-  //   setTimeout(() => {
-  //     const list = document.querySelector('.messages-list');
-  //     if (list) list.scrollTop = list.scrollHeight;
-  //   }, 0);
-  // };
-
-
 
   async startPrivateChat(friendUserId: number) {
     if (this.selectedFriendId === friendUserId) {
       return; // Déjà sur ce chat, on ne refait rien
     }
     this.selectedFriendId = friendUserId;
-    localStorage.setItem('selectedFriendId', friendUserId.toString());
     // Récupère le pseudo de l'ami sélectionné
+    localStorage.setItem('selectedFriendId', friendUserId.toString());
     const friend = this.myFriends.find(f => f.id === friendUserId);
     this.selectedFriendUsername = friend ? friend.username : 'Ami';
     this.messages = [];
@@ -203,14 +201,11 @@ export class ChatComponent implements OnInit {
       if (!response.ok) throw new Error('Erreur serveur');
       const data = await response.json();
       console.log(data);
+      this.conversationName = data.chat_name;
 
       // Connecte le socket à la room
       this.socketPrivateService.connectSocket(this.myUserId, friendUserId);
 
-      // if (this.socketPrivateService.socket) {
-      //   this.socketPrivateService.socket.off('chat message', this.chatMessageListener);
-      //   this.socketPrivateService.socket.on('chat message', this.chatMessageListener);
-      // }
       // Nettoie l'ancien listener avant d'en ajouter un nouveau
       if (this.socketPrivateService.socket) {
         this.socketPrivateService.socket.off('chat message');
@@ -224,6 +219,7 @@ export class ChatComponent implements OnInit {
         });
       }
       this.cdr.markForCheck();
+
     } catch (error) {
       console.error('Erreur lors de la connexion au chat privé', error);
     }
@@ -234,6 +230,9 @@ export class ChatComponent implements OnInit {
   sendChatMessage(message: string) {
     if (this.selectedFriendId && message.trim() !== "") {
       this.socketPrivateService.sendMessage(this.myUserId, this.selectedFriendId, message);
+
+      console.log(message, this.selectedFriendId, this.conversationName)
+      this.socketPrivateService.saveMessageInBdd(message, this.selectedFriendId, this.conversationName);
     }
   }
 
