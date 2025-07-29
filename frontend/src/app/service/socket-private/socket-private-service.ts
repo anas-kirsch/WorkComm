@@ -114,7 +114,13 @@ export class SocketPrivateService {
 
 
 
-  async deleteMessage() {
+  /**
+   * cette fonction envoie une requete vers le backend pour supprimer un message passé en parametre 
+   * @param messageId 
+   * @param conversationName 
+   * @returns 
+   */
+  async deleteMessage(messageId: number, conversationName: string) {
 
     const tokenHeader = this.authService.insertTokeninHeader();
 
@@ -124,19 +130,18 @@ export class SocketPrivateService {
     }
     myHeaders.append("Content-Type", "application/json");
 
-    // const body = JSON.stringify({  })
+    const body = JSON.stringify({ messageId, conversationName })
     const requestOptions = {
-      method: "POST",
+      method: "DELETE",
       headers: myHeaders,
-      // body: 
+      body: body
     };
 
     try {
-
-      const response = await fetch(`${AuthService.apiURL}/api/chatPrivate/getAll-private-message`, requestOptions);
-      const historiqueMessage = await response.json()
-      if (!response.ok) throw new Error(historiqueMessage.error || "Erreur lors de la suppression des messages");
-      return historiqueMessage;
+      const response = await fetch(`${AuthService.apiURL}/api/chatPrivate/delete-private-message`, requestOptions);
+      const confirmDelete = await response.json()
+      if (!response.ok) throw new Error(confirmDelete.error || "Erreur lors de la suppression du message");
+      return confirmDelete;
 
     } catch (error) {
       console.error(error);

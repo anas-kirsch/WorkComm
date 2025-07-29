@@ -108,21 +108,33 @@
     <section class="chat-messages" *ngIf="selectedFriendId !== null">
       <div class="messages-header">
         <h2 class="messages-header-title" id="chat-text">
-         {{ selectedFriendUsername }}
+          {{ selectedFriendUsername }}
         </h2>
       </div>
 
-      
+
       <div class="messages-list">
         <div *ngIf="messages.length === 0" class="no-messages">
           <p>Aucun message pour l’instant.<br>Commence la conversation !</p>
         </div>
         <div *ngFor="let msg of messages; trackBy: trackByMsgId" class="message"
-          [ngClass]="{'me': msg.userId === myUserId, 'friend': msg.userId !== myUserId}">
+          [ngClass]="{'me': msg.userId === myUserId, 'friend': msg.userId !== myUserId}"
+          (dblclick)="msg.userId === myUserId ? action(msg) : null">
           <span class="sender">
             {{ msg.userId === myUserId ? 'Moi' : selectedFriendUsername }}
           </span>
           {{ msg.message }}
+        </div>
+      </div>
+
+      <!-- Delete confirmation modal -->
+      <div *ngIf="showDeleteModal" class="modal-overlay">
+        <div class="modal-content">
+          <p>Confirmer la suppression du message ?</p>
+          <div class="modal-actions">
+            <button (click)="cancelDelete()">Annuler</button>
+            <button (click)="confirmDelete(messageToDelete)">Confirmer</button>
+          </div>
         </div>
       </div>
       <div class="messages-input">

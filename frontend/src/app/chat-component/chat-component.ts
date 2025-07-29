@@ -47,6 +47,10 @@ export class ChatComponent implements OnInit {
   myUserId: number = 0;
   selectedFriendId: number | null = null;
 
+  // For delete confirmation modal
+  showDeleteModal: boolean = false;
+  messageToDelete: any = null;
+
   constructor(
     private cdr: ChangeDetectorRef,
     private socketPrivateService: SocketPrivateService,
@@ -114,6 +118,37 @@ export class ChatComponent implements OnInit {
         console.error(error);
       });
   }
+
+
+  action(msg: string){
+    // console.log(msg)
+
+    // Show the delete confirmation modal
+    this.messageToDelete = msg;
+    this.showDeleteModal = true;
+  }
+
+  cancelDelete() {
+    this.showDeleteModal = false;
+    this.messageToDelete = null;
+  }
+
+  async confirmDelete(msg: any) {
+    this.showDeleteModal = false;
+    this.messageToDelete = null;
+
+    try {
+      const confirmDelete = await this.socketPrivateService.deleteMessage(msg.id, this.conversationName);
+      console.log("confirmation de suppresion : ", confirmDelete);
+      // Si suppression réussie, on retire le message du visuel
+      this.messages = this.messages.filter(m => m.id !== msg.id);
+      this.cdr.detectChanges(); // Pour OnPush
+    } catch (error) {
+      console.error("Erreur lors de la suppression du message", error);
+    }
+  }
+
+
 
 
 
