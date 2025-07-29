@@ -14,7 +14,7 @@ const io = new Server(server, {
     credentials: true
   }
 });
-const PORT = 10000;
+const PORT = 10100;
 
 app.use(cors({
   origin: ["http://localhost:4200","http://192.168.10.125:4200"],

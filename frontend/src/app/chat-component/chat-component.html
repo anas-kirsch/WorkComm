@@ -103,6 +103,23 @@
         </ul>
         }
       </div>
+
+
+
+      <div class="create-groupe">
+        <!-- Nouveau groupe -->
+        <button (click)="createGroup()" class="btn-create-group">
+          <span>
+            <svg height="24" width="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0 0h24v24H0z" fill="none"></path>
+              <path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z" fill="currentColor"></path>
+            </svg>
+            Nouveau groupe
+          </span>
+        </button>
+      </div>
+
+
     </aside>
 
     <section class="chat-messages" *ngIf="selectedFriendId !== null">
@@ -150,5 +167,47 @@
       </div>
     </section>
     }
+
+
+    <!-- creation de groupe -->
+
+
+    @if (createGroupAction == true) {
+
+    <div class="modal-overlay">
+      <div class="modal-content2">
+        <p class="message-new-groupe">Ajouter des amis au nouveau groupe</p>
+
+        <input type="text" class="input-groupe-name">
+
+
+        <div class="friend-list">
+          @for (friend of userFriend; track friend.id) {
+          <p class="one-friend">
+            <!-- <img *ngIf="friend.imagePath?.imagePath" [src]="friend.imagePath.imagePath" alt="Photo de profil"
+              class="profile-picture" width="32" height="32"
+              style="border-radius:50%;margin-right:12px;vertical-align:middle;" /> -->
+            {{ friend.username }}
+          </p>
+          }
+        </div>
+
+        <div class="container-button-choice">
+          <button class="cancel-confirm" (click)="cancelGroupCreation()">Annuler</button>
+          <button class="cancel-confirm"> Confirmer</button>
+
+        </div>
+      </div>
+    </div>
+
+    }
+
+
+
+
+
+
+
+
   </section>
 </main>

@@ -23,3 +23,10 @@ export interface Friends {
     id : number
     
 }
+
+
+interface Friend {
+  id: number;
+  username: string;
+  imagePath?: { imagePath?: string };
+}

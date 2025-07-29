@@ -12,7 +12,7 @@
   z-index: 1000;
 }
 
-.fa-plus{
+.fa-plus {
 
   background-color: #388e3c;
 }
@@ -22,7 +22,7 @@
   color: #fff;
   padding: 2rem 2.5rem;
   border-radius: 10px;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
   text-align: center;
   min-width: 280px;
 }
@@ -56,6 +56,7 @@
 .modal-actions button:last-child:hover {
   background: #b71c1c;
 }
+
 /* --- Layout principal --- */
 .chat-main {
   min-height: 90vh;
@@ -308,7 +309,7 @@ h2 {
   flex-direction: column;
   gap: 12px;
   align-items: stretch;
- height: 100%; 
+  height: 100%;
   max-height: 100%;
   padding-top: 20px;
 }
@@ -336,12 +337,13 @@ h2 {
   border-bottom-left-radius: 18px;
   border-top-right-radius: 18px;
   border-top-left-radius: 18px;
-  font-family: "roboto",sans-serif,Arial, Helvetica, sans-serif;
+  font-family: "roboto", sans-serif, Arial, Helvetica, sans-serif;
 
 }
+
 .message.friend {
   align-self: flex-start;
-  background: linear-gradient(100deg, rgba(48, 26, 99, 0.85) 0%, rgba(168,85,247,0.85) 100%);
+  background: linear-gradient(100deg, rgba(48, 26, 99, 0.85) 0%, rgba(168, 85, 247, 0.85) 100%);
   color: #fff;
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 18px;
@@ -543,3 +545,216 @@ h2 {
 
 
 
+
+/* --- Modal création de groupe amélioré --- */
+.modal-content2 {
+  background: linear-gradient(120deg, #23232a 0%, #18181b 100%);
+  color: #fff;
+  padding: 2.2rem 2.7rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(139, 92, 246, 0.18);
+  text-align: center;
+  min-width: 340px;
+  max-width: 95vw;
+  width: 480px;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+}
+
+.message-new-groupe {
+  font-family: "roboto", Arial, Helvetica, sans-serif;
+  font-size: 1.18rem;
+  color: #c084fc;
+  margin-bottom: 8px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.input-groupe-name {
+  outline: none;
+  width: 90%;
+  padding: 12px 18px;
+  border-radius: 10px;
+  border: 1.5px solid #8B5CF6;
+  background: #18181b;
+  color: #fff;
+  font-size: 1.08rem;
+  margin-bottom: 8px;
+  font-family: "roboto", Arial, Helvetica, sans-serif;
+  transition: border 0.2s;
+}
+
+.input-groupe-name:focus {
+  border: 2px solid #c084fc;
+}
+
+.friend-list {
+  background: #23232a;
+  padding: 16px 10px;
+  margin-top: 10px;
+  max-height: 28vh;
+  overflow-y: auto;
+  min-width: 90%;
+  max-width: 90%;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(139, 92, 246, 0.10);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+}
+
+.one-friend {
+  border: 1.5px solid #8B5CF6;
+  border-radius: 8px;
+  min-height: 48px;
+  /* Hauteur minimale augmentée */
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0 16px;
+  /* Padding horizontal */
+  background: #18181b;
+  color: #fff;
+  font-family: "roboto", Arial, Helvetica, sans-serif;
+  font-size: 1.18rem;
+  /* Plus grand */
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+  line-height: 1.4;
+  margin: 0px;
+}
+
+.one-friend:hover {
+  background: #8B5CF6;
+  color: #23232a;
+}
+
+.container-button-choice {
+  background: transparent;
+  margin-top: 18px;
+  width: 100%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+
+.cancel-confirm {
+  width: 120px;
+  padding: 12px 0;
+  border-radius: 8px;
+  border: none;
+  font-size: 1.08rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, transform 0.18s;
+  background: linear-gradient(90deg, #8B5CF6 0%, #a855f7 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.10);
+}
+
+.cancel-confirm:first-child {
+  background: #888;
+  color: #fff;
+}
+
+.cancel-confirm:last-child:hover {
+  background: linear-gradient(90deg, #a855f7 0%, #c084fc 100%);
+  color: #fff;
+  transform: scale(1.04);
+}
+
+.cancel-confirm:first-child:hover {
+  background: #b71c1c;
+  color: #fff;
+}
+
+/* --- Responsive pour modal groupe --- */
+@media (max-width: 700px) {
+  .modal-content2 {
+    min-width: 90vw;
+    width: 98vw;
+    padding: 1.2rem 0.5rem;
+  }
+
+  .friend-list {
+    min-width: 98%;
+    padding: 10px 2px;
+    font-size: 0.98rem;
+  }
+
+  .container-button-choice {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cancel-confirm {
+    width: 90vw;
+    font-size: 1rem;
+    padding: 10px 0;
+  }
+}
+
+
+
+.create-groupe {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 14px 18px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #8B5CF6;
+  cursor: auto;
+  /* background: #23232a; */
+  transition: background 0.2s;
+  -webkit-user-select: none;
+  user-select: none;
+  font-family: "roboto", sans-serif, Arial, Helvetica, sans-serif;
+  position: relative;
+  bottom: 0px;
+}
+
+
+
+/*boutton créer un groupe */
+
+.btn-create-group {
+  border: 2px solid #8B5CF6;
+  background: linear-gradient(90deg, #8B5CF6 0%, #a855f7 100%);
+  border-radius: 12px;
+  cursor: pointer;
+  padding: 0.8em 1.5em 0.8em 1.2em;
+  transition: background 0.2s, color 0.2s, transform 0.18s;
+  font-size: 1.08rem;
+  font-family: "roboto", Arial, Helvetica, sans-serif;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 2px 12px rgba(139, 92, 246, 0.12);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-create-group span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+}
+
+.btn-create-group svg {
+  fill: #fff;
+}
+
+.btn-create-group:hover {
+  background: linear-gradient(90deg, #a855f7 0%, #c084fc 100%);
+  color: #fff;
+  transform: scale(1.04);
+  border-color: #c084fc;
+}

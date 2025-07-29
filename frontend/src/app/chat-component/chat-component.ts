@@ -43,6 +43,8 @@ export class ChatComponent implements OnInit {
   isFriend = false;
   conversationName: string = "";
 
+  userFriend: Friends[] = [];
+
   messages: any[] = [];
   myUserId: number = 0;
   selectedFriendId: number | null = null;
@@ -51,10 +53,14 @@ export class ChatComponent implements OnInit {
   showDeleteModal: boolean = false;
   messageToDelete: any = null;
 
+  createGroupAction: boolean = false;
+
   constructor(
     private cdr: ChangeDetectorRef,
     private socketPrivateService: SocketPrivateService,
   ) { }
+
+
 
 
 
@@ -120,7 +126,7 @@ export class ChatComponent implements OnInit {
   }
 
 
-  action(msg: string){
+  action(msg: string) {
     // console.log(msg)
 
     // Show the delete confirmation modal
@@ -209,62 +215,62 @@ export class ChatComponent implements OnInit {
   }
 
 
-async startPrivateChat(friendUserId: number) {
-  if (this.selectedFriendId === friendUserId) {
-    return; // Déjà sur ce chat, on ne refait rien
-  }
-
-  this.selectedFriendId = friendUserId;
-  localStorage.setItem('selectedFriendId', friendUserId.toString());
-  const friend = this.myFriends.find(f => f.id === friendUserId);
-  this.selectedFriendUsername = friend ? friend.username : 'Ami';
-  this.messages = [];
-  this.cdr.markForCheck();
-
-  try {
-    const tokenHeader = this.authService.insertTokeninHeader();
-    const myHeaders = new Headers();
-    if (tokenHeader.Authorization) {
-      myHeaders.append("Authorization", tokenHeader.Authorization);
+  async startPrivateChat(friendUserId: number) {
+    if (this.selectedFriendId === friendUserId) {
+      return; // Déjà sur ce chat, on ne refait rien
     }
-    myHeaders.append("Content-Type", "application/json");
 
-    const response = await fetch(`${AuthService.apiURL}/api/chatPrivate/private-chat`, {
-      method: 'POST',
-      headers: myHeaders,
-      body: JSON.stringify({ friendUserId })
-    });
-
-    if (!response.ok) throw new Error('Erreur serveur');
-    const data = await response.json();
-    this.conversationName = data.chat_name;
-    localStorage.setItem("conversation_name", this.conversationName);
-
-    // Charge l'historique APRÈS avoir mis à jour conversationName
-    await this.extractFinalObjectifFromHistory();
-    this.cdr.detectChanges();
-
-    // Connecte le socket à la room
-    this.socketPrivateService.connectSocket(this.myUserId, friendUserId);
-
-    // Nettoie l'ancien listener avant d'en ajouter un nouveau
-    if (this.socketPrivateService.socket) {
-      this.socketPrivateService.socket.off('chat message');
-      this.socketPrivateService.socket.on('chat message', (msg: any) => {
-        this.messages = [...this.messages, msg]; // Nouvelle référence pour OnPush
-        this.cdr.markForCheck();
-        setTimeout(() => {
-          const list = document.querySelector('.messages-list');
-          if (list) list.scrollTop = list.scrollHeight;
-        }, 0);
-      });
-    }
+    this.selectedFriendId = friendUserId;
+    localStorage.setItem('selectedFriendId', friendUserId.toString());
+    const friend = this.myFriends.find(f => f.id === friendUserId);
+    this.selectedFriendUsername = friend ? friend.username : 'Ami';
+    this.messages = [];
     this.cdr.markForCheck();
 
-  } catch (error) {
-    console.error('Erreur lors de la connexion au chat privé', error);
+    try {
+      const tokenHeader = this.authService.insertTokeninHeader();
+      const myHeaders = new Headers();
+      if (tokenHeader.Authorization) {
+        myHeaders.append("Authorization", tokenHeader.Authorization);
+      }
+      myHeaders.append("Content-Type", "application/json");
+
+      const response = await fetch(`${AuthService.apiURL}/api/chatPrivate/private-chat`, {
+        method: 'POST',
+        headers: myHeaders,
+        body: JSON.stringify({ friendUserId })
+      });
+
+      if (!response.ok) throw new Error('Erreur serveur');
+      const data = await response.json();
+      this.conversationName = data.chat_name;
+      localStorage.setItem("conversation_name", this.conversationName);
+
+      // Charge l'historique APRÈS avoir mis à jour conversationName
+      await this.extractFinalObjectifFromHistory();
+      this.cdr.detectChanges();
+
+      // Connecte le socket à la room
+      this.socketPrivateService.connectSocket(this.myUserId, friendUserId);
+
+      // Nettoie l'ancien listener avant d'en ajouter un nouveau
+      if (this.socketPrivateService.socket) {
+        this.socketPrivateService.socket.off('chat message');
+        this.socketPrivateService.socket.on('chat message', (msg: any) => {
+          this.messages = [...this.messages, msg]; // Nouvelle référence pour OnPush
+          this.cdr.markForCheck();
+          setTimeout(() => {
+            const list = document.querySelector('.messages-list');
+            if (list) list.scrollTop = list.scrollHeight;
+          }, 0);
+        });
+      }
+      this.cdr.markForCheck();
+
+    } catch (error) {
+      console.error('Erreur lors de la connexion au chat privé', error);
+    }
   }
-}
 
 
 
@@ -314,6 +320,29 @@ async startPrivateChat(friendUserId: number) {
 
 
 
+  
+
+  async createGroup() {
+    this.createGroupAction = true;
+    try {
+      const getFriends = await this.friendService.getMyFriend();
+      this.userFriend = [];
+      for (const friend of getFriends) {
+        (this.userFriend as any[]).push(friend);
+      }
+      console.log(this.userFriend)
+      this.cdr.detectChanges();
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+
+  cancelGroupCreation() {
+    this.createGroupAction = false;
+    this.cdr.detectChanges();
+  }
+
 
 }
 
@@ -326,62 +355,3 @@ async startPrivateChat(friendUserId: number) {
 
 
 
-
-
-
-// async startPrivateChat(friendUserId: number) {
-//   if (this.selectedFriendId === friendUserId) {
-//     return; // Déjà sur ce chat, on ne refait rien
-//   }
-
-//   this.selectedFriendId = friendUserId;
-//   localStorage.setItem('selectedFriendId', friendUserId.toString());
-//   const friend = this.myFriends.find(f => f.id === friendUserId);
-//   this.selectedFriendUsername = friend ? friend.username : 'Ami';
-//   this.messages = [];
-//   this.cdr.markForCheck();
-
-//   try {
-//     const tokenHeader = this.authService.insertTokeninHeader();
-//     const myHeaders = new Headers();
-//     if (tokenHeader.Authorization) {
-//       myHeaders.append("Authorization", tokenHeader.Authorization);
-//     }
-//     myHeaders.append("Content-Type", "application/json");
-
-//     const response = await fetch(`${AuthService.apiURL}/api/chatPrivate/private-chat`, {
-//       method: 'POST',
-//       headers: myHeaders,
-//       body: JSON.stringify({ friendUserId })
-//     });
-
-//     if (!response.ok) throw new Error('Erreur serveur');
-//     const data = await response.json();
-//     this.conversationName = data.chat_name;
-//     localStorage.setItem("conversation_name", this.conversationName);
-
-//     // Charge l'historique APRÈS avoir mis à jour conversationName
-//     await this.extractFinalObjectifFromHistory();
-//     this.cdr.detectChanges();
-
-//     // Connecte le socket à la room
-//     this.socketPrivateService.connectSocket(this.myUserId, friendUserId);
-
-//     // Nettoie l'ancien listener avant d'en ajouter un nouveau
-//     if (this.socketPrivateService.socket) {
-//       this.socketPrivateService.socket.off('chat message');
-//       this.socketPrivateService.socket.on('chat message', (msg: any) => {
-//         this.messages = [...this.messages, msg]; // Nouvelle référence pour OnPush
-//         this.cdr.markForCheck();
-//         setTimeout(() => {
-//           const list = document.querySelector('.messages-list');
-//           if (list) list.scrollTop = list.scrollHeight;
-//         }, 0);
-//       });
-//     }
-//     this.cdr.markForCheck();
-
-//   } catch (error) {
-//     console.error('Erreur lors de la connexion au chat privé', error);
-//   }
-// }
