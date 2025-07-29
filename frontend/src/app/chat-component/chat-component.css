@@ -12,6 +12,11 @@
   z-index: 1000;
 }
 
+.fa-plus{
+
+  background-color: #388e3c;
+}
+
 .modal-content {
   background: #23232a;
   color: #fff;
@@ -534,3 +539,7 @@ h2 {
 .btn-decline:hover {
   background-color: #b71c1c;
 }
+
+
+
+
