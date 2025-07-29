@@ -64,7 +64,7 @@ export class PrivateChatController {
 
 
 
-    
+
     static async sendPrivateMessage(request, response) {
         try {
             const userIdNum = Number(request.user.id);
@@ -245,9 +245,8 @@ export class PrivateChatController {
             if (!conversationID) {
                 return response.status(404).json({ error: "Conversation introuvable." });
             }
-
+            
             const getAllReferenced = await getConversationMessages(conversationID.id);
-            console.log("test 900:",getAllReferenced)
 
             if (!getAllReferenced || getAllReferenced.length === 0) {
                 return response.status(200).json({
@@ -260,16 +259,24 @@ export class PrivateChatController {
 
             // Récupère tous les messages d'un coup, triés par date si possible
             const getMessageContent = await getPrivateMessages(messageIds);
-            console.log("test 1000:",getMessageContent)
+
+            // Fusionne les références et le contenu des messages
+            const mergedMessages = getAllReferenced.map(ref => {
+                const msg = getMessageContent.find(m => m.id === ref.MessageId);
+                return {
+                    ...ref,
+                    message: msg ? {
+                        id: msg.id,
+                        content: msg.content,
+                        createdAt: msg.createdAt,
+                        updatedAt: msg.updatedAt
+                    } : null
+                };
+            });
 
             return response.status(200).json({
                 message: "Voici votre historique",
-                body: {
-                    id: userId,
-                    conversation: conversationName,
-                    references: getAllReferenced,
-                    messages: getMessageContent
-                }
+                body: mergedMessages
             });
 
         } catch (error) {

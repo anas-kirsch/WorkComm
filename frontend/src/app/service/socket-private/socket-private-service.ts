@@ -114,6 +114,40 @@ export class SocketPrivateService {
 
 
 
+  async deleteMessage() {
+
+    const tokenHeader = this.authService.insertTokeninHeader();
+
+    const myHeaders = new Headers();
+    if (tokenHeader.Authorization) {
+      myHeaders.append("Authorization", tokenHeader.Authorization);
+    }
+    myHeaders.append("Content-Type", "application/json");
+
+    // const body = JSON.stringify({  })
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      // body: 
+    };
+
+    try {
+
+      const response = await fetch(`${AuthService.apiURL}/api/chatPrivate/getAll-private-message`, requestOptions);
+      const historiqueMessage = await response.json()
+      if (!response.ok) throw new Error(historiqueMessage.error || "Erreur lors de la suppression des messages");
+      return historiqueMessage;
+
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+
+
+  }
+
+
+
 
 
 
