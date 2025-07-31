@@ -3,6 +3,7 @@ import express from "express";
 import { getClientTokenAndVerifAccess } from "../middlewares/getClientTokenAndVerifAccess.mjs";
 import { GroupChatController } from "../controllers/chat.group.controller.mjs";
 import multer from "multer";
+import { NavController } from "../controllers/nav.controller.mjs";
 const upload = multer();
 
 
@@ -67,6 +68,11 @@ router.get("/get-all-group-user", getClientTokenAndVerifAccess, GroupChatControl
 
 
 
+
+/**
+ * cette route permet de recuperer les membres d'un groupes dont l'id est passé en param
+ */
+router.post('/getGroupMember', getClientTokenAndVerifAccess, GroupChatController.getGroupMember)
 
 
 

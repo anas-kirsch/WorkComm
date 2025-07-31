@@ -256,5 +256,6 @@ profilPicture.belongsTo(User);
 
 
 
-
+groupMembers.belongsTo(User, { foreignKey: 'UserId' });
+User.hasMany(groupMembers, { foreignKey: 'UserId' });
 

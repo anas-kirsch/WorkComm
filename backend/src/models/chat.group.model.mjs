@@ -326,3 +326,36 @@ export async function getManyGroupName(groupeId) {
 
 }
 
+
+
+/**
+ * Récupère tous les membres d'un groupe avec uniquement leur id utilisateur
+ * @param {number} groupId
+ * @returns {Promise<Array>} Liste des ids des utilisateurs membres du groupe
+ */
+export async function getGroupMembersWithUserInfo(groupId) {
+    return await groupMembers.findAll({
+        where: { groupNameId: groupId },
+        include: [{
+            model: User,
+            attributes: ['id']
+        }],
+        attributes: []
+    });
+}
+
+
+
+
+/**
+ * Récupère les usernames pour une liste d'IDs utilisateur
+ * @param {number[]} userIds
+ * @returns {Promise<Array>} Liste des objets { id, username }
+ */
+export async function getUsernamesByIds(userIds) {
+    return await User.findAll({
+        where: { id: userIds },
+        attributes: ['id', 'username']
+    });
+}
+

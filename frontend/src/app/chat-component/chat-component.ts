@@ -1,3 +1,4 @@
+
 import { FriendsService } from '../service/friends/friends-service';
 import { Friends } from '../interfaces/user';
 import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
@@ -20,6 +21,28 @@ import { environment } from '../../environments/environment.development';
 })
 
 export class ChatComponent implements OnInit {
+  currentGroupMembers: any[] = [];
+
+  // getSenderName(msg: any): string {
+  //   if (msg.userId === this.myUserId) return 'Moi';
+  //   if (this.isGroupChatActive && this.currentGroupMembers?.length) {
+  //     const member = this.currentGroupMembers.find((m: any) => m.id === msg.userId);
+  //     return member?.username || 'Membre';
+  //   }
+  //   return this.selectedFriendUsername;
+  // }
+
+
+
+  getSenderName(msg: any): string {
+    if (msg.userId === this.myUserId) return 'Moi';
+    if (this.isGroupChatActive && this.currentGroupMembers?.length) {
+      const member = this.currentGroupMembers.find((m: any) => m.id === msg.userId);
+      return member?.username || 'Membre';
+    }
+    return this.selectedFriendUsername;
+}
+  isGroupChatActive: boolean = false;
   static apiURL = environment.apiURL;
 
   friendService = inject(FriendsService)
@@ -127,7 +150,7 @@ export class ChatComponent implements OnInit {
 
 
   action(msg: string) {
-    // console.log(msg)
+    console.log(msg)
 
     // Show the delete confirmation modal
     this.messageToDelete = msg;
@@ -297,10 +320,16 @@ export class ChatComponent implements OnInit {
 
 
   sendChatMessage(message: string) {
-    if (this.selectedFriendId && message.trim() !== "") {
+    if (this.isGroupChatActive && this.openSection) {
+      // Envoi message groupe
+      if (message.trim() !== "") {
+        this.groupService.sendGroupMessage(this.openSection, this.myUserId, message);
+        // Optionnel : ajouter le message localement pour affichage instantané
+        // this.messages = [...this.messages, { userId: this.myUserId, message }];
+      }
+    } else if (this.selectedFriendId && message.trim() !== "") {
+      // Envoi message privé
       this.socketPrivateService.sendMessage(this.myUserId, this.selectedFriendId, message);
-
-      console.log(message, this.selectedFriendId, this.conversationName)
       this.socketPrivateService.saveMessageInBdd(message, this.selectedFriendId, this.conversationName);
     }
   }
@@ -368,7 +397,6 @@ export class ChatComponent implements OnInit {
 
     try {
       await this.groupService.fetchCreateGroup(this.selectedFriendIds, this.groupName);
-      // Recharge la liste des groupes pour affichage à jour
       await this.getGroupUser();
     } catch (error) {
       console.error('Erreur lors de la création du groupe', error);
@@ -380,6 +408,71 @@ export class ChatComponent implements OnInit {
     this.createGroupAction = false;
     this.cdr.detectChanges();
   }
+
+
+
+
+
+  async startGroupChat(group: any) {
+    // Si déjà sur ce groupe, ne rien faire
+    if (this.openSection === group.id && this.isGroupChatActive) {
+      return;
+    }
+    console.log(group)
+
+    const MemberName = await this.groupService.fetchGetAllGroupMember(group.id)
+    this.currentGroupMembers = Array.isArray(MemberName) ? MemberName : [];
+    console.log("voici les membres du groupes : ", MemberName);
+
+    this.openSection = group.id;
+    this.selectedFriendId = null;
+    this.selectedFriendUsername = group.name || 'Groupe';
+    this.messages = [];
+    this.isGroupChatActive = true;
+    this.cdr.markForCheck();
+
+    try {
+      // Connecte le socket au groupe
+      this.groupService.connectSocket();
+      this.groupService.joinGroup(group.id);
+
+      // Nettoie l'ancien listener avant d'en ajouter un nouveau
+      if (this.groupService.socket) {
+        this.groupService.socket.off('group message');
+        this.groupService.socket.on('group message', (msg: any) => {
+          this.messages = [...this.messages, msg];
+          this.cdr.markForCheck();
+          setTimeout(() => {
+            const list = document.querySelector('.messages-list');
+            if (list) list.scrollTop = list.scrollHeight;
+          }, 0);
+        });
+      }
+      this.cdr.markForCheck();
+    } catch (error) {
+      console.error('Erreur lors de la connexion au chat de groupe', error);
+    }
+  }
+  // async sendChatMessage(message: string) {
+  //   // ...existing code for sending message...
+  //   // Après avoir ajouté le message dans this.messages (si applicable), scrolle en bas :
+  //   setTimeout(() => {
+  //     const list = document.querySelector('.messages-list');
+  //     if (list) list.scrollTop = list.scrollHeight;
+  //   }, 0);
+  // }
+  
+
+
+
+
+
+
+
+
+
+
+
 
 
 

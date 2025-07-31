@@ -47,7 +47,7 @@
         <ul class="sidebar-list">
           @if (groups.length > 0) {
           @for (group of groups; track group.id) {
-          <li class="sidebar-list-item">
+          <li class="sidebar-list-item" (click)="startGroupChat(group)">
             {{ group.name }}
           </li>
           }
@@ -122,25 +122,22 @@
 
     </aside>
 
-    <section class="chat-messages" *ngIf="selectedFriendId !== null">
+    <section class="chat-messages" *ngIf="selectedFriendId !== null || isGroupChatActive">
       <div class="messages-header">
         <h2 class="messages-header-title" id="chat-text">
           {{ selectedFriendUsername }}
         </h2>
       </div>
 
-
       <div class="messages-list">
         <div *ngIf="messages.length === 0" class="no-messages">
           <p>Aucun message pour l’instant.<br>Commence la conversation !</p>
         </div>
         <div *ngFor="let msg of messages; trackBy: trackByMsgId" class="message"
-          [ngClass]="{'me': msg.userId === myUserId, 'friend': msg.userId !== myUserId}"
-          (dblclick)="msg.userId === myUserId ? action(msg) : null">
-          <span class="sender">
-            {{ msg.userId === myUserId ? 'Moi' : selectedFriendUsername }}
-          </span>
-          {{ msg.message }}
+            [ngClass]="{'me': msg.userId === myUserId, 'friend': msg.userId !== myUserId}"
+            (dblclick)="msg.userId === myUserId ? action(msg) : null">
+          <div class="sender">{{ getSenderName(msg) }}</div>
+          <div class="content">{{ msg.message }}</div>
         </div>
       </div>
 
@@ -160,10 +157,10 @@
         <button class="send-btn" (click)="sendChatMessage(newMessage); newMessage=''">Envoyer</button>
       </div>
     </section>
-    @if (selectedFriendId === null) {
+    @if (selectedFriendId === null && !isGroupChatActive) {
     <section class="chat-messages">
       <div class="no-messages">
-        <p>Sélectionne un ami pour commencer à discuter.</p>
+        <p>Sélectionne un ami ou un groupe pour commencer à discuter.</p>
       </div>
     </section>
     }

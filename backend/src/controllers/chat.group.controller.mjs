@@ -18,7 +18,9 @@ import {
     findAllGroupMessagesByGroupId,
     getGroupMessages,
     getManyGroupName,
-    getAllGroupsForUser
+    getAllGroupsForUser,
+    getGroupMembersWithUserInfo,
+    getUsernamesByIds
 } from "../models/chat.group.model.mjs"
 
 export class GroupChatController {
@@ -455,6 +457,25 @@ export class GroupChatController {
 
 
 
+    /**
+     * Cette méthode statique permet de récupérer tous les membres du groupe demandé
+     */
+    static async getGroupMember(request, response) {
+        try {
+            const { groupId } = request.body;
+            if (!groupId) {
+                return response.status(400).json({ error: 'groupId requis' });
+            }
+            const members = await getGroupMembersWithUserInfo(groupId);
+            // Extraction des IDs
+            const memberIds = members.map(m => m.User.id);
+            // Récupération des usernames
+            const users = await getUsernamesByIds(memberIds);
+            return response.status(200).json(users);
+        } catch (error) {
+            return response.status(500).json({ error: error.message });
+        }
+    }
 
 
 

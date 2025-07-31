@@ -109,7 +109,7 @@ export class AuthService {
  * Récupère le token JWT, l'id utilisateur et le rôle depuis le cookie
  * @returns Objet contenant { token, id, role }
  */
-  static getAuthFromCookies(): { token: string | null, id: string | null, role: string | null } {
+  static getAuthFromCookies(): { token: string | null, id: string | null, role: string | null, username : string |null} {
     const cookies = document.cookie.split(';').reduce((acc: any, cookie) => {
       const [key, value] = cookie.trim().split('=');
       acc[key] = value;
@@ -121,13 +121,14 @@ export class AuthService {
         return {
           token: data.token || null,
           id: data.id || null,
-          role: data.role || null
+          role: data.role || null,
+          username : data.username || null
         };
       } catch {
-        return { token: null, id: null, role: null };
+        return { token: null, id: null, role: null, username :null };
       }
     }
-    return { token: null, id: null, role: null };
+    return { token: null, id: null, role: null, username : null };
   }
 
 
