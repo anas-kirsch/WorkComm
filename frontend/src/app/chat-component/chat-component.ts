@@ -23,16 +23,6 @@ import { environment } from '../../environments/environment.development';
 export class ChatComponent implements OnInit {
   currentGroupMembers: any[] = [];
 
-  // getSenderName(msg: any): string {
-  //   if (msg.userId === this.myUserId) return 'Moi';
-  //   if (this.isGroupChatActive && this.currentGroupMembers?.length) {
-  //     const member = this.currentGroupMembers.find((m: any) => m.id === msg.userId);
-  //     return member?.username || 'Membre';
-  //   }
-  //   return this.selectedFriendUsername;
-  // }
-
-
 
   getSenderName(msg: any): string {
     if (msg.userId === this.myUserId) return 'Moi';
@@ -41,7 +31,7 @@ export class ChatComponent implements OnInit {
       return member?.username || 'Membre';
     }
     return this.selectedFriendUsername;
-}
+  }
   isGroupChatActive: boolean = false;
   static apiURL = environment.apiURL;
 
@@ -162,14 +152,15 @@ export class ChatComponent implements OnInit {
     this.messageToDelete = null;
   }
 
+
   async confirmDelete(msg: any) {
     this.showDeleteModal = false;
     this.messageToDelete = null;
 
     try {
-      const confirmDelete = await this.socketPrivateService.deleteMessage(msg.id, this.conversationName);
-      console.log("confirmation de suppresion : ", confirmDelete);
-      // Si suppression réussie, on retire le message du visuel
+      // Suppression d'un message privé uniquement
+      await this.socketPrivateService.deleteMessage(msg.id, this.conversationName);
+      // Retire le message du visuel
       this.messages = this.messages.filter(m => m.id !== msg.id);
       this.cdr.detectChanges(); // Pour OnPush
     } catch (error) {
@@ -313,7 +304,7 @@ export class ChatComponent implements OnInit {
     }));
 
     this.messages = historiques;
-    this.cdr.markForCheck(); // Pour rafraîchir l'affichage si OnPush
+    this.cdr.markForCheck();
 
     console.log(historiques);
   }
@@ -324,13 +315,24 @@ export class ChatComponent implements OnInit {
       // Envoi message groupe
       if (message.trim() !== "") {
         this.groupService.sendGroupMessage(this.openSection, this.myUserId, message);
-        // Optionnel : ajouter le message localement pour affichage instantané
-        // this.messages = [...this.messages, { userId: this.myUserId, message }];
+        // Sauvegarde le message côté serveur
+        this.groupService.fetchSaveGroupMessage(message, Number(this.openSection));
+        // Scroll automatique après envoi
+        this.cdr.detectChanges();
+        setTimeout(() => {
+          const list = document.querySelector('.messages-list');
+          if (list) list.scrollTop = list.scrollHeight;
+        }, 0);
       }
     } else if (this.selectedFriendId && message.trim() !== "") {
       // Envoi message privé
       this.socketPrivateService.sendMessage(this.myUserId, this.selectedFriendId, message);
       this.socketPrivateService.saveMessageInBdd(message, this.selectedFriendId, this.conversationName);
+      // Scroll automatique après envoi
+      setTimeout(() => {
+        const list = document.querySelector('.messages-list');
+        if (list) list.scrollTop = list.scrollHeight;
+      }, 0);
     }
   }
 
@@ -420,6 +422,28 @@ export class ChatComponent implements OnInit {
     }
     console.log(group)
 
+    const getMessage = await this.groupService.fetchGetGroupMessages(group.id) as { body?: any[] };
+    console.log(getMessage)
+
+    let historiques: any[] = [];
+    if (getMessage && Array.isArray(getMessage.body)) {
+      historiques = getMessage.body.map((item: any) => {
+        const data = item.dataValues || {};
+        const msg = item.message || {};
+        return {
+          ...data,
+          userId: data.SenderId,
+          groupId: data.GroupId,
+          id: data.id,
+          createdAt: data.createdAt,
+          updatedAt: data.updatedAt,
+          message: msg.content || '',
+        };
+      });
+    }
+
+    this.messages = historiques;
+
     const MemberName = await this.groupService.fetchGetAllGroupMember(group.id)
     this.currentGroupMembers = Array.isArray(MemberName) ? MemberName : [];
     console.log("voici les membres du groupes : ", MemberName);
@@ -427,7 +451,7 @@ export class ChatComponent implements OnInit {
     this.openSection = group.id;
     this.selectedFriendId = null;
     this.selectedFriendUsername = group.name || 'Groupe';
-    this.messages = [];
+    // Ne pas vider this.messages ici, sinon l'historique disparait !
     this.isGroupChatActive = true;
     this.cdr.markForCheck();
 
@@ -453,15 +477,6 @@ export class ChatComponent implements OnInit {
       console.error('Erreur lors de la connexion au chat de groupe', error);
     }
   }
-  // async sendChatMessage(message: string) {
-  //   // ...existing code for sending message...
-  //   // Après avoir ajouté le message dans this.messages (si applicable), scrolle en bas :
-  //   setTimeout(() => {
-  //     const list = document.querySelector('.messages-list');
-  //     if (list) list.scrollTop = list.scrollHeight;
-  //   }, 0);
-  // }
-  
 
 
 

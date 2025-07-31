@@ -194,7 +194,8 @@ export class PrivateChatController {
     static async deletePrivateMessage(request, response) {
         try {
             const userId = request.user.id;
-            const { messageId, conversationName } = request.body;
+            // const { messageId, conversationName } = request.body;
+              const {messageId, conversationName } = request.params;
 
             if (!userId || !messageId || !conversationName) {
                 return response.status(400).json({ error: "Erreur données manquantes." });

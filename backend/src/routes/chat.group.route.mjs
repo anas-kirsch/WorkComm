@@ -49,7 +49,7 @@ router.put("/update-group-message", getClientTokenAndVerifAccess, GroupChatContr
 /**
  * cette route permet à un utilisateur de supprimer un de ses messages envoyé dans un groupe
  */
-router.delete("/delete-group-message",  upload.none(), getClientTokenAndVerifAccess, GroupChatController.deleteGroupMessage);
+router.delete("/delete-group-message/:messageId/:groupId",  upload.none(), getClientTokenAndVerifAccess, GroupChatController.deleteGroupMessage);
 
 
 

@@ -116,7 +116,7 @@ export class GroupeService {
    * @param groupId 
    * @returns 
    */
-  fetchGetAllGroupMember(groupId : number) {
+  fetchGetAllGroupMember(groupId: number) {
     const tokenHeader = this.authService.insertTokeninHeader();
     const myHeaders = new Headers();
     if (tokenHeader.Authorization) {
@@ -127,7 +127,7 @@ export class GroupeService {
     const requestOptions: RequestInit = {
       method: "POST",
       headers: myHeaders,
-      body: JSON.stringify({groupId})
+      body: JSON.stringify({ groupId })
     };
 
     return new Promise((resolve, reject) => {
@@ -139,8 +139,104 @@ export class GroupeService {
         .catch(error => reject(error));
     });
 
+  }
+
+
+  /**
+   * cette fonction permet de requeter le backend pour ajouter les messages de groupes dans l'historique 
+   */
+  fetchSaveGroupMessage(messageContent: string, groupId: number) {
+
+    const tokenHeader = this.authService.insertTokeninHeader();
+    const myHeaders = new Headers();
+    if (tokenHeader.Authorization) {
+      myHeaders.append("Authorization", tokenHeader.Authorization);
+    }
+    myHeaders.append("Content-Type", "application/json");
+
+    const requestOptions: RequestInit = {
+      method: "POST",
+      headers: myHeaders,
+      body: JSON.stringify({ messageContent, groupId })
+    };
+
+    return new Promise((resolve, reject) => {
+      fetch(`${this.apiURL}/api/chatGroup/send-group-message`, requestOptions)
+        .then(data => data.json())
+        .then(data => {
+          resolve(data);
+        })
+        .catch(error => reject(error));
+    });
 
   }
+
+
+
+
+
+
+  /**
+   * Cette fonction permet de supprimer un message de groupe 
+   * @param messageId 
+   * @param groupId 
+   * @returns 
+   */
+  fetchDeleteGroupMessage(messageId: number, groupId: number) {
+    const tokenHeader = this.authService.insertTokeninHeader();
+    const myHeaders = new Headers();
+    if (tokenHeader.Authorization) {
+      myHeaders.append("Authorization", tokenHeader.Authorization);
+    }
+    // Pas besoin de Content-Type car pas de body
+
+    const requestOptions: RequestInit = {
+      method: "DELETE",
+      headers: myHeaders
+    };
+
+    return new Promise((resolve, reject) => {
+      fetch(`${this.apiURL}/api/chatGroup/delete-group-message/${messageId}/${groupId}`, requestOptions)
+        .then(data => data.json())
+        .then(data => {
+          resolve(data);
+        })
+        .catch(error => reject(error));
+    });
+  }
+
+
+
+  fetchGetGroupMessages(groupId: number) {
+
+    const tokenHeader = this.authService.insertTokeninHeader();
+    const myHeaders = new Headers();
+    if (tokenHeader.Authorization) {
+      myHeaders.append("Authorization", tokenHeader.Authorization);
+    }
+    myHeaders.append("Content-Type", "application/json");
+
+    const requestOptions: RequestInit = {
+      method: "POST",
+      headers: myHeaders,
+      body: JSON.stringify({ groupId })
+    };
+
+    return new Promise((resolve, reject) => {
+      fetch(`${this.apiURL}/api/chatGroup/getAll-group-message`, requestOptions)
+        .then(data => data.json())
+        .then(data => {
+          resolve(data);
+        })
+        .catch(error => reject(error));
+    });
+
+
+
+  }
+
+
+
 
 
 

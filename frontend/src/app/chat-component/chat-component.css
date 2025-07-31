@@ -228,6 +228,9 @@ h2 {
   cursor: pointer;
   font-family: "roboto", 'Times New Roman', Times, serif;
   font-size: 1.05rem;
+
+  display: flex;
+  padding: 10px;
 }
 
 .sidebar-list-item img {

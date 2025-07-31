@@ -114,46 +114,72 @@ export class SocketPrivateService {
 
 
 
-  /**
-   * cette fonction envoie une requete vers le backend pour supprimer un message passé en parametre 
-   * @param messageId 
-   * @param conversationName 
-   * @returns 
-   */
+  // /**
+  //  * cette fonction envoie une requete vers le backend pour supprimer un message passé en parametre 
+  //  * @param messageId 
+  //  * @param conversationName 
+  //  * @returns 
+  //  */
+  // async deleteMessage(messageId: number, conversationName: string) {
+
+  //   const tokenHeader = this.authService.insertTokeninHeader();
+
+  //   const myHeaders = new Headers();
+  //   if (tokenHeader.Authorization) {
+  //     myHeaders.append("Authorization", tokenHeader.Authorization);
+  //   }
+  //   myHeaders.append("Content-Type", "application/json");
+
+  //   const body = JSON.stringify({ messageId, conversationName })
+  //   const requestOptions = {
+  //     method: "DELETE",
+  //     headers: myHeaders,
+  //     body: body
+  //   };
+
+  //   try {
+  //     const response = await fetch(`${AuthService.apiURL}/api/chatPrivate/delete-private-message`, requestOptions);
+  //     const confirmDelete = await response.json()
+  //     if (!response.ok) throw new Error(confirmDelete.error || "Erreur lors de la suppression du message");
+  //     return confirmDelete;
+
+  //   } catch (error) {
+  //     console.error(error);
+  //     throw error;
+  //   }
+
+
+  // }
+
+
+
   async deleteMessage(messageId: number, conversationName: string) {
+  const tokenHeader = this.authService.insertTokeninHeader();
 
-    const tokenHeader = this.authService.insertTokeninHeader();
-
-    const myHeaders = new Headers();
-    if (tokenHeader.Authorization) {
-      myHeaders.append("Authorization", tokenHeader.Authorization);
-    }
-    myHeaders.append("Content-Type", "application/json");
-
-    const body = JSON.stringify({ messageId, conversationName })
-    const requestOptions = {
-      method: "DELETE",
-      headers: myHeaders,
-      body: body
-    };
-
-    try {
-      const response = await fetch(`${AuthService.apiURL}/api/chatPrivate/delete-private-message`, requestOptions);
-      const confirmDelete = await response.json()
-      if (!response.ok) throw new Error(confirmDelete.error || "Erreur lors de la suppression du message");
-      return confirmDelete;
-
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-
-
+  const myHeaders = new Headers();
+  if (tokenHeader.Authorization) {
+    myHeaders.append("Authorization", tokenHeader.Authorization);
   }
+  // Pas besoin de Content-Type ni de body pour un DELETE avec params
 
+  const requestOptions = {
+    method: "DELETE",
+    headers: myHeaders
+  };
 
-
-
+  try {
+    const response = await fetch(
+      `${AuthService.apiURL}/api/chatPrivate/delete-private-message/${messageId}/${conversationName}`,
+      requestOptions
+    );
+    const confirmDelete = await response.json();
+    if (!response.ok) throw new Error(confirmDelete.error || "Erreur lors de la suppression du message");
+    return confirmDelete;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
 
 
 

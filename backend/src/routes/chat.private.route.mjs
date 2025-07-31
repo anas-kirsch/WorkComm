@@ -28,7 +28,7 @@ router.put("/update-private-message", getClientTokenAndVerifAccess, PrivateChatC
 /**
  * cette router permet à un utilisateur de supprimer un message avec actualisation en BDD
  */
-router.delete("/delete-private-message",upload.none(), getClientTokenAndVerifAccess, PrivateChatController.deletePrivateMessage);
+router.delete("/delete-private-message/:messageId/:conversationName",upload.none(), getClientTokenAndVerifAccess, PrivateChatController.deletePrivateMessage);
 
 
 

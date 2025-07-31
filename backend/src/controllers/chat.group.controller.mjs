@@ -330,7 +330,7 @@ export class GroupChatController {
     static async deleteGroupMessage(request, response) {
         try {
             const userId = request.user.id;
-            const { messageId, groupId } = request.body;
+            const { messageId, groupId } = request.params;
 
             if (!userId || !messageId || !groupId) {
                 return response.status(400).json({ error: "Erreur données manquantes." });
@@ -369,57 +369,126 @@ export class GroupChatController {
 
 
 
-    /**
-     * cette methode static permet de recuperer tout les messages d'un groupe, renvoie un array[] vide si aucun message
-     */
+    // /**
+    //  * cette methode static permet de recuperer tout les messages d'un groupe, renvoie un array[] vide si aucun message
+    //  */
+    // static async getAllGroupMessages(request, response) {
+    //     try {
+    //         const userId = request.user.id;
+    //         const { groupId } = request.body;
+
+    //         if (!userId || !groupId) {
+    //             return response.status(400).json({ error: "Erreur données manquantes." })
+    //         } else {
+    //             const isUserInGroupe = await isUserInGroup(groupId, userId);
+
+    //             if (!isUserInGroupe) {
+    //                 return response.status(400).json({
+    //                     error: `le user ${userId} n'est pas membre du groupe`
+    //                 })
+    //             }
+
+    //             if (isUserInGroupe) {
+    //                 const getAllReferenced = await findAllGroupMessagesByGroupId(groupId);
+
+    //                 if (!getAllReferenced || getAllReferenced.length === 0) {
+    //                     return response.status(200).json({
+    //                         message: "aucun message dans l'historique, commencez à chatter.",
+    //                         body: []
+    //                     });
+    //                 } else {
+    //                     // Récupère les IDs des messages
+    //                     const messageIds = getAllReferenced.map(ref => ref.MessageID);
+    //                     console.log("ID :", messageIds)
+
+    //                     // Récupère tous les messages d'un coup
+    //                     const getMessageContent = await getGroupMessages(messageIds);
+
+    //                     return response.status(200).json({
+    //                         message: "Voici votre historique",
+    //                         body: {
+    //                             getAllReferenced,
+    //                             getMessageContent,
+    //                         }
+    //                     })
+    //                 }
+    //             }
+    //         }
+    //     } catch (error) {
+    //         console.error(error);
+    //         response.status(500).json({ error: "Erreur serveur" });
+    //     }
+
+    // }
+
+
     static async getAllGroupMessages(request, response) {
         try {
             const userId = request.user.id;
             const { groupId } = request.body;
 
             if (!userId || !groupId) {
-                return response.status(400).json({ error: "Erreur données manquantes." })
-            } else {
-                const isUserInGroupe = await isUserInGroup(groupId, userId);
-
-                if (!isUserInGroupe) {
-                    return response.status(400).json({
-                        error: `le user ${userId} n'est pas membre du groupe`
-                    })
-                }
-
-                if (isUserInGroupe) {
-                    const getAllReferenced = await findAllGroupMessagesByGroupId(groupId);
-
-                    if (!getAllReferenced || getAllReferenced.length === 0) {
-                        return response.status(200).json({
-                            message: "aucun message dans l'historique, commencez à chatter.",
-                            body: []
-                        });
-                    } else {
-                        // Récupère les IDs des messages
-                        const messageIds = getAllReferenced.map(ref => ref.MessageID);
-                        console.log("ID :", messageIds)
-
-                        // Récupère tous les messages d'un coup
-                        const getMessageContent = await getGroupMessages(messageIds);
-
-                        return response.status(200).json({
-                            message: "Voici votre historique",
-                            body: {
-                                getAllReferenced,
-                                getMessageContent,
-                            }
-                        })
-                    }
-                }
+                return response.status(400).json({ error: "Erreur données manquantes." });
             }
+
+            const isUserInGroupe = await isUserInGroup(groupId, userId);
+
+            if (!isUserInGroupe) {
+                return response.status(400).json({
+                    error: `le user ${userId} n'est pas membre du groupe`
+                });
+            }
+
+            const getAllReferenced = await findAllGroupMessagesByGroupId(groupId);
+
+            if (!getAllReferenced || getAllReferenced.length === 0) {
+                return response.status(200).json({
+                    message: "aucun message dans l'historique, commencez à chatter.",
+                    body: []
+                });
+            }
+
+            // Récupère les IDs des messages
+            const messageIds = getAllReferenced.map(ref => ref.MessageID);
+
+            // Récupère tous les messages d'un coup
+            const getMessageContent = await getGroupMessages(messageIds);
+
+            // Fusionne les références et le contenu des messages
+            const mergedMessages = getAllReferenced.map(ref => {
+                const msg = getMessageContent.find(m => m.id === ref.MessageID);
+                return {
+                    ...ref,
+                    message: msg ? {
+                        id: msg.id,
+                        content: msg.content,
+                        createdAt: msg.createdAt,
+                        updatedAt: msg.updatedAt
+                    } : null
+                };
+            });
+
+            return response.status(200).json({
+                message: "Voici votre historique",
+                body: mergedMessages
+            });
+
         } catch (error) {
             console.error(error);
             response.status(500).json({ error: "Erreur serveur" });
         }
-
     }
+
+
+
+
+
+
+
+
+
+
+
 
 
     /**

@@ -67,11 +67,11 @@
         <ul class="sidebar-list">
           @for (request of friendRequests; track request.id) {
           <li class="sidebar-list-item" style="display: flex; align-items: center; justify-content: space-between;">
-            <div style="display: flex; align-items: center;">
+            <div style="display: flex; align-items: center; min-width:0;">
               <img *ngIf="request.imagePath?.imagePath" [src]="request.imagePath.imagePath" alt="Photo de profil"
                 class="profile-picture" width="28" height="28"
                 style="border-radius:50%;margin-right:8px;vertical-align:middle;" />
-              {{ request.username }}
+              <span style="max-width:110px; display:inline-block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; vertical-align:middle;">{{ request.username }}</span>
             </div>
             <div>
               <button class="btn-accept" (click)="acceptRequest(request.id)">Accepter</button>
@@ -133,16 +133,15 @@
         <div *ngIf="messages.length === 0" class="no-messages">
           <p>Aucun message pour l’instant.<br>Commence la conversation !</p>
         </div>
-        <div *ngFor="let msg of messages; trackBy: trackByMsgId" class="message"
-            [ngClass]="{'me': msg.userId === myUserId, 'friend': msg.userId !== myUserId}"
-            (dblclick)="msg.userId === myUserId ? action(msg) : null">
+        <div *ngFor="let msg of messages; trackBy: trackByMsgId"
+             class="message"
+             [ngClass]="{'me': msg.userId === myUserId, 'friend': msg.userId !== myUserId, 'right': msg.userId === myUserId, 'left': msg.userId !== myUserId}">
           <div class="sender">{{ getSenderName(msg) }}</div>
           <div class="content">{{ msg.message }}</div>
         </div>
       </div>
 
-      <!-- Delete confirmation modal -->
-      <div *ngIf="showDeleteModal" class="modal-overlay">
+        <div *ngIf="showDeleteModal" class="modal-overlay">
         <div class="modal-content">
           <p>Confirmer la suppression du message ?</p>
           <div class="modal-actions">
@@ -193,13 +192,5 @@
     </div>
 
     }
-
-
-
-
-
-
-
-
   </section>
 </main>
