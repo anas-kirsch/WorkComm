@@ -19,7 +19,7 @@ export class HeaderConnectedComponent {
   authService = inject(AuthService);
   isAuthenticated = AuthService.isConnected();
 
-  
+
   constructor() {
     if (this.isAuthenticated) {
       this.authService.isConnected = true;
@@ -27,7 +27,7 @@ export class HeaderConnectedComponent {
 
   }
 
-   accueil(){
+  accueil() {
     this.router.navigate([""]);
   }
 
@@ -38,7 +38,11 @@ export class HeaderConnectedComponent {
   }
 
 
-  
+  tarifs() {
+    this.router.navigate(["tarifs"]);
+  }
+
+
   deconnexion() {
     // document.cookie = "auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=None; Secure";
     document.cookie = "auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
@@ -51,17 +55,21 @@ export class HeaderConnectedComponent {
   }
 
 
-  showProfil(){
+  showProfil() {
     // const data = this.getUserData();
     // console.log(data)
     this.router.navigate(["profil"]);
   }
 
-  goChat(){
+  goChat() {
 
     this.router.navigate(["chat"]);
   }
 
+
+  contact() {
+    this.router.navigate(["contact"])
+  }
 
 
 

@@ -1,0 +1,113 @@
+.contact-main {
+  min-height: 73.8vh;
+  background: linear-gradient(120deg, #18181b 0%, #23232a 60%, #0f0f0f 100%);
+  color: #e5e7eb;
+  padding: 0 0 32px 0;
+  overflow-y: auto;
+  font-family: 'Inter', 'Roboto', sans-serif;
+  box-sizing: border-box;
+}
+
+.contact-hero {
+  padding: 48px 0 32px 0;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(139,92,246,0.12) 0%, rgba(168,85,247,0.08) 100%);
+  border-radius: 18px;
+  margin: 32px auto 24px auto;
+  max-width: 900px;
+  box-shadow: 0 4px 24px rgba(139, 92, 246, 0.08);
+}
+
+.contact-hero h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #8B5CF6 0%, #a855f7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 18px;
+  letter-spacing: 2px;
+}
+
+.contact-form {
+  max-width: 500px;
+  margin: 0 auto;
+  background: rgba(139, 92, 246, 0.07);
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(139, 92, 246, 0.08);
+  padding: 32px 24px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  box-sizing: border-box;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.form-group label {
+  margin-bottom: 6px;
+  color: #cfcfff;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1.5px solid #23232a;
+  background: #23232a;
+  color: #e5e7eb;
+  font-size: 1rem;
+  margin-bottom: 2px;
+  outline: none;
+  transition: box-shadow 0.2s, border 0.2s;
+  box-sizing: border-box;
+}
+
+.form-group textarea {
+  max-height: 220px;
+  min-height: 90px;
+  resize: vertical;
+  max-width: 100%;
+  background: #23232a;
+}
+.form-group input:focus,
+.form-group textarea:focus {
+  box-shadow: 0 0 0 2px #8B5CF6;
+  border: 1.5px solid #8B5CF6;
+}
+
+.cta {
+  padding: 12px 32px;
+  border-radius: 12px;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(90deg, #8B5CF6 0%, #a855f7 100%);
+  color: #fff;
+  box-shadow: 0 2px 12px rgba(139, 92, 246, 0.15);
+  transition: background 0.2s, transform 0.2s;
+  letter-spacing: 1px;
+  margin-top: 10px;
+  align-self: center;
+  min-width: 180px;
+}
+.cta:hover {
+  background: linear-gradient(90deg, #a855f7 0%, #450881 100%);
+  transform: translateY(-2px) scale(1.04);
+}
+
+@media (max-width: 600px) {
+  .contact-form {
+    padding: 18px 4vw;
+  }
+  .contact-hero {
+    padding: 24px 4vw 18px 4vw;
+  }
+}

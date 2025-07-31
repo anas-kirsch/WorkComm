@@ -12,6 +12,8 @@ import { Component } from '@angular/core';
 import { ProfilComponent } from './profil-component/profil-component';
 import { ChatComponent } from './chat-component/chat-component';
 import { ProfilUsersComponent } from './profil-users-component/profil-users-component';
+import { TarifsComponent } from '../tarifs-component/tarifs-component';
+import { ContactComponent } from '../contact-component/contact-component';
 
 
 
@@ -26,6 +28,8 @@ export const routes: Routes = [
     { path: "profil", component: ProfilComponent, canActivate: [AuthGuard] },
     { path: "chat", component: ChatComponent, canActivate: [AuthGuard] },
     // { path: "user", component: ProfilUsersComponent, canActivate: [AuthGuard]  }
-    { path: "user/:username", component: ProfilUsersComponent, canActivate: [AuthGuard] }
+    { path: "user/:username", component: ProfilUsersComponent, canActivate: [AuthGuard] },
+    { path: "tarifs", component: TarifsComponent},
+    { path: "contact", component: ContactComponent}
 
 ]

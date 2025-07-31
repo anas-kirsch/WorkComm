@@ -23,5 +23,14 @@ export class HeaderComponent {
   }
 
 
+  tarifs(){
+    this.router.navigate(["tarifs"]);
+  }
+
+  contact(){
+    this.router.navigate(["contact"])
+  }
+
+
 }
  

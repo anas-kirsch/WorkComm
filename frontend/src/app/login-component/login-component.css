@@ -1,3 +1,19 @@
+.signup-invite {
+  margin-top: 28px;
+  text-align: center;
+  font-size: 1.08rem;
+  color: #cfcfff;
+  cursor: pointer;
+}
+.signup-invite a {
+  color: #8B5CF6;
+  text-decoration: underline;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+.signup-invite a:hover {
+  color: #a855f7;
+}
 main {
     min-height: 80vh;
     display: flex;

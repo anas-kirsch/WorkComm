@@ -30,6 +30,11 @@ export class LoginComponent {
 
   })
 
+
+  goInscription(){
+    this.router.navigate(["inscription"])
+  }
+
   onSubmitConnexion() {
     if (this.form.invalid) {
       return;
