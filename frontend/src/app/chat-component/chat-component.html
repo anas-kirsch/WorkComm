@@ -170,23 +170,17 @@
 
 
     <!-- creation de groupe -->
-
-
     @if (createGroupAction == true) {
 
     <div class="modal-overlay">
       <div class="modal-content2">
         <p class="message-new-groupe">Ajouter des amis au nouveau groupe</p>
-
-        <input type="text" class="input-groupe-name">
-
+        <input type="text" class="input-groupe-name" [(ngModel)]="groupName" required [attr.minlength]="1">
 
         <div class="friend-list">
           @for (friend of userFriend; track friend.id) {
-          <p class="one-friend">
-            <!-- <img *ngIf="friend.imagePath?.imagePath" [src]="friend.imagePath.imagePath" alt="Photo de profil"
-              class="profile-picture" width="32" height="32"
-              style="border-radius:50%;margin-right:12px;vertical-align:middle;" /> -->
+          <p (click)="toggleFriendSelection(friend.id)" class="one-friend"
+            [class.selected]="selectedFriendIds.includes(friend.id)">
             {{ friend.username }}
           </p>
           }
@@ -194,9 +188,10 @@
 
         <div class="container-button-choice">
           <button class="cancel-confirm" (click)="cancelGroupCreation()">Annuler</button>
-          <button class="cancel-confirm"> Confirmer</button>
-
+          <button class="cancel-confirm" (click)="confirmGroupCreation()" [disabled]="!groupName || groupName.trim().length === 0">Confirmer</button>
         </div>
+
+        
       </div>
     </div>
 

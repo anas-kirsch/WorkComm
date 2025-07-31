@@ -157,7 +157,6 @@ export class ChatComponent implements OnInit {
 
 
 
-
   refuseRequest(friendId: number) {
     if (!friendId) return;
     this.friendService.respondToFriendRequest(friendId, "refuse")
@@ -320,8 +319,6 @@ export class ChatComponent implements OnInit {
 
 
 
-  
-
   async createGroup() {
     this.createGroupAction = true;
     try {
@@ -342,6 +339,48 @@ export class ChatComponent implements OnInit {
     this.createGroupAction = false;
     this.cdr.detectChanges();
   }
+
+
+  selectedFriendIds: number[] = [];
+  groupName: string = '';
+
+  toggleFriendSelection(friendId: number) {
+    const idx = this.selectedFriendIds.indexOf(friendId);
+    if (idx > -1) {
+      this.selectedFriendIds.splice(idx, 1);
+    } else {
+      this.selectedFriendIds.push(friendId);
+    }
+  }
+
+
+  async confirmGroupCreation() {
+    // Ajoute l'id de l'utilisateur courant (depuis le cookie) dans le tableau si absent
+    const auth = AuthService.getAuthFromCookies();
+    if (auth && auth.id) {
+      const myId = Number(auth.id);
+      if (!this.selectedFriendIds.includes(myId)) {
+        this.selectedFriendIds.push(myId);
+      }
+    }
+    console.log('Nom du groupe:', this.groupName);
+    console.log('Utilisateurs sélectionnés:', this.selectedFriendIds);
+
+    try {
+      await this.groupService.fetchCreateGroup(this.selectedFriendIds, this.groupName);
+      // Recharge la liste des groupes pour affichage à jour
+      await this.getGroupUser();
+    } catch (error) {
+      console.error('Erreur lors de la création du groupe', error);
+    }
+
+    // Reset input and selection
+    this.groupName = '';
+    this.selectedFriendIds = [];
+    this.createGroupAction = false;
+    this.cdr.detectChanges();
+  }
+
 
 
 }

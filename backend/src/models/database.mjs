@@ -143,7 +143,7 @@ export const groupName = sequelize.define("groupName", {
     group_name: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true
+        // unique: true
     }
 
 })

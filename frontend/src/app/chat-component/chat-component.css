@@ -1,3 +1,10 @@
+/* Highlight selected friend in group creation modal */
+.one-friend.selected {
+  background: #8B5CF6;
+  color: #fff;
+  border-radius: 8px;
+  font-weight: bold;
+}
 /* --- Modal for delete confirmation --- */
 .modal-overlay {
   position: fixed;

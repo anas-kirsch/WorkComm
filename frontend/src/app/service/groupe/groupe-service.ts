@@ -47,6 +47,36 @@ export class GroupeService {
 
 
 
+  /**
+   * Crée un groupe avec les utilisateurs sélectionnés et le nom du groupe
+   * @param usersArray tableau d'IDs utilisateurs
+   * @param newGroupName nom du groupe
+   * @returns Promise<any>
+   */
+  fetchCreateGroup(usersArray: number[], newGroupName: string): Promise<any> {
+    const tokenHeader = this.authService.insertTokeninHeader();
+    const myHeaders = new Headers();
+    if (tokenHeader.Authorization) {
+      myHeaders.append("Authorization", tokenHeader.Authorization);
+    }
+    myHeaders.append("Content-Type", "application/json");
+
+    const requestOptions: RequestInit = {
+      method: "POST",
+      headers: myHeaders,
+      body: JSON.stringify({ usersArray, newGroupName })
+    };
+
+    return new Promise((resolve, reject) => {
+      fetch(`${this.apiURL}/api/chatGroup/group-chat`, requestOptions)
+        .then(data => data.json())
+        .then(data => {
+          resolve(data);
+        })
+        .catch(error => reject(error));
+    });
+  }
+
 
 
 
