@@ -4,6 +4,12 @@
     <p>Une question, une suggestion ou un souci ? Remplissez le formulaire ci-dessous, nous vous répondrons rapidement.</p>
   </section>
   <form class="contact-form" (ngSubmit)="onSubmitContact()" #contactForm="ngForm">
+    @if (showSuccess) {
+      <div class="success-message">Votre message a bien été envoyé !</div>
+    }
+    @if (showError) {
+      <div class="error-message">{{ errorMsg }}</div>
+    }
     <div class="form-group">
       <label for="email">Votre email</label>
       <input type="email" id="email" name="email" [(ngModel)]="email" required autocomplete="email" />

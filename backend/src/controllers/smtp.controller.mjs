@@ -139,3 +139,126 @@ L'équipe WorkComm`,
 
     return send;
 }
+
+
+
+
+
+
+// /**
+//  * cette fonction envoie une mail contenant les objets passés en param, à l'aide du protocol smtp
+//  * @param {string} email 
+//  * @param {string} subject 
+//  * @param {string} message 
+//  */
+// export async function contactMail(email, subject, message){
+
+
+
+
+
+
+// }
+
+
+
+
+
+/**
+ * cette fonction prend le body de la requete et le transmet a contactMail
+ * @param {*} request 
+ * @param {*} response 
+ * @returns 
+ */
+export async function getMailContent(request, response) {
+    try {
+        const { email, subject, message } = request.body;
+        console.log(email, subject, message);
+
+        if (!email, !subject, !message) {
+            return response.status(400).json({ error: "contenu incomplet" })
+        }
+        else {
+            const sended = await contactMail(email, subject, message);
+            if (sended) {
+                return response.status(200).json("email envoyé avec succès.")
+            }
+        }
+    } catch (error) {
+        console.error(error);
+        return response.status(500).json({ error: "Erreur serveur lors de la vérification du contenu du mail." });
+    }
+}
+
+
+
+
+
+
+
+
+export async function contactMail(email, subject, message) {
+    const transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        auth: {
+            user: "workcomm831@gmail.com",
+            pass: "khbb kbfs qwou srjk "
+        }
+    });
+
+    const send = await transporter.sendMail({
+        from: `"Client WorkComm" <${email}>`,
+        to: "workcomm831@gmail.com",
+        subject: `[Contact WorkComm] ${subject}`,
+        text: `Nouveau message de contact WorkComm
+
+De : ${email}
+Sujet : ${subject}
+
+Message :
+${message}
+        `,
+        html: `
+            <div style="font-family: 'Inter', 'Roboto', Arial, sans-serif; background: linear-gradient(120deg, #18181b 0%, #23232a 60%, #0f0f0f 100%); min-height: 100%; padding: 0; margin: 0;">
+                <div style="max-width: 520px; margin: 32px auto; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.45); border: 1px solid rgba(139, 92, 246, 0.3);">
+                    <div style="background: linear-gradient(120deg, #8B5CF6 0%, #a855f7 100%); padding: 24px 32px; display: flex; align-items: center;">
+                        <h1 style="
+                            font-family: 'Inter', 'Roboto', Arial, sans-serif;
+                            font-size: 1.5rem;
+                            font-weight: 700;
+                            margin: 0;
+                            color: #fff;
+                            letter-spacing: 2px;
+                            background: linear-gradient(135deg, #8B5CF6 0%, #a855f7 50%, #c084fc 100%);
+                            -webkit-background-clip: text;
+                            -webkit-text-fill-color: transparent;
+                            background-clip: text;
+                            text-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
+                        ">
+                            Nouveau message de contact WorkComm
+                        </h1>
+                    </div>
+                    <div style="background: #23232a; padding: 32px; color: #cfcfff;">
+                        <p style="font-size: 1.1rem; margin-bottom: 18px;">
+                            <b style="color:#8B5CF6;">De :</b> ${email}
+                        </p>
+                        <p style="margin-bottom: 18px;">
+                            <b style="color:#a855f7;">Sujet :</b> ${subject}
+                        </p>
+                        <div style="margin: 24px 0; padding: 18px; background: #18181b; border-radius: 10px; color: #e5e7eb;">
+                            <b style="color:#c084fc;">Message :</b>
+                            <p style="white-space:pre-line; margin-top: 10px;">${message}</p>
+                        </div>
+                        <div style="margin: 32px 0 0 0; border-top: 1px solid rgba(139, 92, 246, 0.2); padding-top: 18px;">
+                            <p style="font-size: 0.95rem; color: #888;">Ce message a été envoyé depuis le formulaire de contact WorkComm.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+    });
+
+    return send;
+}

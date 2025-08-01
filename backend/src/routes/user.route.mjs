@@ -4,6 +4,7 @@ import {UserController} from "../controllers/user.controller.mjs"
 import { getClientTokenAndVerifAccess } from "../middlewares/getClientTokenAndVerifAccess.mjs";
 import multer from "multer";
 import { User } from "../models/database.mjs";
+import { contactMail, getMailContent } from "../controllers/smtp.controller.mjs";
 const upload = multer();
 
 const router = express.Router();
@@ -79,6 +80,14 @@ router.post("/checkFriendRequestStatus", getClientTokenAndVerifAccess, UserContr
  * cette route permet à un utilisateur de récuperer toute les demandes d'amis qu'il à envoyer encore en attente 
  */
 router.get("/getPendingSentFriendRequests", getClientTokenAndVerifAccess, UserController.getPendingSentFriendRequests);
+
+
+
+
+/**
+ * cette route recupere le contenu d'un formulaire du frontend pour l'envoyer par mail à l'aide du protocol smtp
+ */
+router.post("/contact", getMailContent);
 
 
 
