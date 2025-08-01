@@ -1,5 +1,5 @@
 import { userInfo } from "os";
-import { DataTypes, ENUM, Model, Sequelize } from "sequelize";
+import { BOOLEAN, DataTypes, ENUM, Model, Sequelize } from "sequelize";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 import { group } from "console";
@@ -43,6 +43,10 @@ export const User = sequelize.define("User", {
         allowNull: false,
         defaultValue: "user",
 
+    },
+    premium :  {
+        type : DataTypes.BOOLEAN,
+        defaultValue : false
     },
     password: {
         type: DataTypes.STRING,

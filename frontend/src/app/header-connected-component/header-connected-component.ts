@@ -50,6 +50,7 @@ export class HeaderConnectedComponent {
     this.authService.isConnected = false;
     console.log("Cookie 'auth' supprimé");
     this.router.navigate([""]);
+    localStorage.clear();
 
 
   }

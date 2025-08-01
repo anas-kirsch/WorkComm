@@ -18,6 +18,8 @@ import authRouter from "../routes/auth.route.mjs"
 import chatGroupRouter from "../routes/chat.group.route.mjs"
 import chatPrivateRouter from "../routes/chat.private.route.mjs"
 import navRouter from "../routes/nav.route.mjs"
+import paiementRouter from "../routes/paiement.route.mjs";
+
 
 import path from "path";
 import { fileURLToPath } from "url";
@@ -55,6 +57,7 @@ export function runServer(sequelize) {
     app.use("/api/chatGroup", chatGroupRouter);//ok
     app.use("/api/chatPrivate", chatPrivateRouter);//ok
     app.use("/api/nav", navRouter);
+    app.use("/api/paiement", paiementRouter )
 
         app.listen(port, "0.0.0.0", () => {
         console.log(`Server listen on port ${port}`)

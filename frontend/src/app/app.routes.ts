@@ -31,5 +31,6 @@ export const routes: Routes = [
     { path: "user/:username", component: ProfilUsersComponent, canActivate: [AuthGuard] },
     { path: "tarifs", component: TarifsComponent},
     { path: "contact", component: ContactComponent}
+    
 
 ]
