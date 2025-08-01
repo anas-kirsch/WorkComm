@@ -1,0 +1,196 @@
+<main class="chat-main">
+  <section class="chat-search-bar">
+    <input class="chat-search-input" (input)="onInput($event)" type="text"
+      placeholder="Rechercher un utilisateur ..." />
+    <button class="chat-search-btn">Rechercher</button>
+  </section>
+
+  @if (foundUsers.length > 0) {
+  <div class="search-results">
+    @for (user of foundUsers; track user.id) {
+    <p class="search-results-item" (click)="friendService.showUserProfil(user)">
+      {{ user.username }}
+    </p>
+    }
+  </div>
+  } @else {
+  <div class="search-results"></div>
+  }
+
+  <section class="chat-content">
+    <aside class="chat-sidebar">
+      <div class="sidebar-section" [class.open]="openSection === 'amis'">
+        <div class="sidebar-header" (click)="openSection = openSection === 'amis' ? null : 'amis'">
+          <span>Mes amis</span>
+          <span class="arrow" [class.down]="openSection === 'amis'">&#9660;</span>
+        </div>
+        @if (openSection === 'amis') {
+        <ul class="sidebar-list">
+          @for (friend of myFriends; track friend.id) {
+          <!-- <li class="sidebar-list-item" (click)="startPrivateChat(friend.id)"> -->
+          <li class="sidebar-list-item" (click)="startPrivateChat(friend.id)">
+            <img *ngIf="getFriendImage(friend)" [src]="getFriendImage(friend)" alt="Photo" width="32" height="32"
+              style="border-radius:50%;margin-right:8px;">
+            {{ friend.username }}
+          </li>
+          }
+        </ul>
+        }
+      </div>
+
+      <div class="sidebar-section" [class.open]="openSection === 'groupes'">
+        <div class="sidebar-header" (click)="openSection = openSection === 'groupes' ? null : 'groupes'">
+          <span>Mes groupes</span>
+          <span class="arrow" [class.down]="openSection === 'groupes'">&#9660;</span>
+        </div>
+        @if (openSection === 'groupes') {
+        <ul class="sidebar-list">
+          @if (groups.length > 0) {
+          @for (group of groups; track group.id) {
+          <li class="sidebar-list-item" (click)="startGroupChat(group)">
+            {{ group.name }}
+          </li>
+          }
+          } @else {
+          <li class="sidebar-list-item">aucun groupe</li>
+          }
+        </ul>
+        }
+      </div>
+
+      <div class="sidebar-section" [class.open]="openSection === 'recues'">
+        <div class="sidebar-header" (click)="openSection = openSection === 'recues' ? null : 'recues'">
+          <span>Demandes d'amis reçues</span>
+          <span class="arrow" [class.down]="openSection === 'recues'">&#9660;</span>
+        </div>
+        @if (openSection === 'recues') {
+        <ul class="sidebar-list">
+          @for (request of friendRequests; track request.id) {
+          <li class="sidebar-list-item" style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; min-width:0;">
+              <img *ngIf="request.imagePath?.imagePath" [src]="request.imagePath.imagePath" alt="Photo de profil"
+                class="profile-picture" width="28" height="28"
+                style="border-radius:50%;margin-right:8px;vertical-align:middle;" />
+              <span style="max-width:110px; display:inline-block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; vertical-align:middle;">{{ request.username }}</span>
+            </div>
+            <div>
+              <button class="btn-accept" (click)="acceptRequest(request.id)">Accepter</button>
+              <button class="btn-decline" (click)="refuseRequest(request.id)">Refuser</button>
+            </div>
+          </li>
+          }
+        </ul>
+        }
+      </div>
+
+      <div class="sidebar-section" [class.open]="openSection === 'envoyees'">
+        <div class="sidebar-header" (click)="openSection = openSection === 'envoyees' ? null : 'envoyees'">
+          <span>Demandes d'amis envoyées</span>
+          <span class="arrow" [class.down]="openSection === 'envoyees'">&#9660;</span>
+        </div>
+        @if (openSection === 'envoyees') {
+        <ul class="sidebar-list">
+          @if (arrayOfSentFriendRequests.length > 0) {
+          @for (user of arrayOfSentFriendRequests; track user.id) {
+          <li class="sidebar-list-item">
+            <img *ngIf="user.profilePicture" [src]="user.profilePicture" alt="Photo de profil" class="avatar" />
+            <span>{{ user.username }}</span>
+          </li>
+          }
+          } @else {
+          <li class="sidebar-list-item">aucune demande d'ami envoyée</li>
+          }
+        </ul>
+        }
+      </div>
+
+
+
+      <div class="create-groupe">
+        <!-- Nouveau groupe -->
+        <button (click)="createGroup()" class="btn-create-group">
+          <span>
+            <svg height="24" width="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0 0h24v24H0z" fill="none"></path>
+              <path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z" fill="currentColor"></path>
+            </svg>
+            Nouveau groupe
+          </span>
+        </button>
+      </div>
+
+
+    </aside>
+
+    <section class="chat-messages" *ngIf="selectedFriendId !== null || isGroupChatActive">
+      <div class="messages-header">
+        <h2 class="messages-header-title" id="chat-text">
+          {{ selectedFriendUsername }}
+        </h2>
+      </div>
+
+      <div class="messages-list">
+        <div *ngIf="messages.length === 0" class="no-messages">
+          <p>Aucun message pour l’instant.<br>Commence la conversation !</p>
+        </div>
+        <div *ngFor="let msg of messages; trackBy: trackByMsgId"
+             class="message"
+             [ngClass]="{'me': msg.userId === myUserId, 'friend': msg.userId !== myUserId, 'right': msg.userId === myUserId, 'left': msg.userId !== myUserId}">
+          <div class="sender">{{ getSenderName(msg) }}</div>
+          <div class="content">{{ msg.message }}</div>
+        </div>
+      </div>
+
+        <div *ngIf="showDeleteModal" class="modal-overlay">
+        <div class="modal-content">
+          <p>Confirmer la suppression du message ?</p>
+          <div class="modal-actions">
+            <button (click)="cancelDelete()">Annuler</button>
+            <button (click)="confirmDelete(messageToDelete)">Confirmer</button>
+          </div>
+        </div>
+      </div>
+      <div class="messages-input">
+        <input class="messages-input-field" type="text" placeholder="Écrire un message..." [(ngModel)]="newMessage"
+          (keyup.enter)="sendChatMessage(newMessage); newMessage=''" />
+        <button class="send-btn" (click)="sendChatMessage(newMessage); newMessage=''">Envoyer</button>
+      </div>
+    </section>
+    @if (selectedFriendId === null && !isGroupChatActive) {
+    <section class="chat-messages">
+      <div class="no-messages">
+        <p>Sélectionne un ami ou un groupe pour commencer à discuter.</p>
+      </div>
+    </section>
+    }
+
+
+    <!-- creation de groupe -->
+    @if (createGroupAction == true) {
+
+    <div class="modal-overlay">
+      <div class="modal-content2">
+        <p class="message-new-groupe">Ajouter des amis au nouveau groupe</p>
+        <input type="text" class="input-groupe-name" [(ngModel)]="groupName" required [attr.minlength]="1">
+
+        <div class="friend-list">
+          @for (friend of userFriend; track friend.id) {
+          <p (click)="toggleFriendSelection(friend.id)" class="one-friend"
+            [class.selected]="selectedFriendIds.includes(friend.id)">
+            {{ friend.username }}
+          </p>
+          }
+        </div>
+
+        <div class="container-button-choice">
+          <button class="cancel-confirm" (click)="cancelGroupCreation()">Annuler</button>
+          <button class="cancel-confirm" (click)="confirmGroupCreation()" [disabled]="!groupName || groupName.trim().length === 0">Confirmer</button>
+        </div>
+
+        
+      </div>
+    </div>
+
+    }
+  </section>
+</main>

@@ -1,0 +1,178 @@
+
+import getClientTokenAndVerifAccess from "../middlewares/getClientTokenAndVerifAccess.mjs"
+import { findUserByMail, updateUserResetToken } from "../models/auth.model.mjs";
+import { getProfilPictureFromDataB } from "../controllers/getAndSaveProfilPicture.mjs"
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { generateResetLink } from "../controllers/generateResetLink.controller.mjs"
+import { emailResetPassword } from "../controllers/smtp.controller.mjs"
+
+const secret = process.env.JWT_SECRET || "secret-key"; // à adapter selon ton projet
+
+
+export class authController {
+
+
+    /**
+     * Cette methode static permet à un utilisateur de se connecter 
+     * @param {*} request 
+     * @param {*} response 
+     * @returns 
+     */
+    static async login(request, response) {
+        try {
+
+            console.log('route : login');
+
+            const UserData = request.body;
+            // console.log(UserData);
+
+            // ...existing code...
+            if (!UserData || !UserData.mail || !UserData.password) {
+                return response.status(400).json({ error: "Données manquantes." });
+            }
+            else {
+                // console.log(UserData.mail)
+                // console.log(UserData.password)
+
+                const getUserConnect = await findUserByMail(UserData.mail);
+
+                if (!getUserConnect) {
+                    return response.status(400).json({ error: "Identifiants invalides." });
+
+                } else {
+                    console.log("myUser:", getUserConnect.dataValues)
+
+                    const compareMdp = await bcrypt.compare(UserData.password, getUserConnect.dataValues.password)
+                    // console.log("test comparaison",compareMdp)
+
+                    if (!compareMdp) {
+                        return response.status(400).json({ error: "Identifiants invalides." });
+                    }
+
+                    if (compareMdp === true) {
+                        console.log("connection autorisée", compareMdp)
+
+                        // fournir user , donc ces donnee , username, mail, pp, bio, language, id
+                        //fournir le jwt 
+                        const profilPicture = await getProfilPictureFromDataB(getUserConnect.dataValues.id);
+
+                        if (profilPicture) {
+                            console.log(profilPicture)
+                        }
+                        if (!profilPicture) {
+                            // console.log("impossible de recupérer la pp de l'utilisateur. ")
+                        }
+
+                        //envoyer un jwt au client qui s'est connecté
+                        const payload = { id: getUserConnect.dataValues.id, role: getUserConnect.dataValues.role }
+                        const newToken = jwt.sign(payload, secret, {
+                            expiresIn: "30 days"
+                        })
+
+                        const user = {
+                            id: getUserConnect.dataValues.id,
+                            username: getUserConnect.dataValues.username,
+                            mail: getUserConnect.dataValues.mail,
+                            language: getUserConnect.dataValues.language,
+                            bio: getUserConnect.dataValues.bio,
+                            imagePath: profilPicture,
+                            token: newToken,
+                            role: getUserConnect.dataValues.role
+
+                        }
+                        console.log(user)
+                        response.status(200).json({
+                            message: "connection autorisée",
+                            body: user
+                        })
+
+                    } else {
+                        console.log("connection refusée", compareMdp)
+                        return response.status(400).json({ error: "Erreur dans le mot de passe" })
+                    }
+                }
+
+            }
+        } catch (error) {
+            console.error(error); // pour le voir dans la console
+            response.status(500).json({ error: "Erreur serveur lors de l'inscription." });
+
+        }
+    }
+
+
+    /**
+     * cette methode static permet à un utilisateur de demander la réinitialisation de son mot de passe 
+     */
+    static async resetPassword(request, response) {
+        try {
+            const { mail } = request.body;
+            if (!mail) {
+                return response.status(400).json({ error: "Email manquant." });
+            }
+
+            // Cherche l'utilisateur par email
+            const user = await findUserByMail(mail);
+            if (!user) {
+                return response.status(404).json({ error: "Utilisateur non trouvé." });
+            }
+
+            // Génère le token et le lien
+            const baseUrl = process.env.RESET_URL || "http://localhost:4900/reset-password";
+            const { token, link } = generateResetLink(baseUrl);
+
+            // Sauvegarde le token et la date d'expiration en BDD
+            await updateUserResetToken(user.dataValues.id, token);
+
+            // Envoie l'email
+            await emailResetPassword(user.dataValues.username, mail, link);
+
+            response.status(200).json({ message: "Email de réinitialisation envoyé." });
+        } catch (error) {
+            console.error(error);
+            response.status(500).json({ error: "Erreur lors de la demande de réinitialisation." });
+        }
+    }
+
+
+
+    /**
+     * cette methode static permet à un utilisateur d'entrer un mot de passe pour qui soit bien réinitialiser en bdd
+     * @returns 
+     */
+    static async passwordUpdater(request, response) {
+        try {
+            const { newPassword, newConfirmedPassword, token } = request.body;
+
+            if (!newPassword || !newConfirmedPassword || !token) {
+                return response.status(400).json({ error: "Données manquantes." });
+            }
+            if (newPassword !== newConfirmedPassword) {
+                return response.status(400).json({ error: "Les mots de passe ne correspondent pas." });
+            }
+
+            // Cherche l'utilisateur avec ce token
+            const user = await User.findOne({ where: { resetToken: token } });
+            if (!user) {
+                return response.status(400).json({ error: "Lien de réinitialisation invalide ou expiré." });
+            }
+
+            // Hash le nouveau mot de passe
+            const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+            // Met à jour le mot de passe et supprime le resetToken
+            await User.update(
+                { password: hashedPassword, resetToken: null },
+                { where: { id: user.id } }
+            );
+
+            response.status(200).json({ message: "Mot de passe réinitialisé avec succès." });
+        } catch (error) {
+            console.error(error);
+            response.status(500).json({ error: "Erreur lors de la réinitialisation du mot de passe." });
+        }
+    }
+
+
+}

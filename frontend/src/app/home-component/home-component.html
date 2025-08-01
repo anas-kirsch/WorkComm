@@ -1,0 +1,62 @@
+<!-- 
+<app-home-component></app-home-component> -->
+
+<main>
+    <section class="hero">
+        <h1>Bienvenue sur WorkComm</h1>
+        <p>La plateforme collaborative pour les professionnels, étudiants et entreprises qui veulent communiquer,
+            partager et avancer ensemble.</p>
+        <div class="hero-actions">
+
+            <!-- <button class="cta">Découvrir</button> -->
+            @if (!this.authService.isConnected) {
+            <button (click)="inscription()" class="cta secondary">S'inscrire</button>
+            }@else {
+            <button (click)="showProfil()" class="cta secondary"> Profil </button>
+            }
+
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="feature">
+            <i class="fa fa-users"></i>
+            <h2>Communauté active</h2>
+            <p>Rejoignez des milliers de membres et échangez sur vos projets, idées et opportunités.</p>
+        </div>
+        <!-- <div class="feature">
+            <i class="fa fa-briefcase"></i>
+            <h2>Outils professionnels</h2>
+            <p>Accédez à des outils de gestion, de partage de documents et de communication avancée.</p>
+        </div> -->
+        <div class="feature">
+            <i class="fa fa-briefcase"></i>
+            <h2>Outils de communication dédiés</h2>
+            <p>Profitez d’un espace sécurisé pour échanger et transférer vos documents sans passer par les réseaux
+                sociaux ou plateformes grand public. Restez concentré sur l’essentiel, loin des distractions, et
+                collaborez efficacement avec vos équipes.</p>
+        </div>
+        <div class="feature">
+            <i class="fa fa-envelope"></i>
+            <h2>Newsletter Motivation</h2>
+            <p>Inscrivez-vous pour recevoir chaque semaine des conseils, des astuces et de la motivation pour booster
+                votre travail et votre organisation. Profitez de tips exclusifs pour progresser et rester inspiré !</p>
+        </div>
+    </section>
+
+    <section class="about">
+        <h2>À propos de WorkComm</h2>
+        <p>
+            WorkComm est né de la volonté de connecter les talents et les idées. Notre mission : faciliter la
+            collaboration, l’apprentissage et la réussite collective.
+        </p>
+        <ul>
+            <li>Plateforme sécurisée et intuitive</li>
+            <li>Support réactif et communauté bienveillante</li>
+            <li>Ouvert à tous les profils</li>
+        </ul>
+    </section>
+</main>
+
+
+<app-footer-component></app-footer-component>
