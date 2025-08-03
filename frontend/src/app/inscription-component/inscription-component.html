@@ -9,7 +9,8 @@
                 <div class="error" *ngIf="form.get('username')?.touched && form.get('username')?.invalid">
                     <span *ngIf="form.get('username')?.errors?.['required']">Ce champ est requis.</span>
                     <span *ngIf="form.get('username')?.errors?.['minlength']">Minimum 3 caractères.</span>
-                    <span *ngIf="form.get('username')?.errors?.['pattern']">Caractères autorisés : lettres, chiffres, _</span>
+                    <span *ngIf="form.get('username')?.errors?.['pattern']">Caractères autorisés : lettres, chiffres,
+                        _</span>
                 </div>
             </div>
 
@@ -57,6 +58,11 @@
 
             <button type="submit" class="cta" [disabled]="form.invalid">S'inscrire</button>
         </form>
+
+        <div class="signup-invite">
+              <span>Vous avez déjà un compte ? <a (click)="goConnexion()">Connectez-vous</a></span>
+            <!-- <span>Pas de compte ? <a (click)="goConnexion()">Inscrivez-vous</a></span> -->
+        </div>
     </section>
 </main>
 

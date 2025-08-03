@@ -47,7 +47,9 @@ export class InscriptionComponent {
   }
 
 
-
+  goConnexion(){
+    this.router.navigate(["connexion"]);
+  }
 
 
 

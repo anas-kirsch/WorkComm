@@ -14,6 +14,8 @@
 .signup-invite a:hover {
   color: #a855f7;
 }
+
+
 main {
     min-height: 80vh;
     display: flex;
