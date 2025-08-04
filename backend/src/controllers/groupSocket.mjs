@@ -8,7 +8,7 @@ const server = createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:4200", "http://192.168.10.125:4200"],
+    origin: ["http://localhost:4200", "http://192.168.10.125:4200", "http://192.168.1.248:4200"],
     methods: ["GET", "POST"],
     credentials: true
   }
@@ -16,7 +16,7 @@ const io = new Server(server, {
 const PORT = 9000;
 
 app.use(cors({
-  origin: ["http://localhost:4200", "http://192.168.10.125:4200"],
+  origin: ["http://localhost:4200", "http://192.168.10.125:4200", "http://192.168.1.248:4200"],
   credentials: true
 }));
 

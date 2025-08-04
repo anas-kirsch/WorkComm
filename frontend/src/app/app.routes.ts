@@ -12,8 +12,10 @@ import { Component } from '@angular/core';
 import { ProfilComponent } from './profil-component/profil-component';
 import { ChatComponent } from './chat-component/chat-component';
 import { ProfilUsersComponent } from './profil-users-component/profil-users-component';
-import { TarifsComponent } from '../tarifs-component/tarifs-component';
-import { ContactComponent } from '../contact-component/contact-component';
+import { TarifsComponent } from './tarifs-component/tarifs-component';
+import { ContactComponent } from './contact-component/contact-component';
+import { SuccessPaiementComponent } from './success-paiement-component/success-paiement-component';
+import { FailurePaiementComponent } from './failure-paiement-component/failure-paiement-component';
 
 
 
@@ -30,7 +32,9 @@ export const routes: Routes = [
     // { path: "user", component: ProfilUsersComponent, canActivate: [AuthGuard]  }
     { path: "user/:username", component: ProfilUsersComponent, canActivate: [AuthGuard] },
     { path: "tarifs", component: TarifsComponent},
-    { path: "contact", component: ContactComponent}
-    
+    { path: "contact", component: ContactComponent},
+    { path : "success-paiement", component : SuccessPaiementComponent, canActivate: [AuthGuard]},
+    { path : "failure-paiement", component : FailurePaiementComponent, canActivate: [AuthGuard]},
+
 
 ]

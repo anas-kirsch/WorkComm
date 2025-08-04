@@ -34,7 +34,7 @@ export function runServer(sequelize) {
     const port = 4900;
     // Autorise l'accès CORS depuis l'IP du front
     app.use(cors({
-        origin: 'http://192.168.10.125:4200',
+        origin: 'http://192.168.1.248:4200',
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization']

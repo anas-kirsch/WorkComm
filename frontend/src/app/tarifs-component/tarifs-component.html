@@ -26,7 +26,7 @@
     <div class="feature">
       <i class="fa fa-star"></i>
       <h2>Premium</h2>
-      <p>20€ / an</p>
+      <p> 19.90€ / an</p>
       <ul>
         <li>Mode clair pour le style</li>
         <li>Thèmes personnalisés (à venir)</li>
@@ -34,7 +34,7 @@
         <li>Accès à une newsletter poussée et complète</li>
         <li>Toutes les fonctionnalités de l'offre gratuite</li>
       </ul>
-      <button class="cta" >Passer Premium</button>
+      <button (click)="paiementService.buyPremium()" class="cta" >Passer Premium</button>
     </div>
   </section>
 

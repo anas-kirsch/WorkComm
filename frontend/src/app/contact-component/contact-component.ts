@@ -1,9 +1,9 @@
 import { Component, inject, ChangeDetectorRef } from '@angular/core';
-import { FooterComponent } from '../app/footer-component/footer-component';
 import { FormsModule, NgForm, NgModel } from '@angular/forms';
-import { AuthService } from '../app/service/auth/auth-service';
-import { environment } from '../environments/environment.development';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../environments/environment.development';
+import { AuthService } from '../service/auth/auth-service';
+import { FooterComponent } from '../footer-component/footer-component';
 
 
 @Component({
