@@ -1,16 +1,8 @@
 // dependances externes du projet 
-import { json, Op, Sequelize } from "sequelize";
-import express, { request, response } from "express";
+import {Sequelize } from "sequelize";
+import express from "express";
 import cors from "cors";
-import bcrypt from "bcrypt";
-import parseFormData from '@trojs/formdata-parser';
 import fileUpload from "express-fileupload";
-import { get } from "http";
-import jwt from "jsonwebtoken"
-import fs from "fs/promises";
-import { error, group } from "console";
-import { getgroups } from "process";
-
 
 import userRouter from "../routes/user.route.mjs"
 import adminRouter from "../routes/admin.route.mjs"
@@ -20,11 +12,8 @@ import chatPrivateRouter from "../routes/chat.private.route.mjs"
 import navRouter from "../routes/nav.route.mjs"
 import paiementRouter from "../routes/paiement.route.mjs";
 
-
 import path from "path";
 import { fileURLToPath } from "url";
-import formData from "@trojs/formdata-parser";
-// import paiementRouter from "../routes/paiement.route.mjs";
 
 /**
  * 
@@ -50,7 +39,6 @@ export function runServer(sequelize) {
 
 
     app.use("/api/paiement", paiementRouter); // webhook route
-
 
     app.use(express.static("../public"));
     app.use(express.json());

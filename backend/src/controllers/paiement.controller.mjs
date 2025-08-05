@@ -56,43 +56,6 @@ export class paiementController {
     }
 
 
-
-
-    // /**
-    //  * Cette méthode est appelée après le paiement réussi (depuis success_url)
-    //  */
-    // static async paiementSuccess(request, response) {
-    //     try {
-    //         const userId = request.query.user_id;
-    //         const sessionId = request.query.session_id;
-
-    //         // Optionnel : vérifier le paiement via Stripe API
-    //         const session = await stripe.checkout.sessions.retrieve(sessionId);
-    //         if (session.payment_status !== 'paid') {
-    //             return response.status(400).json({ error: "Paiement non validé." });
-    //         }
-
-    //         const activePremiumForUser = await paimentAccepted(userId);
-    //         console.log("abonnement status :", activePremiumForUser)
-    //         if (!activePremiumForUser) {
-    //             return response.status(500).json({ error: "impossible d'activer l'abonnement de l'utilisateur." });
-    //         }
-
-    //         response.json({ success: true, message: "Abonnement premium activé !" });
-    //     } catch (err) {
-    //         response.status(500).json({ error: err.message });
-    //     }
-    // }
-
-
-
-    // static async handleCheckoutCompleted(session) {
-    //     const userId = session.metadata.user_id;
-    //     await paimentAccepted(userId);
-    //     console.log("Abonnement activé pour l'utilisateur :", userId);
-    // }
-
-
     static async handleCheckoutCompleted(session) {
         const userId = session.metadata.user_id;
         console.log("Webhook reçu, userId:", userId);
