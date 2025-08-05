@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { TarifsComponent } from '../../tarifs-component/tarifs-component';
 import { environment } from '../../../environments/environment.development';
 import { loadStripe } from '@stripe/stripe-js';
+import { AuthService } from '../auth/auth-service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,14 +12,25 @@ export class Paiement {
   static apiURL = environment.apiURL;
   static stripePublicKey = environment.stripePublicKey;
 
+  authService = inject(AuthService);
+
+
 
   async buyPremium() {
+    console.log("paiement lancé")
+
+    const tokenHeader = this.authService.insertTokeninHeader();
+
+    const myHeaders = new Headers();
+    if (tokenHeader.Authorization) {
+      myHeaders.append("Authorization", tokenHeader.Authorization);
+    }
+    myHeaders.append("Content-Type", "application/json");
+
     // Appel backend avec fetch
     const response = await fetch(`${Paiement.apiURL}/api/paiement/stripe/premium`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: myHeaders,
       body: JSON.stringify({ product: 'premium' })
     });
     const data = await response.json();

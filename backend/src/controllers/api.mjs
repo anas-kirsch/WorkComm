@@ -24,6 +24,7 @@ import paiementRouter from "../routes/paiement.route.mjs";
 import path from "path";
 import { fileURLToPath } from "url";
 import formData from "@trojs/formdata-parser";
+// import paiementRouter from "../routes/paiement.route.mjs";
 
 /**
  * 
@@ -47,6 +48,10 @@ export function runServer(sequelize) {
     const __dirname = path.dirname(__filename);
     app.use('/images', express.static(path.join(__dirname, '../../public/images')));
 
+
+    app.use("/api/paiement", paiementRouter); // webhook route
+
+
     app.use(express.static("../public"));
     app.use(express.json());
     app.use(fileUpload());
@@ -57,7 +62,7 @@ export function runServer(sequelize) {
     app.use("/api/chatGroup", chatGroupRouter);//ok
     app.use("/api/chatPrivate", chatPrivateRouter);//ok
     app.use("/api/nav", navRouter);
-    app.use("/api/paiement", paiementRouter )
+    // app.use("/api/paiement", paiementRouter )
 
         app.listen(port, "0.0.0.0", () => {
         console.log(`Server listen on port ${port}`)
