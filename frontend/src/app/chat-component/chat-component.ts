@@ -311,30 +311,28 @@ export class ChatComponent implements OnInit {
 
 
   sendChatMessage(message: string) {
-    if (this.isGroupChatActive && this.openSection) {
-      // Envoi message groupe
-      if (message.trim() !== "") {
-        this.groupService.sendGroupMessage(this.openSection, this.myUserId, message);
-        // Sauvegarde le message côté serveur
-        this.groupService.fetchSaveGroupMessage(message, Number(this.openSection));
-        // Scroll automatique après envoi
-        this.cdr.detectChanges();
-        setTimeout(() => {
-          const list = document.querySelector('.messages-list');
-          if (list) list.scrollTop = list.scrollHeight;
-        }, 0);
-      }
-    } else if (this.selectedFriendId && message.trim() !== "") {
-      // Envoi message privé
-      this.socketPrivateService.sendMessage(this.myUserId, this.selectedFriendId, message);
-      this.socketPrivateService.saveMessageInBdd(message, this.selectedFriendId, this.conversationName);
-      // Scroll automatique après envoi
+  if (this.isGroupChatActive && this.openSection) {
+    console.log(message)
+    if (message.trim() !== "") {
+      // Récupère le username de l'utilisateur courant
+      const myUsername = this.selectedFriendUsername || this.myFriends.find(f => f.id === this.myUserId)?.username || 'Moi';
+      this.groupService.sendGroupMessage(this.openSection, this.myUserId, message, myUsername);
+      // this.groupService.fetchSaveGroupMessage(message, Number(this.openSection)); // à remettre si besoin
+      this.cdr.detectChanges();
       setTimeout(() => {
         const list = document.querySelector('.messages-list');
         if (list) list.scrollTop = list.scrollHeight;
       }, 0);
     }
+  } else if (this.selectedFriendId && message.trim() !== "") {
+    this.socketPrivateService.sendMessage(this.myUserId, this.selectedFriendId, message);
+    this.socketPrivateService.saveMessageInBdd(message, this.selectedFriendId, this.conversationName);
+    setTimeout(() => {
+      const list = document.querySelector('.messages-list');
+      if (list) list.scrollTop = list.scrollHeight;
+    }, 0);
   }
+}
 
 
 

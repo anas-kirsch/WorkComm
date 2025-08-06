@@ -19,7 +19,7 @@ export class GroupeService {
 
   connectSocket() {
     // Mets ici l'URL de ton serveur Socket.io groupe
-    this.socket = io('http://192.168.10.125:9000', {
+    this.socket = io('http://192.168.1.248:9000', {
       withCredentials: true
     });
   }
@@ -30,9 +30,9 @@ export class GroupeService {
     }
   }
 
-  sendGroupMessage(groupId: string, userId: number, message: string) {
+  sendGroupMessage(groupId: string, userId: number, message: string,username : string ) {
     if (this.socket) {
-      this.socket.emit('group message', { groupId, userId, message });
+      this.socket.emit('group message', { groupId, userId, message, username });
     }
   }
 
