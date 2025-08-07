@@ -71,7 +71,9 @@
               <img *ngIf="request.imagePath?.imagePath" [src]="request.imagePath.imagePath" alt="Photo de profil"
                 class="profile-picture" width="28" height="28"
                 style="border-radius:50%;margin-right:8px;vertical-align:middle;" />
-              <span style="max-width:110px; display:inline-block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; vertical-align:middle;">{{ request.username }}</span>
+              <span
+                style="max-width:110px; display:inline-block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; vertical-align:middle;">{{
+                request.username }}</span>
             </div>
             <div>
               <button class="btn-accept" (click)="acceptRequest(request.id)">Accepter</button>
@@ -122,75 +124,81 @@
 
     </aside>
 
-    <section class="chat-messages" *ngIf="selectedFriendId !== null || isGroupChatActive">
-      <div class="messages-header">
-        <h2 class="messages-header-title" id="chat-text">
-          {{ selectedFriendUsername }}
-        </h2>
-      </div>
-
-      <div class="messages-list">
-        <div *ngIf="messages.length === 0" class="no-messages">
-          <p>Aucun message pour l’instant.<br>Commence la conversation !</p>
+    @if (selectedFriendId !== null || isGroupChatActive) {
+      <section class="chat-messages">
+        <div class="messages-header">
+          <h2 class="messages-header-title" id="chat-text">
+            {{ selectedFriendUsername }}
+          </h2>
         </div>
-        <div *ngFor="let msg of messages; trackBy: trackByMsgId"
-             class="message"
-             [ngClass]="{'me': msg.userId === myUserId, 'friend': msg.userId !== myUserId, 'right': msg.userId === myUserId, 'left': msg.userId !== myUserId}">
-          <div class="sender">{{ getSenderName(msg) }}</div>
-          <div class="content">{{ msg.message }}</div>
-        </div>
-      </div>
-
-        <div *ngIf="showDeleteModal" class="modal-overlay">
-        <div class="modal-content">
-          <p>Confirmer la suppression du message ?</p>
-          <div class="modal-actions">
-            <button (click)="cancelDelete()">Annuler</button>
-            <button (click)="confirmDelete(messageToDelete)">Confirmer</button>
-          </div>
-        </div>
-      </div>
-      <div class="messages-input">
-        <input class="messages-input-field" type="text" placeholder="Écrire un message..." [(ngModel)]="newMessage"
-          (keyup.enter)="sendChatMessage(newMessage); newMessage=''" />
-        <button class="send-btn" (click)="sendChatMessage(newMessage); newMessage=''">Envoyer</button>
-      </div>
-    </section>
-    @if (selectedFriendId === null && !isGroupChatActive) {
-    <section class="chat-messages">
-      <div class="no-messages">
-        <p>Sélectionne un ami ou un groupe pour commencer à discuter.</p>
-      </div>
-    </section>
-    }
-
-
-    <!-- creation de groupe -->
-    @if (createGroupAction == true) {
-
-    <div class="modal-overlay">
-      <div class="modal-content2">
-        <p class="message-new-groupe">Ajouter des amis au nouveau groupe</p>
-        <input type="text" class="input-groupe-name" [(ngModel)]="groupName" required [attr.minlength]="1">
-
-        <div class="friend-list">
-          @for (friend of userFriend; track friend.id) {
-          <p (click)="toggleFriendSelection(friend.id)" class="one-friend"
-            [class.selected]="selectedFriendIds.includes(friend.id)">
-            {{ friend.username }}
-          </p>
+        <div class="messages-list">
+          @if (messages.length === 0) {
+            <div class="no-messages">
+              <p>Aucun message pour l’instant.<br>Commence la conversation !</p>
+            </div>
+          }
+          @for (msg of messages; track msg.id) {
+            <div class="message"
+              [ngClass]="{'me': (msg.UserId ?? msg.userId) === myUserId, 'friend': (msg.UserId ?? msg.userId) !== myUserId, 'right': (msg.UserId ?? msg.userId) === myUserId, 'left': (msg.UserId ?? msg.userId) !== myUserId}">
+              <div class="sender">{{ getSenderName(msg) }}</div>
+              <div class="content">{{ msg.message }}</div>
+            </div>
           }
         </div>
-
-        <div class="container-button-choice">
-          <button class="cancel-confirm" (click)="cancelGroupCreation()">Annuler</button>
-          <button class="cancel-confirm" (click)="confirmGroupCreation()" [disabled]="!groupName || groupName.trim().length === 0">Confirmer</button>
+        @if (showDeleteModal) {
+          <div class="modal-overlay">
+            <div class="modal-content">
+              <p>Confirmer la suppression du message ?</p>
+              <div class="modal-actions">
+                <button (click)="cancelDelete()">Annuler</button>
+                <button (click)="confirmDelete(messageToDelete)">Confirmer</button>
+              </div>
+            </div>
+          </div>
+        }
+        <div class="messages-input">
+          <input class="messages-input-field" type="text" placeholder="Écrire un message..." [(ngModel)]="newMessage"
+            (keyup.enter)="sendChatMessage(newMessage); newMessage=''" />
+          <button class="send-btn" (click)="sendChatMessage(newMessage); newMessage=''">Envoyer</button>
         </div>
-
-        
-      </div>
-    </div>
-
+      </section>
     }
-  </section>
+      @if (selectedFriendId === null && !isGroupChatActive) {
+      <section class="chat-messages">
+        <div class="no-messages">
+          <p>Sélectionne un ami ou un groupe pour commencer à discuter.</p>
+        </div>
+      </section>
+      }
+
+
+      <!-- creation de groupe -->
+      @if (createGroupAction == true) {
+
+      <div class="modal-overlay">
+        <div class="modal-content2">
+          <p class="message-new-groupe">Ajouter des amis au nouveau groupe</p>
+          <input type="text" class="input-groupe-name" [(ngModel)]="groupName" required [attr.minlength]="1">
+
+          <div class="friend-list">
+            @for (friend of userFriend; track friend.id) {
+            <p (click)="toggleFriendSelection(friend.id)" class="one-friend"
+              [class.selected]="selectedFriendIds.includes(friend.id)">
+              {{ friend.username }}
+            </p>
+            }
+          </div>
+
+          <div class="container-button-choice">
+            <button class="cancel-confirm" (click)="cancelGroupCreation()">Annuler</button>
+            <button class="cancel-confirm" (click)="confirmGroupCreation()"
+              [disabled]="!groupName || groupName.trim().length === 0">Confirmer</button>
+          </div>
+
+
+        </div>
+      </div>
+
+      }
+    </section>
 </main>

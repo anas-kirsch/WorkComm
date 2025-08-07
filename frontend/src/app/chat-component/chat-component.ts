@@ -24,16 +24,9 @@ export class ChatComponent implements OnInit {
   currentGroupMembers: any[] = [];
 
 
-  getSenderName(msg: any): string {
-    if (msg.userId === this.myUserId) return 'Moi';
-    if (this.isGroupChatActive && this.currentGroupMembers?.length) {
-      const member = this.currentGroupMembers.find((m: any) => m.id === msg.userId);
-      return member?.username || 'Membre';
-    }
-    return this.selectedFriendUsername;
-  }
   isGroupChatActive: boolean = false;
   static apiURL = environment.apiURL;
+  isLoadingGroup: boolean = false; // Pour bloquer les clics multiples
 
   friendService = inject(FriendsService)
   groupService = inject(GroupeService)
@@ -71,11 +64,20 @@ export class ChatComponent implements OnInit {
   constructor(
     private cdr: ChangeDetectorRef,
     private socketPrivateService: SocketPrivateService,
+    private socketGroupService : GroupeService
   ) { }
-
-
-
-
+  
+  
+  
+  
+  getSenderName(msg: any): string {
+    if (msg.userId === this.myUserId || msg.UserId === this.myUserId) return 'Moi';
+    if (this.isGroupChatActive && this.currentGroupMembers?.length) {
+      const member = this.currentGroupMembers.find((m: any) => m.id === (msg.userId ?? msg.UserId));
+      return member?.username || '';
+    }
+    return this.selectedFriendUsername;
+  }
 
 
   async ngOnInit() {
@@ -338,6 +340,7 @@ export class ChatComponent implements OnInit {
 
   ngOnDestroy() {
     this.socketPrivateService.disconnect();
+    this.socketGroupService.disconnectSocket();
   }
 
 
@@ -413,80 +416,26 @@ export class ChatComponent implements OnInit {
 
 
 
-  // async startGroupChat(group: any) {
-  //   // Si déjà sur ce groupe, ne rien faire
-  //   if (this.openSection === group.id && this.isGroupChatActive) {
-  //     return;
-  //   }
-  //   console.log(group)
 
-  //   const getMessage = await this.groupService.fetchGetGroupMessages(group.id) as { body?: any[] };
-  //   console.log(getMessage)
-
-  //   let historiques: any[] = [];
-  //   if (getMessage && Array.isArray(getMessage.body)) {
-  //     historiques = getMessage.body.map((item: any) => {
-  //       const data = item.dataValues || {};
-  //       const msg = item.message || {};
-  //       return {
-  //         ...data,
-  //         userId: data.SenderId,
-  //         groupId: data.GroupId,
-  //         id: data.id,
-  //         createdAt: data.createdAt,
-  //         updatedAt: data.updatedAt,
-  //         message: msg.content || '',
-  //       };
-  //     });
-  //   }
-
-  //   this.messages = historiques;
-
-  //   const MemberName = await this.groupService.fetchGetAllGroupMember(group.id)
-  //   this.currentGroupMembers = Array.isArray(MemberName) ? MemberName : [];
-  //   console.log("voici les membres du groupes : ", MemberName);
-
-  //   this.openSection = group.id;
-  //   this.selectedFriendId = null;
-  //   this.selectedFriendUsername = group.name || 'Groupe';
-  //   // Ne pas vider this.messages ici, sinon l'historique disparait !
-  //   this.isGroupChatActive = true;
-  //   this.cdr.markForCheck();
-
-  //   try {
-  //     // Connecte le socket au groupe
-  //     this.groupService.connectSocket();
-  //     this.groupService.joinGroup(group.id);
-
-  //     // Nettoie l'ancien listener avant d'en ajouter un nouveau
-  //     if (this.groupService.socket) {
-  //       this.groupService.socket.off('group message');
-  //       this.groupService.socket.on('group message', (msg: any) => {
-  //         this.messages = [...this.messages, msg];
-  //         this.cdr.markForCheck();
-  //         setTimeout(() => {
-  //           const list = document.querySelector('.messages-list');
-  //           if (list) list.scrollTop = list.scrollHeight;
-  //         }, 0);
-  //       });
-  //     }
-  //     this.cdr.markForCheck();
-  //   } catch (error) {
-  //     console.error('Erreur lors de la connexion au chat de groupe', error);
-  //   }
-  // }
-
-
-
-
-
-  activeGroupListenerId: number | null = null; // Ajoute cette propriété à la classe
+  activeGroupListenerId: number | null = null; 
 
   async startGroupChat(group: any) {
-    // Si déjà sur ce groupe, ne rien faire
+    // Empêche les clics multiples pendant le chargement
+    if (this.isLoadingGroup) return;
+
+    // Si déjà sur ce groupe, ne rien faire (ne touche pas au listener)
     if (this.openSection === group.id && this.isGroupChatActive) {
       return;
     }
+
+    this.isLoadingGroup = true;
+
+    // Ferme tous les listeners existants UNIQUEMENT si on change de groupe
+    if (this.groupService.socket && this.activeGroupListenerId !== group.id) {
+      this.groupService.socket.off('group message');
+      // Ajoute ici d'autres .off() si tu as d'autres listeners
+    }
+
     console.log(group);
 
     const getMessage = await this.groupService.fetchGetGroupMessages(group.id) as { body?: any[] };
@@ -543,6 +492,7 @@ export class ChatComponent implements OnInit {
     } catch (error) {
       console.error('Erreur lors de la connexion au chat de groupe', error);
     }
+    this.isLoadingGroup = false;
   }
 
 

@@ -440,6 +440,7 @@ export class GroupChatController {
             }
 
             const getAllReferenced = await findAllGroupMessagesByGroupId(groupId);
+            console.log("verification 1 : ", getAllReferenced)
 
             if (!getAllReferenced || getAllReferenced.length === 0) {
                 return response.status(200).json({
@@ -453,12 +454,29 @@ export class GroupChatController {
 
             // Récupère tous les messages d'un coup
             const getMessageContent = await getGroupMessages(messageIds);
+            console.log("verification 2 : ", getMessageContent)
 
-            // Fusionne les références et le contenu des messages
+
+            // Extrait tous les UserId uniques
+            const userIds = [...new Set(getAllReferenced.map(ref => ref.UserId ?? ref.dataValues?.UserId))];
+            // Récupère les usernames pour ces UserId
+            let userIdToUsername = {};
+            try {
+                const usernames = await getUsernamesByIds(userIds);
+                usernames.forEach(u => {
+                    userIdToUsername[u.id] = u.username;
+                });
+            } catch (err) {
+                console.error('Erreur récupération usernames', err);
+            }
+
+            // Fusionne les références, le contenu des messages et le username
             const mergedMessages = getAllReferenced.map(ref => {
-                const msg = getMessageContent.find(m => m.id === ref.MessageID);
+                const userId = ref.UserId ?? ref.dataValues?.UserId;
+                const msg = getMessageContent.find(m => m.id === ref.MessageID ?? ref.dataValues?.MessageID);
                 return {
                     ...ref,
+                    username: userIdToUsername[userId] || null,
                     message: msg ? {
                         id: msg.id,
                         content: msg.content,
