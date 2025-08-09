@@ -1,0 +1,11 @@
+@if (showBanner) {
+<section class="banner-container" [class.show]="showBanner" [class.hide]="!showBanner">
+    <div class="content">
+        <p>
+            Ce site utilise uniquement des cookies fonctionnels nécessaires au bon fonctionnement des fonctionnalités et pour éviter des bugs. 
+            Ces cookies ne peuvent pas être refusés.
+        </p>
+        <button (click)="cookieOk()" class="banner-btn">J'ai compris</button>
+    </div>
+</section>
+}

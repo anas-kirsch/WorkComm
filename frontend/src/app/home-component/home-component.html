@@ -60,3 +60,7 @@
 
 
 <app-footer-component></app-footer-component>
+
+@if (cookieAccepted === false && authService.isConnected === false) {
+    <app-cookie-banner-component></app-cookie-banner-component>
+}
