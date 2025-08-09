@@ -1,8 +1,9 @@
 // dependances externes du projet 
-import {Sequelize } from "sequelize";
+import { Sequelize } from "sequelize";
 import express from "express";
 import cors from "cors";
 import fileUpload from "express-fileupload";
+
 
 import userRouter from "../routes/user.route.mjs"
 import adminRouter from "../routes/admin.route.mjs"
@@ -30,15 +31,15 @@ export function runServer(sequelize) {
         allowedHeaders: ['Content-Type', 'Authorization']
     }));
 
-    
+
 
     // Sert le dossier public/images sur /images
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
     app.use('/images', express.static(path.join(__dirname, '../../public/images')));
 
-
-    app.use("/api/paiement", paiementRouter); // webhook route
+    // Ajout du router webhook Stripe avant express.json et fileUpload
+    app.use("/api/paiement", paiementRouter);
 
     app.use(express.static("../public"));
     app.use(express.json());
@@ -50,9 +51,10 @@ export function runServer(sequelize) {
     app.use("/api/chatGroup", chatGroupRouter);//ok
     app.use("/api/chatPrivate", chatPrivateRouter);//ok
     app.use("/api/nav", navRouter);
-    app.use("/api/premium", paiementRouter )
+    app.use("/api/paiement", paiementRouter); // autres routes paiement
+    app.use("/api/premium", paiementRouter)
 
-        app.listen(port, "0.0.0.0", () => {
+    app.listen(port, "0.0.0.0", () => {
         console.log(`Server listen on port ${port}`)
     })
 }
