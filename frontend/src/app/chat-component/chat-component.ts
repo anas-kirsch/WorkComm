@@ -1,4 +1,3 @@
-
 import { FriendsService } from '../service/friends/friends-service';
 import { Friends } from '../interfaces/user';
 import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
@@ -61,15 +60,17 @@ export class ChatComponent implements OnInit {
 
   createGroupAction: boolean = false;
 
+  private refreshInterval: any;
+
   constructor(
     private cdr: ChangeDetectorRef,
     private socketPrivateService: SocketPrivateService,
-    private socketGroupService : GroupeService
+    private socketGroupService: GroupeService
   ) { }
   
-  
-  
-  
+
+
+
   getSenderName(msg: any): string {
     if (msg.userId === this.myUserId || msg.UserId === this.myUserId) return 'Moi';
     if (this.isGroupChatActive && this.currentGroupMembers?.length) {
@@ -95,12 +96,14 @@ export class ChatComponent implements OnInit {
       if (savedId) {
         this.startPrivateChat(Number(savedId));
         const conversationName = localStorage.getItem("conversation_name");
-        // console.log('9000: ', conversationName);
 
         // recupere l'historique 
         this.extractFinalObjectifFromHistory();
         this.cdr.detectChanges();
-
+      // Démarre le rafraîchissement automatique toutes les 5 secondes
+      this.refreshInterval = setInterval(() => {
+        this.refreshFriendsAndRequests();
+      }, 5000);
       }
 
       this.cdr.detectChanges();
@@ -341,6 +344,15 @@ export class ChatComponent implements OnInit {
   ngOnDestroy() {
     this.socketPrivateService.disconnect();
     this.socketGroupService.disconnectSocket();
+    if (this.refreshInterval) {
+      clearInterval(this.refreshInterval);
+    }
+  }
+
+  async refreshFriendsAndRequests() {
+    await this.getMyFriend();
+    this.friendRequests = await this.friendService.getFriendRequests();
+    this.cdr.detectChanges();
   }
 
 
@@ -417,7 +429,7 @@ export class ChatComponent implements OnInit {
 
 
 
-  activeGroupListenerId: number | null = null; 
+  activeGroupListenerId: number | null = null;
 
   async startGroupChat(group: any) {
     // Empêche les clics multiples pendant le chargement
