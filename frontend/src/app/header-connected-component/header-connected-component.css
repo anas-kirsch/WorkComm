@@ -183,6 +183,20 @@ nav li:hover::before {
     box-shadow: 0 8px 32px rgba(139, 92, 246, 0.25);
 }
 
+.premium-gold {
+    background: linear-gradient(90deg, #FFD700 0%, #FFC107 100%);
+    color: #23232a;
+    border: 2px solid #FFD700;
+    box-shadow: 0 2px 12px rgba(255, 215, 0, 0.25);
+}
+
+.premium-gold:hover {
+    background: linear-gradient(90deg, #FFC107 0%, #FFD700 100%);
+    color: #fff;
+    transform: translateY(-2px) scale(1.06);
+    box-shadow: 0 8px 32px rgba(255, 215, 0, 0.35);
+}
+
 .icon-user {
     font-size: 1.3rem;
     pointer-events: none;

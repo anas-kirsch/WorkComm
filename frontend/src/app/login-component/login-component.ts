@@ -51,7 +51,8 @@ export class LoginComponent {
           username: result.body.username,
           imagePath: result.body.imagePath?.imagePath || '', // si imagePath est un objet
           mail: result.body.mail,
-          language: result.body.language
+          language: result.body.language,
+          premium : result.body.premium
         };
         // Stocker dans le cookie
         AuthService.saveAuthToCookies(authData);

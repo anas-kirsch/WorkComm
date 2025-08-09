@@ -6,6 +6,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { generateResetLink } from "../controllers/generateResetLink.controller.mjs"
 import { emailResetPassword } from "../controllers/smtp.controller.mjs"
+import {premiumIsTrue} from "../models/paiement.model.mjs"
 
 const secret = process.env.JWT_SECRET || "secret-key"; // à adapter selon ton projet
 
@@ -64,6 +65,12 @@ export class authController {
                             // console.log("impossible de recupérer la pp de l'utilisateur. ")
                         }
 
+                        const getPremiumStatus = await premiumIsTrue(getUserConnect.dataValues.id)
+                        // console.log("recuperation du status du premium à la connexion",getPremiumStatus.dataValues.premium)
+                        if(!getPremiumStatus){
+                            console.error("error dans la recuperation du status de l'abonnement de l'utilisateur", getPremiumStatus)
+                        }
+
                         //envoyer un jwt au client qui s'est connecté
                         const payload = { id: getUserConnect.dataValues.id, role: getUserConnect.dataValues.role }
                         const newToken = jwt.sign(payload, secret, {
@@ -78,8 +85,8 @@ export class authController {
                             bio: getUserConnect.dataValues.bio,
                             imagePath: profilPicture,
                             token: newToken,
-                            role: getUserConnect.dataValues.role
-
+                            role: getUserConnect.dataValues.role,
+                            premium : getPremiumStatus.dataValues.premium
                         }
                         console.log(user)
                         response.status(200).json({

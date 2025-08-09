@@ -81,7 +81,8 @@ export class AuthService {
     username: string,
     imagePath: string,
     mail: string,
-    language: string
+    language: string,
+    premium :string
   }): void {
     const data = {
       token: authData.token,
@@ -91,12 +92,11 @@ export class AuthService {
       username: authData.username,
       imagePath: authData.imagePath,
       mail: authData.mail,
-      language: authData.language
+      language: authData.language,
+      premium : authData.premium
     };
     // document.cookie = `auth=${encodeURIComponent(JSON.stringify(data))}; path=/; SameSite=None; Secure`;
     document.cookie = `auth=${encodeURIComponent(JSON.stringify(data))}; path=/;`;
-    // document.cookie = `auth=${encodeURIComponent(JSON.stringify(data))}; path=/; `;
-    // document.cookie = `auth=${encodeURIComponent(JSON.stringify(data))}; path=/; httpOnly : true`;
   }
 
 

@@ -1,13 +1,15 @@
 import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { User } from '../interfaces/user';
 import { Router } from '@angular/router';
 import { AuthService } from '../service/auth/auth-service';
 import { UserService } from '../service/user/user-service';
+import { PremiumAccess } from '../service/premium-access';
 
 
 @Component({
   selector: 'app-header-connected-component',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './header-connected-component.html',
   styleUrl: './header-connected-component.css'
 })
@@ -18,7 +20,8 @@ export class HeaderConnectedComponent {
   userService = inject(UserService)
   authService = inject(AuthService);
   isAuthenticated = AuthService.isConnected();
-
+  premiumService = inject(PremiumAccess);
+  isPremium = false;
 
   constructor() {
     if (this.isAuthenticated) {
@@ -32,9 +35,7 @@ export class HeaderConnectedComponent {
   }
 
   ngOnInit() {
-    // console.log(this.getProfilPicture())
-
-    // a voir 
+    this.checkPremiumStatus()
   }
 
 
@@ -72,6 +73,29 @@ export class HeaderConnectedComponent {
     this.router.navigate(["contact"])
   }
 
+
+
+
+  async checkPremiumStatus() {
+    const cookies = document.cookie.split(';').reduce((acc: any, cookie) => {
+      const [key, value] = cookie.trim().split('=');
+      acc[key] = value;
+      return acc;
+    }, {});
+    if (cookies['auth']) {
+      try {
+        const data = JSON.parse(decodeURIComponent(cookies['auth']));
+        this.isPremium = !!data.premium;
+        console.log("1 : ",this.isPremium)
+      } catch {
+        this.isPremium = false;
+        console.log("2 : ",this.isPremium)
+      
+      }
+    } else {
+      this.isPremium = false;
+    }
+  }
 
 
 

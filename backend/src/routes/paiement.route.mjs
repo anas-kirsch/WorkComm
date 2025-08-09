@@ -13,9 +13,11 @@ const stripe = new Stripe(process.env.STRIPE_KEY);
  */
 router.post('/stripe/premium',getClientTokenAndVerifAccess, paiementController.paiementPremiumOption)
 
-// router.post('/webhook', )
 
 
+/**
+ * cette router est directement appelé par stripe apres le paiement pour verification 
+ */
 router.post("/webhook", express.raw({type: 'application/json'}), async (req, res) => {
     const sig = req.headers['stripe-signature'];
     let event;
@@ -34,6 +36,13 @@ router.post("/webhook", express.raw({type: 'application/json'}), async (req, res
         res.status(400).send(`Webhook Error: ${err.message}`);
     }
 });
+
+
+/**
+ * cette router permet de verifie si l'utilisateur a l'abonnement premium activé ou non 
+ */
+router.get('/status', getClientTokenAndVerifAccess, paiementController.getPremiumStatus);
+
 
 
 

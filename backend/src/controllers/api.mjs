@@ -50,7 +50,7 @@ export function runServer(sequelize) {
     app.use("/api/chatGroup", chatGroupRouter);//ok
     app.use("/api/chatPrivate", chatPrivateRouter);//ok
     app.use("/api/nav", navRouter);
-    // app.use("/api/paiement", paiementRouter )
+    app.use("/api/premium", paiementRouter )
 
         app.listen(port, "0.0.0.0", () => {
         console.log(`Server listen on port ${port}`)

@@ -1,7 +1,7 @@
 
 import express from "express"
 import Stripe from "stripe";
-import { paimentAccepted } from "../models/paiement.model.mjs";
+import { paimentAccepted, premiumIsTrue } from "../models/paiement.model.mjs";
 
 const stripe = new Stripe(process.env.STRIPE_KEY);
 
@@ -43,18 +43,11 @@ export class paiementController {
 
             response.json({ sessionId: session.id });
 
-            // const activePremiumForUser = paimentAccepted(userId);
-
-            // if (!activePremiumForUser) {
-            //     return response.status(500).json({ error: "impossible d'activer l'abonnement de l'utilisateur." })
-            // }
-
         } catch (err) {
             console.error("Erreur Stripe:", err);
             response.status(500).json({ error: err.message });
         }
     }
-
 
     static async handleCheckoutCompleted(session) {
         const userId = session.metadata.user_id;
@@ -64,6 +57,36 @@ export class paiementController {
     }
 
 
+    static async getPremiumStatus(request, response) {
+        try {
+            if (!request.user || !request.user.id) {
+                return response.status(401).json({ error: "Utilisateur non authentifié." });
+            }
+            const userId = request.user.id;
+
+            // interaction avec le model 
+            const getPremiumStatus = await premiumIsTrue(userId);
+
+            if (!getPremiumStatus) {
+                return response.status(404).json({ error: "Utilisateur non trouvé." });
+            }
+
+            // return la reponse en cas de succes
+            return response.status(200).json(getPremiumStatus);
+
+        } catch (error) {
+            console.error("Erreur dans la recuperation du status:", err);
+            response.status(500).json({ error: err.message });
+        }
+    }
+
+
+
+
+
+
+
 }
+
 
 

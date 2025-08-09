@@ -16,6 +16,7 @@ import { TarifsComponent } from './tarifs-component/tarifs-component';
 import { ContactComponent } from './contact-component/contact-component';
 import { SuccessPaiementComponent } from './success-paiement-component/success-paiement-component';
 import { FailurePaiementComponent } from './failure-paiement-component/failure-paiement-component';
+import { PrivacyPolicyAndTermsComponent } from './privacy-policy-and-terms-component/privacy-policy-and-terms-component';
 
 
 
@@ -35,6 +36,6 @@ export const routes: Routes = [
     { path: "contact", component: ContactComponent},
     { path : "success-paiement", component : SuccessPaiementComponent, canActivate: [AuthGuard]},
     { path : "failure-paiement", component : FailurePaiementComponent, canActivate: [AuthGuard]},
-
+    { path : "goPrivacyPolicyAndTerms", component : PrivacyPolicyAndTermsComponent}
 
 ]

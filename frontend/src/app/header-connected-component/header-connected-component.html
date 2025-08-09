@@ -16,9 +16,15 @@
                 <!-- <li class="dev-page">À venir (en développement)</li> -->
             </ul>
             <div class="actions">
-                <button (click)="showProfil()" class="profil-btn">
-                    <i class="fa fa-user"></i> Profil
-                </button>
+                @if (isPremium) {
+                  <button (click)="showProfil()" class="profil-btn premium-gold">
+                      <i class="fa fa-user"></i> Profil Premium
+                  </button>
+                } @else {
+                  <button (click)="showProfil()" class="profil-btn">
+                      <i class="fa fa-user"></i> Profil
+                  </button>
+                }
                 <button (click)="deconnexion()" class="logout-btn">
                     <i class="fa fa-sign-out-alt icon-logout"></i> Déconnexion
                 </button>

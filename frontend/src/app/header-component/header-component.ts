@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { PremiumAccess } from '../service/premium-access';
+
 
 @Component({
   selector: 'app-header-component',
@@ -8,29 +10,53 @@ import { Router } from '@angular/router';
   styleUrl: './header-component.css'
 })
 export class HeaderComponent {
-  router : Router = new Router()
 
-  accueil(){
+  constructor(private router: Router) { } // Injection du Router
+  premiumService = inject(PremiumAccess);
+  isPremium = false;
+
+  ngOnInit(): void {
+  }
+
+  accueil() {
     this.router.navigate([""]);
   }
 
-  inscription(){
+  inscription() {
     this.router.navigate(["inscription"]);
   }
 
-  connexion(){
+  connexion() {
     this.router.navigate(["connexion"]);
   }
 
 
-  tarifs(){
+  tarifs() {
     this.router.navigate(["tarifs"]);
   }
 
-  contact(){
+  contact() {
     this.router.navigate(["contact"])
   }
 
+  // async checkPremiumStatus() {
+  //   const cookies = document.cookie.split(';').reduce((acc: any, cookie) => {
+  //     const [key, value] = cookie.trim().split('=');
+  //     acc[key] = value;
+  //     return acc;
+  //   }, {});
+  //   if (cookies['auth']) {
+  //     try {
+  //       const data = JSON.parse(decodeURIComponent(cookies['auth']));
+  //       this.isPremium = !!data.premium;
+  //     } catch {
+  //       this.isPremium = false;
+  //     }
+  //   } else {
+  //     this.isPremium = false;
+  //   }
+  // }
+
+
 
 }
- 
