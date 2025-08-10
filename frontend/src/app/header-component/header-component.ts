@@ -15,6 +15,8 @@ export class HeaderComponent {
   premiumService = inject(PremiumAccess);
   isPremium = false;
 
+  menuOpen = false;
+
   ngOnInit(): void {
   }
 
@@ -37,6 +39,10 @@ export class HeaderComponent {
 
   contact() {
     this.router.navigate(["contact"])
+  }
+
+  toggleMenu() {
+    this.menuOpen = !this.menuOpen;
   }
 
   // async checkPremiumStatus() {

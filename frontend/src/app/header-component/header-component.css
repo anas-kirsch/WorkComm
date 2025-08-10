@@ -274,3 +274,134 @@ button.dark-mode-toggle:hover {
 .icon-moon {
     pointer-events: none;
 }
+
+/* Burger menu button */
+button.burger-menu {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(120deg, #23232a 0%, #18181b 100%);
+    border: 2px solid #8B5CF6;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-left: 8px;
+    position: relative;
+    z-index: 1002;
+    transition: background 0.2s, border 0.2s, transform 0.3s;
+}
+button.burger-menu span {
+    display: block;
+    width: 24px;
+    height: 3px;
+    background: #8B5CF6;
+    margin: 4px 0;
+    border-radius: 2px;
+    transition: all 0.3s;
+}
+
+button.burger-menu.open {
+    transform: rotate(180deg);
+    transition: transform 0.3s;
+}
+
+/* Mobile nav styles */
+.mobile-nav {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(24, 24, 27, 0.98);
+    z-index: 1001;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s, visibility 0.3s;
+    opacity: 0;
+    visibility: hidden;
+}
+.mobile-nav.open {
+    display: flex;
+    opacity: 1;
+    visibility: visible;
+}
+.mobile-nav ul {
+    flex-direction: column;
+    gap: 32px;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 32px 0;
+    align-items: center;
+}
+.mobile-nav li {
+    font-size: 1.4rem;
+    color: #fff;
+    font-weight: 600;
+    padding: 12px 32px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(168, 85, 247, 0.12));
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+.mobile-nav li:hover {
+    background: linear-gradient(135deg, #8B5CF6 0%, #a855f7 100%);
+    color: #fff;
+}
+.mobile-nav .actions {
+    flex-direction: column;
+    gap: 18px;
+    align-items: center;
+}
+.mobile-nav button.connection,
+.mobile-nav button.inscription {
+    width: 180px;
+    font-size: 1.1rem;
+    padding: 14px 0;
+}
+
+@media (min-width: 650px) and (max-width: 1000px) {
+    button.burger-menu {
+        display: flex;
+        margin-right: 40px;
+    }
+    nav {
+        display: none;
+    }
+    .mobile-nav {
+        /* visible only if open */
+        font-family: "roboto",Arial, Helvetica, sans-serif;
+    }
+    ul{
+        display: flex;
+        margin-left: 40px;
+    }
+}
+
+@media (max-width: 649px) {
+    .header-content {
+        padding: 0 10px;
+    }
+    h1 {
+        font-size: 1.3rem;
+        margin-right: 8px;
+        margin-left: 40px;
+    }
+    button.burger-menu {
+        display: flex;
+        margin-right: 40px;
+    }
+    nav {
+        display: none;
+    }
+    .mobile-nav {
+        /* visible only if open */
+        font-family: "roboto",Arial, Helvetica, sans-serif;
+    }
+     ul{
+        display: flex;
+    }
+}

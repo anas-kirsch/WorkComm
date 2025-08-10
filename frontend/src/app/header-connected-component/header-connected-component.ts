@@ -23,19 +23,31 @@ export class HeaderConnectedComponent {
   premiumService = inject(PremiumAccess);
   isPremium = false;
 
+  menuOpen = false;
+
   constructor() {
     if (this.isAuthenticated) {
       this.authService.isConnected = true;
     }
-
   }
 
   accueil() {
     this.router.navigate([""]);
   }
 
+  inscription() {
+    this.router.navigate(["inscription"]);
+  }
+
+  connexion() {
+    this.router.navigate(["connexion"]);
+  }
+
   ngOnInit() {
     this.checkPremiumStatus()
+  }
+  toggleMenu() {
+    this.menuOpen = !this.menuOpen;
   }
 
 
