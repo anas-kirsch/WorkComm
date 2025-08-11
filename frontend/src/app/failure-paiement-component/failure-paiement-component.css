@@ -83,7 +83,6 @@ main {
 
 
 
-
 @media (min-width: 650px) and (max-width: 1000px) {
     .failure-container {
         margin: 10vh 5vh 10vh 5vh;
@@ -95,3 +94,5 @@ main {
         margin: 10vh 5vh 10vh 5vh;
     }
 }
+
+
