@@ -1,23 +1,25 @@
 /* Bouton supprimer le compte */
 .cta.delete-account {
-  background: #ff4d4f;
-  color: #fff;
-  border: none;
-  margin-left: 12px;
-  padding: 12px 32px;
-  border-radius: 12px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 2px 12px rgba(255, 77, 79, 0.15);
-  transition: background 0.2s, transform 0.2s;
-  letter-spacing: 1px;
-  margin-top: 10px;
+    background: #ff4d4f;
+    color: #fff;
+    border: none;
+    margin-left: 12px;
+    padding: 12px 32px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 12px rgba(255, 77, 79, 0.15);
+    transition: background 0.2s, transform 0.2s;
+    letter-spacing: 1px;
+    margin-top: 10px;
 }
+
 .cta.delete-account:hover {
-  background: #d9363e;
-  transform: translateY(-2px) scale(1.04);
+    background: #d9363e;
+    transform: translateY(-2px) scale(1.04);
 }
+
 .profil-main {
     min-height: 73.8vh;
     background: linear-gradient(120deg, #18181b 0%, #23232a 60%, #0f0f0f 100%);
@@ -30,7 +32,7 @@
 .profil-hero {
     padding: 48px 0 32px 0;
     text-align: center;
-    background: linear-gradient(135deg, rgba(139,92,246,0.12) 0%, rgba(168,85,247,0.08) 100%);
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(168, 85, 247, 0.08) 100%);
     border-radius: 18px;
     margin: 32px auto 24px auto;
     max-width: 900px;
@@ -42,6 +44,7 @@
     justify-content: center;
     /* margin-bottom: 18px; */
 }
+
 .profil-avatar img {
     width: 110px;
     height: 110px;
@@ -159,12 +162,68 @@
     margin-bottom: 8px;
 }
 
+
+
+.delete-account-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    font-family: "roboto", Arial, Helvetica, sans-serif;
+}
+
+.delete-account-modal-content {
+    background: #fff;
+    padding: 2.5rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    text-align: center;
+    min-width: 320px;
+    max-width: 90vw;
+}
+
+.delete-account-modal-content h2 {
+    margin-bottom: 1rem;
+}
+
+.delete-account-modal-content .danger {
+    color: #d32f2f;
+    font-weight: bold;
+}
+
+.modal-actions {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.cta.delete-account {
+    background: #d32f2f;
+    color: #fff;
+    border: none;
+}
+
+.cta.delete-account:hover {
+    background: #b71c1c;
+}
+
 /* Responsive */
 @media (max-width: 900px) {
-    .profil-details, .profil-about, .profil-hero {
+
+    .profil-details,
+    .profil-about,
+    .profil-hero {
         max-width: 100%;
         padding: 24px 8px;
     }
+
     .profil-avatar img {
         width: 80px;
         height: 80px;
@@ -172,53 +231,61 @@
 }
 
 
+@media (min-width: 650px) and (max-width: 1000px) {
+    .profil-hero {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 80%;
+    }
 
+    .profil-actions {
+        flex-direction: column;
+        align-items: center;
 
+    }
 
+    .profil-details {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 80%;
+    }
 
+    .profil-about {
+        width: 80%;
+    }
 
-
-
-
-
-
-.delete-account-modal {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.55);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  font-family: "roboto", Arial, Helvetica, sans-serif;
+    .cta.delete-account{
+        margin-left: 0px;
+    }
 }
-.delete-account-modal-content {
-  background: #fff;
-  padding: 2.5rem 2rem;
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-  text-align: center;
-  min-width: 320px;
-  max-width: 90vw;
-}
-.delete-account-modal-content h2 {
-  margin-bottom: 1rem;
-}
-.delete-account-modal-content .danger {
-  color: #d32f2f;
-  font-weight: bold;
-}
-.modal-actions {
-  margin-top: 2rem;
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-}
-.cta.delete-account {
-  background: #d32f2f;
-  color: #fff;
-  border: none;
-}
-.cta.delete-account:hover {
-  background: #b71c1c;
+
+@media (max-width: 649px) {
+    .profil-hero {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 80%;
+    }
+
+    .profil-actions {
+        flex-direction: column;
+        align-items: center;
+
+    }
+
+    .profil-details {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 80%;
+    }
+
+    .profil-about {
+        width: 80%;
+    }
+     .cta.delete-account{
+        margin-left: 0px;
+    }
 }
