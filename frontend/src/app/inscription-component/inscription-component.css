@@ -116,18 +116,36 @@ main {
 
 
 .signup-invite {
-  margin-top: 28px;
-  text-align: center;
-  font-size: 1.08rem;
-  color: #cfcfff;
-  cursor: pointer;
+    margin-top: 28px;
+    text-align: center;
+    font-size: 1.08rem;
+    color: #cfcfff;
+    cursor: pointer;
 }
+
 .signup-invite a {
-  color: #8B5CF6;
-  text-decoration: underline;
-  font-weight: 600;
-  transition: color 0.2s;
+    color: #8B5CF6;
+    text-decoration: underline;
+    font-weight: 600;
+    transition: color 0.2s;
 }
+
 .signup-invite a:hover {
-  color: #a855f7;
+    color: #a855f7;
+}
+
+
+
+@media (min-width: 650px) and (max-width: 1000px) {
+    .inscription-form-container {
+        margin: 50px 20px 50px 20px;
+        padding: 20px 30px 30px 30px;
+    }
+}
+
+@media (max-width: 649px) {
+    .inscription-form-container {
+        margin: 50px 20px 50px 20px;
+        padding: 20px 30px 30px 30px;
+    }
 }
