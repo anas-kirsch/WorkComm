@@ -406,4 +406,9 @@ button.burger-menu.open {
     }
 }
 
+/* Global rule to hide content below header when mobile menu is open */
+.hide-content-below-header ~ *:not(header) {
+  display: none !important;
+}
+
 

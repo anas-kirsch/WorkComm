@@ -1,5 +1,3 @@
-
-
 /* Burger menu button */
 button.burger-menu {
     display: none;
@@ -442,4 +440,9 @@ button.dark-mode-toggle:hover {
     .mobile-nav.open{
         display: none;
     }
+}
+
+/* Masquer le contenu en dehors du header quand le menu mobile est ouvert dans le header connecté */
+.hide-content-below-header ~ *:not(header) {
+  display: none !important;
 }

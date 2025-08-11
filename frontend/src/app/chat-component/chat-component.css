@@ -1,3 +1,6 @@
+body.hide-content-below-header .chat-main {
+  display: none !important;
+}
 /* Highlight selected friend in group creation modal */
 .one-friend.selected {
   background: #8B5CF6;
@@ -812,7 +815,8 @@ h2 {
 
   .chat-messages {
     margin: 20px;
-    width: 74%;
+    /* width: 74%; */
+    width: 85%;
     height: 50vh;
   }
 
@@ -886,7 +890,8 @@ h2 {
 
   .chat-messages {
     margin: 20px;
-    width: 74%;
+    /* width: 74%; */
+    width: 85%;
     height: 50vh;
   }
 
@@ -897,4 +902,11 @@ h2 {
    .messages-input-field{
     width: 100px;
   }
+}
+
+
+body.hide-content-below-header .chat-search-bar,
+body.hide-content-below-header .create-groupe,
+body.hide-content-below-header .chat-messages {
+  display: none !important;
 }

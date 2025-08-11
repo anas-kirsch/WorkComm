@@ -43,6 +43,11 @@ export class HeaderComponent {
 
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
+    if (this.menuOpen) {
+      document.body.classList.add('hide-content-below-header');
+    } else {
+      document.body.classList.remove('hide-content-below-header');
+    }
   }
 
   // async checkPremiumStatus() {
