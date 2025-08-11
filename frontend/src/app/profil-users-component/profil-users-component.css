@@ -475,16 +475,51 @@ input {
   cursor: not-allowed;
 }
 
-
-
-.choice-request-friend{
-  /* gap: 30px; */
+#container-choice {
+  display: flex;
+  justify-content: space-evenly;
 
 }
 
 
-#container-choice{
-display: flex;
-  justify-content: space-evenly;
 
+@media (min-width: 650px) and (max-width: 1000px) {
+
+  .profil-main {
+    padding: 25px 20px 10px 20px;
+  }
+
+  .profil-details {
+    padding: 24px 30px;
+  }
+
+  .profil-hero {
+    gap: 40px;
+  }
+
+  main {
+    min-height: 91.4vh;
+
+  }
+
+}
+
+
+@media (max-width: 649px) {
+
+  .profil-main {
+    padding: 25px 20px 10px 20px;
+  }
+
+  .profil-details {
+    padding: 24px 30px;
+  }
+
+  .profil-hero {
+    gap: 40px;
+  }
+
+  main {
+    min-height: 91.4vh;
+  }
 }
