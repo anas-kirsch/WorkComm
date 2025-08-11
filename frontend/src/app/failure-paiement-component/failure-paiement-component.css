@@ -1,48 +1,3 @@
-
-
-
-
-/* 
-.failure-container {
-    background: #ffe6e6;
-    border: 2px solid #f44336;
-    border-radius: 8px;
-    padding: 2rem;
-    text-align: center;
-    margin: 2rem auto;
-    max-width: 400px;
-}
-
-.failure-container h2 {
-    color: #f44336;
-    margin-bottom: 1rem;
-}
-
-.failure-container button {
-    margin-top: 1.5rem;
-    padding: 0.5rem 1.5rem;
-    background: #f44336;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-}
-
-.failure-container button:hover {
-    background: #b71c1c;
-}
-
-.support {
-    margin-top: 1rem;
-    font-size: 0.95rem;
-}
-
-.support a {
-    color: #f44336;
-    text-decoration: underline;
-} */
-
 main {
     /* min-height: 73.8vh; */
     min-height: 55.5vh;
@@ -52,6 +7,7 @@ main {
     overflow-y: auto;
     font-family: 'Inter', 'Roboto', sans-serif;
 }
+
 .failure-container {
     background: linear-gradient(120deg, #18181b 0%, #23232a 60%, #0f0f0f 100%);
     border: 2px solid #f44336;
@@ -121,5 +77,21 @@ main {
 
     50% {
         background-position: 100% 50%;
+    }
+}
+
+
+
+
+
+@media (min-width: 650px) and (max-width: 1000px) {
+    .failure-container {
+        margin: 10vh 5vh 10vh 5vh;
+    }
+}
+
+@media (max-width: 649px) {
+    .failure-container {
+        margin: 10vh 5vh 10vh 5vh;
     }
 }

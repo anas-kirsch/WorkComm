@@ -79,3 +79,19 @@ main {
         background-position: 100% 50%;
     }
 }
+
+
+
+
+@media (min-width: 650px) and (max-width: 1000px) {
+    .success-container {
+        margin: 10vh 5vh 10vh 5vh;
+    }
+}
+
+@media (max-width: 649px) {
+    .success-container {
+        margin: 10vh 5vh 10vh 5vh;
+    }
+    
+}
