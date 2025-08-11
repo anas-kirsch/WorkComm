@@ -182,7 +182,7 @@ h4 {
 .mentions-legales li {
     margin-bottom: 4px;
     font-family: 'Inter', 'Roboto', sans-serif;
-    
+
 }
 
 .mentions-legales a {
@@ -204,11 +204,37 @@ h4 {
     .footer-content {
         flex-direction: column;
         gap: 32px;
-        align-items: flex-start;
-        padding: 0 20px;
+        /* align-items: flex-start; */
+        /* padding: 0 20px; */
     }
 
     .footer-brand {
         margin-bottom: 12px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .footer-copyright {
+        padding: 20px 0px 0px 0px;
+    }
+}
+
+
+
+@media (min-width: 650px) and (max-width: 1000px) {
+    .footer-brand {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 649px) {
+    .footer-brand {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .footer-copyright {
+        padding: 20px 0px 10px 0px;
     }
 }

@@ -144,3 +144,21 @@
     padding: 24px 4vw 18px 4vw;
   }
 }
+
+
+
+
+
+
+@media (min-width: 650px) and (max-width: 1000px) {
+  .contact-hero, .contact-form{
+    margin: 20px;
+  }
+  
+}
+
+@media (max-width: 649px) {
+  .contact-hero, .contact-form{
+    margin: 20px;
+  }
+}

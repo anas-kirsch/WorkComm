@@ -10,6 +10,7 @@
     opacity: 0.85;
     transition: none;
 }
+
 /* Boutons tarifs */
 .cta {
     padding: 12px 32px;
@@ -25,15 +26,18 @@
     letter-spacing: 1px;
     margin-top: 18px;
 }
+
 .cta.secondary {
     background: linear-gradient(90deg, #23232a 0%, #18181b 100%);
     color: #8B5CF6;
     border: 2px solid #8B5CF6;
 }
+
 .cta:hover {
     background: linear-gradient(90deg, #a855f7 0%, #450881 100%);
     transform: translateY(-2px) scale(1.04);
 }
+
 main {
     min-height: 73.8vh;
     background: linear-gradient(120deg, #18181b 0%, #23232a 60%, #0f0f0f 100%);
@@ -161,21 +165,54 @@ main {
         min-width: unset;
     }
 
-.cta {
-    padding: 12px 32px;
-    border-radius: 12px;
-    border: none;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    background: linear-gradient(90deg, #8B5CF6 0%, #a855f7 100%);
-    color: #fff;
-    box-shadow: 0 2px 12px rgba(139, 92, 246, 0.15);
-    transition: background 0.2s, transform 0.2s;
-    letter-spacing: 1px;
-    margin-top: 24px;
-    align-self: center;
-    min-width: 200px;
-}
+    .cta {
+        padding: 12px 32px;
+        border-radius: 12px;
+        border: none;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        background: linear-gradient(90deg, #8B5CF6 0%, #a855f7 100%);
+        color: #fff;
+        box-shadow: 0 2px 12px rgba(139, 92, 246, 0.15);
+        transition: background 0.2s, transform 0.2s;
+        letter-spacing: 1px;
+        margin-top: 24px;
+        align-self: center;
+        min-width: 200px;
+    }
 
 }
+
+
+
+
+@media (min-width: 650px) and (max-width: 1000px) {
+    .hero {
+        margin: 30px 20px 0px 20px;
+    }
+
+    .feature {
+        margin: 0px 20px 0px 20px;
+    }
+    .about{
+        margin: 20px 20px 0px 20px;
+    }
+}
+
+
+
+
+@media (max-width: 649px) {
+    .hero {
+        margin: 30px 20px 0px 20px;
+    }
+
+    .feature {
+        margin: 0px 20px 0px 20px;
+    }
+    .about{
+        margin: 20px 20px 0px 20px;
+    }
+}
+
