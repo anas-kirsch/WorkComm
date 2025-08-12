@@ -13,22 +13,38 @@ import { FooterComponent } from '../footer-component/footer-component';
   templateUrl: './contact-component.html',
   styleUrl: './contact-component.css'
 })
+
 export class ContactComponent {
+  /** Adresse email saisie par l'utilisateur */
   email = '';
+  /** Sujet du message */
   subject = '';
+  /** Contenu du message */
   message = '';
+  /** Affiche le message de succès après envoi */
   showSuccess = false;
+  /** Affiche le message d'erreur en cas de problème */
   showError = false;
+  /** Message d'erreur à afficher */
   errorMsg = '';
+  /** ChangeDetectorRef pour forcer la mise à jour de l'UI */
   private cdr: ChangeDetectorRef;
+  /** Service d'authentification pour récupérer le token */
   private authService: AuthService;
+  /** URL de l'API backend */
   static apiURL = environment.apiURL;
 
+  /**
+   * Constructeur : injection des services nécessaires
+   */
   constructor() {
     this.cdr = inject(ChangeDetectorRef);
     this.authService = inject(AuthService);
   }
 
+  /**
+   * Soumet le formulaire de contact après validation côté client
+   */
   async onSubmitContact() {
     // Validation JS côté client
     if (!this.email || !this.subject || !this.message) {
@@ -55,11 +71,17 @@ export class ContactComponent {
     }, 2000);
   }
 
+  /**
+   * Vérifie la validité d'une adresse email avec une regex simple
+   */
   isValidEmail(email: string): boolean {
     // Regex simple pour valider un email
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
+  /**
+   * Envoie le mail de contact au backend
+   */
   async fetchMailContact(email: string, subject: string, message: string) {
     
     try { 
@@ -82,14 +104,18 @@ export class ContactComponent {
    * @param message 
    * @returns 
    */
+  /**
+   * Fait l'appel HTTP POST au backend pour envoyer le contenu du mail
+   * @param email Adresse email du destinataire
+   * @param subject Sujet du mail
+   * @param message Contenu du mail
+   * @returns Réponse du backend
+   */
   async emailSend(email: string, subject: string, message: string) {
 
     const tokenHeader = this.authService.insertTokeninHeader();
 
     const myHeaders = new Headers();
-    // if (tokenHeader.Authorization) {
-    //   myHeaders.append("Authorization", tokenHeader.Authorization);
-    // }
 
      myHeaders.append("Content-Type", "application/json"); 
 

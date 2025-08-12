@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken'
-
 const secret = process.env.JWT_SECRET ?? "secret-key";
 
 
@@ -23,11 +22,10 @@ export async function getClientTokenAndVerifAccess(request, response, next) {
         const verifyToken = await jwt.verify(token, secret);
 
         if (verifyToken) {
-
             console.log(verifyToken);
             console.log("token valid");
 
-            request.user = verifyToken; // <-- Ajoute le token décodé à la requête
+            request.user = verifyToken; 
 
             switch (verifyToken.role) {
                 case "admin":
@@ -42,17 +40,14 @@ export async function getClientTokenAndVerifAccess(request, response, next) {
                     break;
             }
         }
-  
     } catch (error) {
-        console.error("JWT error:", error); // Ajoute ceci
+        console.error("JWT error:", error);
         response.status(401).json({
             message: "Unauthorized access",
             error: error.message
         });
         return;
     }
-
-
 }
 
 

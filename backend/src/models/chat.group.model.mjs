@@ -14,10 +14,8 @@ import { GroupMessage } from '../models/database.mjs';
  * @returns 
  */
 export async function createChatGroup(group_name) {
-
     return await groupName.create({
         group_name: group_name
-
     })
 }
 
@@ -26,9 +24,7 @@ export async function createChatGroup(group_name) {
  * @param {string} group_name 
  */
 export async function getGroupId(group_name) {
-
     return await groupName.findOne({ where: { group_name: group_name } });
-
 }
 
 /**
@@ -38,16 +34,13 @@ export async function getGroupId(group_name) {
  * @returns 
  */
 export async function addUserToGroupIfNotExists(groupId, userId) {
-
     return await groupMembers.findOrCreate({
         where: {
-
             groupNameId: groupId,
             UserId: userId
 
         }
     });
-
 }
 
 
@@ -57,12 +50,10 @@ export async function addUserToGroupIfNotExists(groupId, userId) {
  * @returns 
  */
 export async function getAllGroupMember(groupId) {
-
     return await groupMembers.findAll({
         where: { groupNameId: groupId },
         attributes: ['UserId']
     });
-
 }
 
 
@@ -72,9 +63,7 @@ export async function getAllGroupMember(groupId) {
  * @returns 
  */
 export async function findGroup(groupId) {
-
     return await groupName.findOne({ where: { id: groupId } });
-
 }
 
 
@@ -85,13 +74,10 @@ export async function findGroup(groupId) {
  * @returns 
  */
 export async function isUserInGroup(groupId, memberId) {
-
     return await groupMembers.findOne({
         where: { groupNameId: groupId, UserId: memberId }
     })
-
 }
-
 
 
 /**
@@ -100,11 +86,9 @@ export async function isUserInGroup(groupId, memberId) {
  * @param {number} newMemberId 
  */
 export async function addUserToGroup(groupeId, newMemberId) {
-
     return await groupMembers.create({
         groupNameId: groupeId, UserId: newMemberId
     })
-
 }
 
 
@@ -115,14 +99,12 @@ export async function addUserToGroup(groupeId, newMemberId) {
  * @returns 
  */
 export async function removeUserFromGroup(groupeId, memberId) {
-
     return await groupMembers.destroy({
         where: {
             groupNameId: groupeId,
             UserId: memberId
         }
     });
-
 }
 
 
@@ -132,11 +114,9 @@ export async function removeUserFromGroup(groupeId, memberId) {
  * @returns {Promise<object>}
  */
 export async function createMessage(content) {
-
     return await Message.create({
         content: content,
     });
-
 }
 
 
@@ -164,13 +144,11 @@ export async function createGroupMessageLink(userId, groupId, messageId) {
  * @returns 
  */
 export async function findGroupMessageLink(userId, groupId, messageId) {
-
     return await GroupMessage.findOne({
         where: {
             UserId: userId, GroupNameId: groupId, MessageID: messageId
         }
     })
-
 }
 
 
@@ -181,12 +159,10 @@ export async function findGroupMessageLink(userId, groupId, messageId) {
  * @returns 
  */
 export async function updateMessage(newMessage, messageId) {
-
     return await Message.update(
         { content: newMessage },
         { where: { id: messageId } }
     );
-
 }
 
 /**
@@ -196,11 +172,9 @@ export async function updateMessage(newMessage, messageId) {
  * @param {number} messageId 
  */
 export async function deleteGroupMessageLink(userId, groupId, messageId) {
-
     return await GroupMessage.destroy({
         where: { UserId: userId, GroupNameId: groupId, MessageID: messageId }
     });
-
 }
 
 
@@ -211,9 +185,7 @@ export async function deleteGroupMessageLink(userId, groupId, messageId) {
  * @returns 
  */
 export async function findMessage(messageId) {
-
     return await Message.findOne({ where: { id: messageId } });
-
 }
 
 
@@ -224,11 +196,9 @@ export async function findMessage(messageId) {
  * @returns 
  */
 export async function deleteMessage(messageId) {
-
     return await Message.destroy({
         where: { id: messageId }
     });
-
 }
 
 
@@ -239,13 +209,11 @@ export async function deleteMessage(messageId) {
  * @returns 
  */
 export async function findAllGroupMessagesByGroupId(groupId) {
-
     return await GroupMessage.findAll({
         where: {
             GroupNameId: groupId
         }
     })
-
 }
 
 
@@ -255,11 +223,9 @@ export async function findAllGroupMessagesByGroupId(groupId) {
  * @returns {Promise<Array>} 
  */
 export async function getGroupMessages(messageIds) {
-
     return await Message.findAll({
         where: { id: messageIds }
     });
-
 }
 
 
@@ -300,17 +266,6 @@ export async function deleteMessages(messageIds) {
     });
 }
 
-
-// /**
-//  * Supprime tous les messages privés dont l'id est dans le tableau messageIds
-//  * @param {number[]|string[]} messageIds - Tableau d'IDs de messages privés
-//  * @returns {Promise<number>} - Nombre de messages supprimés
-//  */
-// export async function deletePrivateMessages(messageIds) {
-//     return await Message.destroy({
-//         where: { id: messageIds }
-//     });
-// }
 
 
 /**

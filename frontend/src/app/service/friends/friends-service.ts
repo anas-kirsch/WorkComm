@@ -10,25 +10,32 @@ import { environment } from '../../../environments/environment.development';
   providedIn: 'root'
 })
 export class FriendsService {
+  // Service d'authentification pour récupérer le token et autres infos utilisateur
   authService = inject(AuthService);
+  // Permet d'exécuter du code dans la zone Angular (utile pour les callbacks asynchrones)
   ngZone = inject(NgZone);
+  // Permet de forcer la détection de changements dans l'application
   appRef = inject(ApplicationRef);
+  // Permet la navigation entre les routes Angular
+  router = inject(Router);
+  // URL de l'API backend
   static apiURL = environment.apiURL;
 
-
-  // router: Router = new Router();
-  router = inject(Router);
-
+  // Liste des utilisateurs trouvés lors d'une recherche
   foundUsers: Friends[] = [];
+  // Valeur courante du champ de recherche
   searchValue: string = '';
+  // Référence à l'input de recherche
   searchInput: any;
 
+  // URL de l'API (non statique)
   apiURL = environment.apiURL;
   /**
    * fetch qui cherche des utilisateurs selon les caractères tapés dans la barre 
    * @param search 
    */
   fetchInputSearch(search: string): Promise<responseObject> {
+    // Recherche des utilisateurs selon la valeur tapée dans la barre de recherche
     const tokenHeader = this.authService.insertTokeninHeader();
 
     const myHeaders = new Headers();
@@ -45,9 +52,9 @@ export class FriendsService {
       method: "POST",
       headers: myHeaders,
       body: raw,
-      // redirect: "follow"
     };
 
+    // Effectue la requête POST pour récupérer les utilisateurs correspondant à la recherche
     return new Promise((resolve, reject) => {
       fetch(`${AuthService.apiURL}/api/user/getUser`, requestOptions)
         .then(data => data.json())
@@ -65,6 +72,7 @@ export class FriendsService {
    * @param search 
    */
   async fetchDataByUsername(search: string): Promise<Friends> {
+    // Recherche un utilisateur par son username
     const tokenHeader = this.authService.insertTokeninHeader();
 
     const myHeaders = new Headers();
@@ -81,9 +89,9 @@ export class FriendsService {
       method: "POST",
       headers: myHeaders,
       body: raw,
-      // redirect: "follow"
     };
 
+    // Effectue la requête POST pour récupérer l'utilisateur par username
     return fetch(`${AuthService.apiURL}/api/user/getByUsername`, requestOptions)
       .then(response => response.json())
       .then(data => data as Friends);
@@ -96,6 +104,7 @@ export class FriendsService {
    * @param dataOfUser 
    */
   showUserProfil(dataOfUser: Friends) {
+    // Navigue vers la page de profil de l'utilisateur sélectionné
     console.log(dataOfUser);
     this.router.navigate(["user", dataOfUser.username]);
 
@@ -110,6 +119,7 @@ export class FriendsService {
    * @returns 
    */
   async sendFriendRequest(userId: number, friendId: number): Promise<object> {
+    // Envoie une demande d'ami au backend
     const tokenHeader = this.authService.insertTokeninHeader();
 
     const myHeaders = new Headers();
@@ -129,6 +139,7 @@ export class FriendsService {
       body: raw
     };
 
+    // Effectue la requête POST pour envoyer la demande d'ami
     try {
       const response = await fetch(`${AuthService.apiURL}/api/user/send-friend-requests`, requestOptions);
       const data = await response.json();
@@ -147,6 +158,7 @@ export class FriendsService {
    * @returns 
    */
   async checkFriendRequestStatus(friendId: number): Promise<any> {
+    // Vérifie le statut d'une demande d'ami pour un utilisateur donné
     const tokenHeader = this.authService.insertTokeninHeader();
 
     const myHeaders = new Headers();
@@ -163,6 +175,7 @@ export class FriendsService {
       body: raw
     };
 
+    // Effectue la requête POST pour vérifier le statut de la demande d'ami
     try {
       const response = await fetch(`${AuthService.apiURL}/api/user/checkFriendRequestStatus`, requestOptions);
       const data = await response.json();
@@ -180,6 +193,7 @@ export class FriendsService {
    * @returns 
    */
   async getFriendRequests(): Promise<any[]> {
+    // Récupère la liste des demandes d'amis reçues par l'utilisateur
     const tokenHeader = this.authService.insertTokeninHeader();
 
     const myHeaders = new Headers();
@@ -192,6 +206,7 @@ export class FriendsService {
       headers: myHeaders
     };
 
+    // Effectue la requête GET pour récupérer les demandes d'amis
     try {
       const response = await fetch(`${AuthService.apiURL}/api/user/friend-requests`, requestOptions);
       const data = await response.json();
@@ -212,6 +227,7 @@ export class FriendsService {
    * @param action "accept" ou "refuse"
    */
   async respondToFriendRequest(friendId: number, action: "accept" | "refuse"): Promise<any> {
+    // Répond à une demande d'ami (accepter ou refuser)
     const tokenHeader = this.authService.insertTokeninHeader();
 
     const myHeaders = new Headers();
@@ -228,6 +244,7 @@ export class FriendsService {
       body: raw
     };
 
+    // Effectue la requête POST pour répondre à la demande d'ami
     try {
       const response = await fetch(`${AuthService.apiURL}/api/user/confirm-friend-requests`, requestOptions);
       const data = await response.json();
@@ -247,6 +264,7 @@ export class FriendsService {
  * @param friendId ID de l'ami à supprimer
  */
   async deleteFriend(friendId: number): Promise<any> {
+    // Supprime un ami (relation d'amitié) pour l'utilisateur courant
     const tokenHeader = this.authService.insertTokeninHeader();
 
     const myHeaders = new Headers();
@@ -263,6 +281,7 @@ export class FriendsService {
       body: raw
     };
 
+    // Effectue la requête DELETE pour supprimer l'ami
     try {
       const response = await fetch(`${AuthService.apiURL}/api/user/delete-friend`, requestOptions);
       const data = await response.json();
@@ -283,6 +302,7 @@ export class FriendsService {
    */
   async getMyFriend(): Promise<any> {
 
+    // Récupère la liste des amis de l'utilisateur courant
     const tokenHeader = this.authService.insertTokeninHeader();
 
     const myHeaders = new Headers();
@@ -295,6 +315,7 @@ export class FriendsService {
       method: "GET",
       headers: myHeaders,
     };
+    // Effectue la requête GET pour récupérer les amis
     try {
       const response = await fetch(`${AuthService.apiURL}/api/user/myfriend`, requestOptions);
       const data = await response.json();
@@ -310,6 +331,7 @@ export class FriendsService {
 
 
 async fetchGetPendingSentFriendRequests(): Promise<any> {
+  // Récupère la liste des demandes d'amis envoyées et en attente de réponse
   const tokenHeader = this.authService.insertTokeninHeader();
 
   const myHeaders = new Headers();
@@ -323,6 +345,7 @@ async fetchGetPendingSentFriendRequests(): Promise<any> {
     headers: myHeaders,
   };
 
+  // Effectue la requête GET pour récupérer les demandes d'amis envoyées en attente
   try {
     const response = await fetch(`${AuthService.apiURL}/api/user/getPendingSentFriendRequests`, requestOptions);
     const data = await response.json();

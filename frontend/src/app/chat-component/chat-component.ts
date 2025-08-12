@@ -19,49 +19,80 @@ import { environment } from '../../environments/environment.development';
 
 })
 
+
 export class ChatComponent implements OnInit {
+  /** Liste des membres du groupe courant (pour affichage des noms dans le chat de groupe) */
   currentGroupMembers: any[] = [];
 
-
+  /** Indique si le chat de groupe est actif */
   isGroupChatActive: boolean = false;
-  static apiURL = environment.apiURL;
-  isLoadingGroup: boolean = false; // Pour bloquer les clics multiples
 
+  /** URL de l'API backend */
+  static apiURL = environment.apiURL;
+
+  /** Pour éviter les clics multiples lors du chargement d'un groupe */
+  isLoadingGroup: boolean = false;
+
+  /** Service pour gérer les amis */
   friendService = inject(FriendsService)
+  /** Service pour gérer les groupes */
   groupService = inject(GroupeService)
+  /** Service d'authentification */
   authService = inject(AuthService)
 
+  /** Nom d'utilisateur de l'ami ou du groupe sélectionné */
   selectedFriendUsername: string = '';
+  /** Message en cours de saisie */
   newMessage: string = '';
 
+  /** Indique si le chat est activé */
   chatActivate = false;
+  /** Section ouverte dans la sidebar (amis, groupes, etc.) */
   openSection: string | null = null;
 
+  /** Utilisateurs trouvés lors de la recherche */
   foundUsers: Friends[] = [];
+  /** Valeur du champ de recherche */
   searchValue: string = '';
+  /** Liste des demandes d'amis reçues */
   friendRequests: any[] = [];
+  /** Liste des amis de l'utilisateur */
   myFriends: Friends[] = [];
+  /** Liste des groupes de l'utilisateur */
   groups: any[] = [];
+  /** Liste des demandes d'amis envoyées en attente */
   arrayOfSentFriendRequests: any[] = [];
+  /** Indique si une demande d'ami a été reçue */
   isIncomingFriendRequest = false;
+  /** Indique si une demande d'ami est en attente */
   isFriendRequestPending = false;
+  /** Indique si l'utilisateur est ami avec la personne sélectionnée */
   isFriend = false;
+  /** Nom de la conversation privée courante */
   conversationName: string = "";
 
+  /** Liste des amis pour la création de groupe */
   userFriend: Friends[] = [];
 
+  /** Liste des messages affichés dans le chat */
   messages: any[] = [];
+  /** ID de l'utilisateur courant */
   myUserId: number = 0;
+  /** ID de l'ami sélectionné (pour chat privé) */
   selectedFriendId: number | null = null;
 
-  // For delete confirmation modal
+  /** Affichage de la modale de confirmation de suppression de message */
   showDeleteModal: boolean = false;
+  /** Message à supprimer (stocké pour la modale) */
   messageToDelete: any = null;
 
+  /** Indique si la modale de création de groupe est affichée */
   createGroupAction: boolean = false;
 
+  /** Intervalle pour le rafraîchissement automatique des amis et demandes */
   private refreshInterval: any;
 
+  /** Constructeur : injection des services et du ChangeDetectorRef */
   constructor(
     private cdr: ChangeDetectorRef,
     private socketPrivateService: SocketPrivateService,
@@ -71,6 +102,9 @@ export class ChatComponent implements OnInit {
 
 
 
+  /**
+   * Retourne le nom de l'expéditeur du message ("Moi" si c'est l'utilisateur courant)
+   */
   getSenderName(msg: any): string {
     if (msg.userId === this.myUserId || msg.UserId === this.myUserId) return 'Moi';
     if (this.isGroupChatActive && this.currentGroupMembers?.length) {
@@ -81,6 +115,9 @@ export class ChatComponent implements OnInit {
   }
 
 
+  /**
+   * Initialisation du composant : récupération des données utilisateur, amis, groupes, etc.
+   */
   async ngOnInit() {
     try {
       const auth = AuthService.getAuthFromCookies();
@@ -114,6 +151,9 @@ export class ChatComponent implements OnInit {
 
 
 
+  /**
+   * Gestion de la recherche d'utilisateur dans la barre de recherche
+   */
   async onInput(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.searchValue = value;
@@ -128,6 +168,9 @@ export class ChatComponent implements OnInit {
 
 
 
+  /**
+   * Accepte une demande d'ami
+   */
   acceptRequest(friendId: number) {
     if (!friendId) return;
     this.friendService.respondToFriendRequest(friendId, "accept")
@@ -144,6 +187,9 @@ export class ChatComponent implements OnInit {
   }
 
 
+  /**
+   * Affiche la modale de confirmation de suppression pour un message
+   */
   action(msg: string) {
     console.log(msg)
 
@@ -152,12 +198,18 @@ export class ChatComponent implements OnInit {
     this.showDeleteModal = true;
   }
 
+  /**
+   * Annule la suppression d'un message (ferme la modale)
+   */
   cancelDelete() {
     this.showDeleteModal = false;
     this.messageToDelete = null;
   }
 
 
+  /**
+   * Confirme la suppression d'un message privé
+   */
   async confirmDelete(msg: any) {
     this.showDeleteModal = false;
     this.messageToDelete = null;
@@ -176,6 +228,9 @@ export class ChatComponent implements OnInit {
 
 
 
+  /**
+   * Refuse une demande d'ami
+   */
   refuseRequest(friendId: number) {
     if (!friendId) return;
     this.friendService.respondToFriendRequest(friendId, "refuse")
@@ -192,6 +247,9 @@ export class ChatComponent implements OnInit {
 
 
 
+  /**
+   * Récupère la liste des amis de l'utilisateur
+   */
   async getMyFriend() {
     try {
       this.myFriends = await this.friendService.getMyFriend();
@@ -203,6 +261,9 @@ export class ChatComponent implements OnInit {
 
 
 
+  /**
+   * Retourne le chemin de l'image de profil d'un ami
+   */
   getFriendImage(friend: any): string | null {
     if (!friend.imagePath) return null;
     if (typeof friend.imagePath === 'string') return friend.imagePath;
@@ -212,6 +273,9 @@ export class ChatComponent implements OnInit {
 
 
 
+  /**
+   * Récupère la liste des groupes de l'utilisateur
+   */
   async getGroupUser() {
     try {
       const res = await this.groupService.fetchGetGroupUser();
@@ -223,6 +287,9 @@ export class ChatComponent implements OnInit {
 
 
 
+  /**
+   * Récupère la liste des demandes d'amis envoyées en attente
+   */
   async getPendingSentFriendRequests() {
     try {
       const res = await this.friendService.fetchGetPendingSentFriendRequests();
@@ -233,6 +300,9 @@ export class ChatComponent implements OnInit {
   }
 
 
+  /**
+   * Démarre une conversation privée avec un ami
+   */
   async startPrivateChat(friendUserId: number) {
     if (this.selectedFriendId === friendUserId) {
       return; // Déjà sur ce chat, on ne refait rien
@@ -293,6 +363,9 @@ export class ChatComponent implements OnInit {
 
 
 
+  /**
+   * Récupère l'historique des messages de la conversation privée courante
+   */
   async extractFinalObjectifFromHistory() {
     const conversationName = localStorage.getItem("conversation_name");
 
@@ -315,6 +388,9 @@ export class ChatComponent implements OnInit {
   }
 
 
+  /**
+   * Envoie un message dans le chat (privé ou groupe)
+   */
   sendChatMessage(message: string) {
     if (this.isGroupChatActive && this.openSection) {
       console.log(message)
@@ -365,6 +441,9 @@ export class ChatComponent implements OnInit {
 
 
 
+  /**
+   * Nettoie les sockets et l'intervalle lors de la destruction du composant
+   */
   ngOnDestroy() {
     this.socketPrivateService.disconnect();
     this.socketGroupService.disconnectSocket();
@@ -373,6 +452,9 @@ export class ChatComponent implements OnInit {
     }
   }
 
+  /**
+   * Rafraîchit la liste des amis et des demandes d'amis
+   */
   async refreshFriendsAndRequests() {
     await this.getMyFriend();
     this.friendRequests = await this.friendService.getFriendRequests();
@@ -381,12 +463,18 @@ export class ChatComponent implements OnInit {
 
 
 
+  /**
+   * Fonction de tracking pour l'affichage des messages (optimisation ngFor)
+   */
   trackByMsgId(index: number, msg: any) {
     return msg?.id ?? msg?.createdAt ?? index;
   }
 
 
 
+  /**
+   * Affiche la modale de création de groupe et récupère la liste des amis
+   */
   async createGroup() {
     this.createGroupAction = true;
     try {
@@ -403,15 +491,23 @@ export class ChatComponent implements OnInit {
   }
 
 
+  /**
+   * Annule la création de groupe
+   */
   cancelGroupCreation() {
     this.createGroupAction = false;
     this.cdr.detectChanges();
   }
 
 
+  /** IDs des amis sélectionnés pour le nouveau groupe */
   selectedFriendIds: number[] = [];
+  /** Nom du nouveau groupe à créer */
   groupName: string = '';
 
+  /**
+   * Ajoute ou retire un ami de la sélection pour la création de groupe
+   */
   toggleFriendSelection(friendId: number) {
     const idx = this.selectedFriendIds.indexOf(friendId);
     if (idx > -1) {
@@ -422,8 +518,10 @@ export class ChatComponent implements OnInit {
   }
 
 
+  /**
+   * Crée le groupe avec les amis sélectionnés et le nom donné
+   */
   async confirmGroupCreation() {
-    // Ajoute l'id de l'utilisateur courant (depuis le cookie) dans le tableau si absent
     const auth = AuthService.getAuthFromCookies();
     if (auth && auth.id) {
       const myId = Number(auth.id);
@@ -453,8 +551,12 @@ export class ChatComponent implements OnInit {
 
 
 
+  /** ID du groupe actuellement écouté par le socket (pour éviter les doublons) */
   activeGroupListenerId: number | null = null;
 
+  /**
+   * Démarre le chat de groupe, récupère les messages et connecte le socket
+   */
   async startGroupChat(group: any) {
     // Empêche les clics multiples pendant le chargement
     if (this.isLoadingGroup) return;
@@ -530,19 +632,6 @@ export class ChatComponent implements OnInit {
     }
     this.isLoadingGroup = false;
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

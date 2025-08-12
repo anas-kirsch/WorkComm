@@ -14,7 +14,6 @@ export async function findUserByMail(userMail){
 
 }
 
-
 /**
  * Met à jour le resetToken pour un utilisateur donné
  * @param {number} userId 

@@ -1,11 +1,8 @@
 
 
-<!-- <app-header-component></app-header-component> -->
-<!-- <app-header-connected-component *ngIf="isAuthenticated"></app-header-connected-component>
-<app-header-component *ngIf="!isAuthenticated"></app-header-component> -->
-<!-- <router-outlet></router-outlet> -->
-
-
-<app-header-connected-component *ngIf="this.authService.isConnected"></app-header-connected-component>
-<app-header-component *ngIf="!this.authService.isConnected"></app-header-component>
+@if (this.authService.isConnected) {
+  <app-header-connected-component></app-header-connected-component>
+} @else {
+  <app-header-component></app-header-component>
+}
 <router-outlet></router-outlet>

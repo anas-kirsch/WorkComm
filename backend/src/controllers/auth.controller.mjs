@@ -7,9 +7,9 @@ import jwt from "jsonwebtoken";
 import { generateResetLink } from "../controllers/generateResetLink.controller.mjs"
 import { emailResetPassword } from "../controllers/smtp.controller.mjs"
 import {premiumIsTrue} from "../models/paiement.model.mjs"
+import { User } from "../models/database.mjs";
 
-const secret = process.env.JWT_SECRET || "secret-key"; // à adapter selon ton projet
-
+const secret = process.env.JWT_SECRET || "secret-key"; 
 
 export class authController {
 
@@ -22,22 +22,13 @@ export class authController {
      */
     static async login(request, response) {
         try {
-
-            console.log('route : login');
-
             const UserData = request.body;
-            // console.log(UserData);
 
-            // ...existing code...
             if (!UserData || !UserData.mail || !UserData.password) {
                 return response.status(400).json({ error: "Données manquantes." });
             }
             else {
-                // console.log(UserData.mail)
-                // console.log(UserData.password)
-
                 const getUserConnect = await findUserByMail(UserData.mail);
-
                 if (!getUserConnect) {
                     return response.status(400).json({ error: "Identifiants invalides." });
 
@@ -45,7 +36,6 @@ export class authController {
                     console.log("myUser:", getUserConnect.dataValues)
 
                     const compareMdp = await bcrypt.compare(UserData.password, getUserConnect.dataValues.password)
-                    // console.log("test comparaison",compareMdp)
 
                     if (!compareMdp) {
                         return response.status(400).json({ error: "Identifiants invalides." });
@@ -53,25 +43,20 @@ export class authController {
 
                     if (compareMdp === true) {
                         console.log("connection autorisée", compareMdp)
-
-                        // fournir user , donc ces donnee , username, mail, pp, bio, language, id
-                        //fournir le jwt 
                         const profilPicture = await getProfilPictureFromDataB(getUserConnect.dataValues.id);
 
                         if (profilPicture) {
                             console.log(profilPicture)
                         }
                         if (!profilPicture) {
-                            // console.log("impossible de recupérer la pp de l'utilisateur. ")
+                            console.log("impossible de recupérer la pp de l'utilisateur. ")
                         }
 
                         const getPremiumStatus = await premiumIsTrue(getUserConnect.dataValues.id)
-                        // console.log("recuperation du status du premium à la connexion",getPremiumStatus.dataValues.premium)
                         if(!getPremiumStatus){
                             console.error("error dans la recuperation du status de l'abonnement de l'utilisateur", getPremiumStatus)
                         }
 
-                        //envoyer un jwt au client qui s'est connecté
                         const payload = { id: getUserConnect.dataValues.id, role: getUserConnect.dataValues.role }
                         const newToken = jwt.sign(payload, secret, {
                             expiresIn: "30 days"
@@ -99,7 +84,6 @@ export class authController {
                         return response.status(400).json({ error: "Erreur dans le mot de passe" })
                     }
                 }
-
             }
         } catch (error) {
             console.error(error); // pour le voir dans la console
@@ -118,21 +102,15 @@ export class authController {
             if (!mail) {
                 return response.status(400).json({ error: "Email manquant." });
             }
-
-            // Cherche l'utilisateur par email
             const user = await findUserByMail(mail);
             if (!user) {
                 return response.status(404).json({ error: "Utilisateur non trouvé." });
             }
 
-            // Génère le token et le lien
             const baseUrl = process.env.RESET_URL || "http://localhost:4900/reset-password";
             const { token, link } = generateResetLink(baseUrl);
 
-            // Sauvegarde le token et la date d'expiration en BDD
             await updateUserResetToken(user.dataValues.id, token);
-
-            // Envoie l'email
             await emailResetPassword(user.dataValues.username, mail, link);
 
             response.status(200).json({ message: "Email de réinitialisation envoyé." });
@@ -159,16 +137,13 @@ export class authController {
                 return response.status(400).json({ error: "Les mots de passe ne correspondent pas." });
             }
 
-            // Cherche l'utilisateur avec ce token
             const user = await User.findOne({ where: { resetToken: token } });
             if (!user) {
                 return response.status(400).json({ error: "Lien de réinitialisation invalide ou expiré." });
             }
 
-            // Hash le nouveau mot de passe
             const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-            // Met à jour le mot de passe et supprime le resetToken
             await User.update(
                 { password: hashedPassword, resetToken: null },
                 { where: { id: user.id } }

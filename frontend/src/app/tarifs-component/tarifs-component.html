@@ -35,12 +35,12 @@
         <li>Toutes les fonctionnalités de l'offre gratuite</li>
       </ul>
       @if (authService.isConnected=== true ) {
-        <!--ici @if pour que si premium dans cookie === false alors oui on affiche le button pour payer -->
-        @if (this.subscriptionStatus === false) {
-          <button (click)="paiementService.buyPremium()" class="cta">Passer Premium</button>
-        }@else {
-          <button class="cta disabled"> premium activé</button>
-        }
+      <!--ici @if pour que si premium dans cookie === false alors oui on affiche le button pour payer -->
+      @if (this.subscriptionStatus === false) {
+      <button (click)="paiementService.buyPremium()" class="cta">Passer Premium</button>
+      }@else {
+      <button class="cta disabled"> premium activé</button>
+      }
       <!--mais ici @else si le premium est true dans cookie alors ici on affiche le boutton avec une classe css qui le met gris et sans clique pour dire deja active -->
       }@else {
       <button (click)="goConnect()" class="cta">Passer Premium</button>

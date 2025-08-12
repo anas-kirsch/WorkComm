@@ -13,9 +13,7 @@ import { privateMessage } from '../models/database.mjs';
  * @param {string} conversationName 
  */
 export async function findConversation(conversationName) {
-
     return await conversation.findOne({ where: { chat_name: conversationName } });
-
 }
 
 
@@ -26,13 +24,11 @@ export async function findConversation(conversationName) {
  * @param {number} id2 
  */
 export async function createConversation(conversationName, id1, id2) {
-
     return await conversation.create({
         chat_name: conversationName,
         UserId: id1,
         friendId: id2
     });
-
 }
 
 
@@ -45,11 +41,9 @@ export async function createConversation(conversationName, id1, id2) {
  * @returns 
  */
 export async function findPrivateConversation(userId, friendId, conversationName) {
-
     return await conversation.findOne({
         where: { UserId: userId, friendId: friendId, chat_name: conversationName }
     })
-
 }
 
 
@@ -59,11 +53,9 @@ export async function findPrivateConversation(userId, friendId, conversationName
  * @returns {Promise<Message>}
  */
 export async function createMessagePrivate(content) {
-
     return await Message.create({
         content: content,
     });
-
 }
 
 
@@ -77,14 +69,12 @@ export async function createMessagePrivate(content) {
  * @returns {Promise<Object>}
  */
 export async function saveMessageHistory(userId, friendId, conversationId, messageId) {
-
     return await privateMessage.create({
         SenderId: userId,
         receiverId: friendId,
         ConversationId: conversationId,
         MessageId: messageId
     })
-
 }
 
 
@@ -94,7 +84,6 @@ export async function saveMessageHistory(userId, friendId, conversationId, messa
  * @returns {Promise<number>}
  */
 export async function deleteMessagePrivate(messageId) {
-
     return await Message.destroy({
         where: { id: messageId }
     })
@@ -110,7 +99,6 @@ export async function deleteMessagePrivate(messageId) {
  * @returns {Promise<Object|null>}
  */
 export async function findPrivateMessage(userId, conversationId, messageId) {
-
     return await privateMessage.findOne({
         where: {
             SenderId: userId,
@@ -118,7 +106,6 @@ export async function findPrivateMessage(userId, conversationId, messageId) {
             MessageId: messageId
         }
     })
-
 }
 
 
@@ -130,12 +117,10 @@ export async function findPrivateMessage(userId, conversationId, messageId) {
  * @returns {Promise<[number, any[]]>}
  */
 export async function updatePrivateMessageInDb(newMessage, messageId) {
-
     return await Message.update(
         { content: newMessage },
         { where: { id: messageId } }
     );
-
 }
 
 
@@ -147,7 +132,6 @@ export async function updatePrivateMessageInDb(newMessage, messageId) {
  * @returns {Promise<number>}
  */
 export async function deletePrivateMessageLink(userId, conversationId, messageId) {
-
     return await privateMessage.destroy({
         where: {
             SenderId: userId,
@@ -155,8 +139,6 @@ export async function deletePrivateMessageLink(userId, conversationId, messageId
             MessageId: messageId
         }
     });
-
-
 }
 
 
@@ -166,11 +148,9 @@ export async function deletePrivateMessageLink(userId, conversationId, messageId
  * @returns {Promise<any[]>}
  */
 export async function getConversationMessages(conversationId) {
-
     return await privateMessage.findAll({
         where: { ConversationId: conversationId }
     });
-
 }
 
 
@@ -206,10 +186,6 @@ export async function deletePrivateMessages(messageIds, options = {}) {
         ...options
     });
 }
-
-
-
-
 
 
 

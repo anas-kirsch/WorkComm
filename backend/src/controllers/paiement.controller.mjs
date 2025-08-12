@@ -81,11 +81,6 @@ export class paiementController {
     }
 
 
-
-
-
-
-
 }
 
 

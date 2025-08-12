@@ -46,16 +46,9 @@ import {
 } from "../models/chat.private.model.mjs";
 
 
-
-
 export class adminController {
 
     /**
-     * 
-     * A MODIFIER : CETTE METHODE EST A REVOIR ET A SECURISER AVEC UN JWT ADMIN 
-     * 
-     *
-     * 
      * cette methode static permet à un admin de donner le role d'admin a un utilisateur existant ou à creer un nouvel admin directement 
      * @returns 
      */
@@ -76,7 +69,6 @@ export class adminController {
                     return response.status(400).json({ error: "Les mots de passe ne correspondent pas." });
 
                 } else {
-
                     const ValidAdmin = {
                         username: myNewAdmin.username,
                         mail: myNewAdmin.mail,
@@ -99,24 +91,14 @@ export class adminController {
                                 username: insertNewAdmin.username,
                                 mail: insertNewAdmin.mail
                             }
-
                         });
-
                     };
-
                 };
             };
-
         } catch (error) {
             console.error(error); // pour le voir dans la console
             response.status(500).json({ error: "Erreur serveur lors de l'inscription." });
         }
-
-
-
-
-
-
     }
 
 
@@ -164,7 +146,6 @@ export class adminController {
                     }
                 }
             }
-
             // Suppression des amis
             if (userFriends && userFriends.length > 0) {
                 for (const friend of userFriends) {
@@ -194,7 +175,6 @@ export class adminController {
                 }
             }
 
-            // await getConversation.destroy({ transaction: t });
             if (getConversation && getConversation.length > 0) {
                 for (const conv of getConversation) {
                     await conv.destroy({ transaction: t });
@@ -211,9 +191,6 @@ export class adminController {
             return response.status(500).json({ error: "Erreur serveur lors de la suppression de l'utilisateur." });
         }
     }
-
-
-
 
 
 }

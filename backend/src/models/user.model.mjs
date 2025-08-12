@@ -21,14 +21,12 @@ export async function findUserByUsernameOrMail(userData) {
 }
 
 
-
 /**
  * cette fonction attend les données d'un formulaire client pour verifier si l'utilisateur existe, si non alors il le créer 
  * @param {object} userData 
  * @returns
  */
 export async function findUserOrCreate(userData) {
-
     return await User.findOrCreate({
         where: {
             username: userData.username,
@@ -41,7 +39,6 @@ export async function findUserOrCreate(userData) {
             password: userData.password,
         }
     });
-
 }
 
 
@@ -50,9 +47,7 @@ export async function findUserOrCreate(userData) {
  * @param {number} userId 
  */
 export async function findUser(userId){
-
     return await User.findOne({ where: { id: userId } })
-
 }
 
 /**
@@ -60,9 +55,7 @@ export async function findUser(userId){
  * @param {number} userId
  */
 export async function getUserProfilPicture(userId){
-
     return await profilPicture.findOne({where : { UserId : userId}});
-
 }
 
 
@@ -72,9 +65,7 @@ export async function getUserProfilPicture(userId){
  * @param {number} userId 
  */
 export async function getUserData(userId) {
-
     return await User.findByPk(userId);
-
 }
 
 
@@ -101,7 +92,6 @@ export async function getUserByUsername(usernamePart) {
  * @param {string} username 
  */
 export async function getByUsernameModel(username) {
-    
     return await User.findOne({
         where: {
             username: username

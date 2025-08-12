@@ -9,6 +9,7 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url); // Chemin complet du fichier courant
 const __dirname = path.dirname(__filename);
+
 /**
  * Cette fonction prend en paramètre une image envoyée par le client lors de la création de son compte ou s'il souhaite la modifier.
  * @param {import('express-fileupload').UploadedFile} picture - L'image envoyée par le client

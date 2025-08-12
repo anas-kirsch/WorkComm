@@ -6,7 +6,9 @@ import { AuthService } from './auth/auth-service';
   providedIn: 'root'
 })
 export class PremiumAccess {
+  // URL de l'API backend
   static apiURL = environment.apiURL;
+  // Service d'authentification pour récupérer le token utilisateur
   authService = inject(AuthService);
 
 
@@ -15,6 +17,7 @@ export class PremiumAccess {
    */
   fetchPremiumStatus() {
 
+    // Vérifie le statut premium de l'utilisateur (abonnement actif ou non)
     const tokenHeader = this.authService.insertTokeninHeader();
 
     const myHeaders = new Headers();
@@ -27,6 +30,7 @@ export class PremiumAccess {
       headers: myHeaders,
     };
 
+    // Effectue la requête GET pour récupérer le statut premium
     return new Promise((resolve, reject) => {
       fetch(`${AuthService.apiURL}/api/premium/status`,requestOptions)
       .then(response => response.json())

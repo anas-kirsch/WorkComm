@@ -1,4 +1,3 @@
-
 import express from "express"
 import { paiementController } from "../controllers/paiement.controller.mjs";
 import getClientTokenAndVerifAccess from "../middlewares/getClientTokenAndVerifAccess.mjs";
@@ -12,7 +11,6 @@ const stripe = new Stripe(process.env.STRIPE_KEY);
  * cette route permet de faire le paiment de l'abonnement premium
  */
 router.post('/stripe/premium',getClientTokenAndVerifAccess, paiementController.paiementPremiumOption)
-
 
 
 /**
@@ -42,8 +40,6 @@ router.post("/webhook", express.raw({type: 'application/json'}), async (req, res
  * cette router permet de verifie si l'utilisateur a l'abonnement premium activé ou non 
  */
 router.get('/status', getClientTokenAndVerifAccess, paiementController.getPremiumStatus);
-
-
 
 
 

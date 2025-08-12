@@ -206,9 +206,6 @@ button.inscription:hover {
     box-shadow: 0 10px 36px rgba(139, 92, 246, 0.35);
 }
 
-/* button.inscription:hover::after {
-} */
-
 button.connection span,
 button.inscription span {
     position: relative;
@@ -245,8 +242,6 @@ button.inscription span {
     }
 }   
 
-
-/*dark mode button*/
 
 button.dark-mode-toggle {
     background: linear-gradient(120deg, #23232a 0%, #18181b 100%);
@@ -372,7 +367,6 @@ button.burger-menu.open {
         display: none;
     }
     .mobile-nav {
-        /* visible only if open */
         font-family: "roboto",Arial, Helvetica, sans-serif;
     }
     ul{
@@ -398,7 +392,6 @@ button.burger-menu.open {
         display: none;
     }
     .mobile-nav {
-        /* visible only if open */
         font-family: "roboto",Arial, Helvetica, sans-serif;
     }
      ul{

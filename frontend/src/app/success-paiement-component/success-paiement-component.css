@@ -1,6 +1,5 @@
 
 main {
-    /* min-height: 73.8vh; */
     min-height: 55.5vh;
     background: linear-gradient(120deg, #18181b 0%, #23232a 60%, #0f0f0f 100%);
     color: #e5e7eb;
@@ -57,16 +56,6 @@ main {
     background: linear-gradient(90deg, #077707 0%, #32ec3b 100%);
     transform: scale(1.04);
 }
-/* 
-.support {
-    margin-top: 1rem;
-    font-size: 0.95rem;
-}
-
-.support a {
-    color: #f44336;
-    text-decoration: underline;
-} */
 
 @keyframes gradientMove {
 
@@ -79,9 +68,6 @@ main {
         background-position: 100% 50%;
     }
 }
-
-
-
 
 @media (min-width: 650px) and (max-width: 1000px) {
     .success-container {

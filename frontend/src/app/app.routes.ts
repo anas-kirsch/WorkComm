@@ -21,21 +21,31 @@ import { PrivacyPolicyAndTermsComponent } from './privacy-policy-and-terms-compo
 
 
 export const routes: Routes = [
-
-    // {path :"",component:Teste}
-    { path: "", component: HomeComponent },
-    { path: "inscription", component: InscriptionComponent, canActivate: [ConnectedGuard] },
-    { path: "information", component: InformationComponent },
-    { path: "connexion", component: LoginComponent, canActivate: [ConnectedGuard] },
-    { path: "connected", component: HeaderConnectedComponent, canActivate: [AuthGuard] },
-    { path: "profil", component: ProfilComponent, canActivate: [AuthGuard] },
-    { path: "chat", component: ChatComponent, canActivate: [AuthGuard] },
-    // { path: "user", component: ProfilUsersComponent, canActivate: [AuthGuard]  }
-    { path: "user/:username", component: ProfilUsersComponent, canActivate: [AuthGuard] },
-    { path: "tarifs", component: TarifsComponent},
-    { path: "contact", component: ContactComponent},
-    { path : "success-paiement", component : SuccessPaiementComponent, canActivate: [AuthGuard]},
-    { path : "failure-paiement", component : FailurePaiementComponent, canActivate: [AuthGuard]},
-    { path : "goPrivacyPolicyAndTerms", component : PrivacyPolicyAndTermsComponent}
+  // Page d'accueil
+  { path: "", component: HomeComponent },
+  // Page d'inscription, accessible uniquement si non connecté
+  { path: "inscription", component: InscriptionComponent, canActivate: [ConnectedGuard] },
+  // Page d'informations générales
+  { path: "information", component: InformationComponent },
+  // Page de connexion, accessible uniquement si non connecté
+  { path: "connexion", component: LoginComponent, canActivate: [ConnectedGuard] },
+  // Header connecté, affiché uniquement si authentifié
+  { path: "connected", component: HeaderConnectedComponent, canActivate: [AuthGuard] },
+  // Profil utilisateur connecté
+  { path: "profil", component: ProfilComponent, canActivate: [AuthGuard] },
+  // Page de chat, accessible uniquement si authentifié
+  { path: "chat", component: ChatComponent, canActivate: [AuthGuard] },
+  // Profil d'un autre utilisateur, accessible uniquement si authentifié
+  { path: "user/:username", component: ProfilUsersComponent, canActivate: [AuthGuard] },
+  // Page des tarifs premium
+  { path: "tarifs", component: TarifsComponent},
+  // Page de contact
+  { path: "contact", component: ContactComponent},
+  // Page de succès de paiement, accessible uniquement si authentifié
+  { path : "success-paiement", component : SuccessPaiementComponent, canActivate: [AuthGuard]},
+  // Page d'échec de paiement, accessible uniquement si authentifié
+  { path : "failure-paiement", component : FailurePaiementComponent, canActivate: [AuthGuard]},
+  // Page de politique de confidentialité et conditions
+  { path : "goPrivacyPolicyAndTerms", component : PrivacyPolicyAndTermsComponent}
 
 ]

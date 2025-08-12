@@ -3,8 +3,6 @@ body.hide-content-below-header .chat-main {
 }
 
 
-
-/* Highlight selected friend in group creation modal */
 .one-friend.selected {
   background: #8B5CF6;
   color: #fff;
@@ -12,7 +10,6 @@ body.hide-content-below-header .chat-main {
   font-weight: bold;
 }
 
-/* --- Modal for delete confirmation --- */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -71,7 +68,6 @@ body.hide-content-below-header .chat-main {
   background: #b71c1c;
 }
 
-/* --- Layout principal --- */
 .chat-main {
   min-height: 90vh;
   background: linear-gradient(120deg, #18181b 0%, #23232a 60%, #0f0f0f 100%);
@@ -82,8 +78,6 @@ body.hide-content-below-header .chat-main {
   animation: gradientMove 8s ease-in-out infinite;
   background-size: 200% 200%;
 }
-
-
 
 
 @keyframes gradientMove {
@@ -660,8 +654,6 @@ h2 {
 
 
 
-/*boutton créer un groupe */
-
 .btn-create-group {
   border: 2px solid #8B5CF6;
   background: linear-gradient(90deg, #8B5CF6 0%, #a855f7 100%);
@@ -759,7 +751,6 @@ h2 {
 
   .chat-messages {
     margin: 20px;
-    /* width: 74%; */
     width: 85%;
     height: 50vh;
   }
@@ -777,10 +768,8 @@ h2 {
   .chat-search-bar {
     width: 100%;
     max-width: 100vw;
-    /* pile la largeur de l'écran */
     padding: 10px 10px;
     box-sizing: border-box;
-    /* padding inclus dans la largeur */
     gap: 8px;
     margin: 0;
   }
@@ -801,7 +790,6 @@ h2 {
 
   .search-results {
     position: static;
-    /* s'affiche juste sous la barre */
     width: 100%;
     max-width: 100vw;
     left: auto;

@@ -1,4 +1,3 @@
-
 import express from "express"
 import {authController} from "../controllers/auth.controller.mjs"
 
@@ -22,8 +21,6 @@ router.post("/reset-password", authController.resetPassword)
  * cette router permet à l'utilisateur par le biai d'un formulaire d'entrer un nouveau mot de passe pour son compte 
  */
 router.put("/change-password", authController.passwordUpdater)
-
-
 
 
 

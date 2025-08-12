@@ -1,9 +1,5 @@
-
-
-
 import { User } from "./database.mjs";
 import { Op } from "sequelize";
-
 
 
 /**

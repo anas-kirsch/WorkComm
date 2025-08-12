@@ -6,21 +6,34 @@
             <div class="form-group">
                 <label for="username">Nom d'utilisateur</label>
                 <input type="text" id="username" formControlName="username" required>
-                <div class="error" *ngIf="form.get('username')?.touched && form.get('username')?.invalid">
-                    <span *ngIf="form.get('username')?.errors?.['required']">Ce champ est requis.</span>
-                    <span *ngIf="form.get('username')?.errors?.['minlength']">Minimum 3 caractères.</span>
-                    <span *ngIf="form.get('username')?.errors?.['pattern']">Caractères autorisés : lettres, chiffres,
-                        _</span>
-                </div>
+                @if (form.get('username')?.touched && form.get('username')?.invalid) {
+                  <div class="error">
+                    @if (form.get('username')?.errors?.['required']) {
+                      <span>Ce champ est requis.</span>
+                    }
+                    @if (form.get('username')?.errors?.['minlength']) {
+                      <span>Minimum 3 caractères.</span>
+                    }
+                    @if (form.get('username')?.errors?.['pattern']) {
+                      <span>Caractères autorisés : lettres, chiffres, _</span>
+                    }
+                  </div>
+                }
             </div>
 
             <div class="form-group">
                 <label for="email">Adresse mail</label>
                 <input type="email" id="email" formControlName="email" required>
-                <div class="error" *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
-                    <span *ngIf="form.get('email')?.errors?.['required']">Ce champ est requis.</span>
-                    <span *ngIf="form.get('email')?.errors?.['email']">Adresse mail invalide.</span>
-                </div>
+                @if (form.get('email')?.touched && form.get('email')?.invalid) {
+                  <div class="error">
+                    @if (form.get('email')?.errors?.['required']) {
+                      <span>Ce champ est requis.</span>
+                    }
+                    @if (form.get('email')?.errors?.['email']) {
+                      <span>Adresse mail invalide.</span>
+                    }
+                  </div>
+                }
             </div>
 
             <div class="form-group">
@@ -31,23 +44,33 @@
             <div class="form-group">
                 <label for="password">Mot de passe</label>
                 <input type="password" id="password" formControlName="password" required>
-                <div class="error" *ngIf="form.get('password')?.touched && form.get('password')?.invalid">
-                    <span *ngIf="form.get('password')?.errors?.['required']">Ce champ est requis.</span>
-                    <span *ngIf="form.get('password')?.errors?.['pattern']">
-                        Minimum 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre.
-                    </span>
-                </div>
+                @if (form.get('password')?.touched && form.get('password')?.invalid) {
+                  <div class="error">
+                    @if (form.get('password')?.errors?.['required']) {
+                      <span>Ce champ est requis.</span>
+                    }
+                    @if (form.get('password')?.errors?.['pattern']) {
+                      <span>Minimum 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre.</span>
+                    }
+                  </div>
+                }
             </div>
 
             <div class="form-group">
                 <label for="confirmpassword">Confirmer le mot de passe</label>
                 <input type="password" id="confirmpassword" formControlName="confirmpassword" required>
-                <div class="error" *ngIf="form.get('confirmpassword')?.touched && form.get('confirmpassword')?.invalid">
-                    <span *ngIf="form.get('confirmpassword')?.errors?.['required']">Ce champ est requis.</span>
-                </div>
-                <div class="error" *ngIf="form.touched && form.errors?.['notSame']">
+                @if (form.get('confirmpassword')?.touched && form.get('confirmpassword')?.invalid) {
+                  <div class="error">
+                    @if (form.get('confirmpassword')?.errors?.['required']) {
+                      <span>Ce champ est requis.</span>
+                    }
+                  </div>
+                }
+                @if (form.touched && form.errors?.['notSame']) {
+                  <div class="error">
                     <span>Les mots de passe ne correspondent pas.</span>
-                </div>
+                  </div>
+                }
             </div>
 
             <div class="form-group">
@@ -61,7 +84,6 @@
 
         <div class="signup-invite">
               <span>Vous avez déjà un compte ? <a (click)="goConnexion()">Connectez-vous</a></span>
-            <!-- <span>Pas de compte ? <a (click)="goConnexion()">Inscrivez-vous</a></span> -->
         </div>
     </section>
 </main>

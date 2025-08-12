@@ -6,7 +6,6 @@ import cors from "cors"
 const app = express();
 const server = createServer(app);
 
-// Ajoute l'option cors ici :
 const io = new Server(server, {
   cors: {
     origin: ["http://localhost:4200","http://192.168.1.248:4200","http://192.168.10.125:4200"],

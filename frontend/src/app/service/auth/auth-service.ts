@@ -40,9 +40,6 @@ export class AuthService {
   }
 
 
-
-
-
   /**
    * Envoie les données de connexion au backend 
    * @param formulaire FormGroup du formulaire de connexion
@@ -65,7 +62,6 @@ export class AuthService {
       .then((response) => response.json());
 
   };
-
 
 
 
@@ -110,13 +106,16 @@ export class AuthService {
  * @returns Objet contenant { token, id, role }
  */
   static getAuthFromCookies(): { token: string | null, id: string | null, role: string | null, username : string |null} {
+    // Récupère les informations d'authentification (token, id, rôle, username) depuis le cookie 'auth'.
     const cookies = document.cookie.split(';').reduce((acc: any, cookie) => {
+      // Découpe chaque cookie et l'ajoute à l'objet 'cookies'.
       const [key, value] = cookie.trim().split('=');
       acc[key] = value;
       return acc;
     }, {});
     if (cookies['auth']) {
       try {
+        // Décode et parse le cookie 'auth' pour récupérer les données.
         const data = JSON.parse(decodeURIComponent(cookies['auth']));
         return {
           token: data.token || null,
@@ -125,9 +124,11 @@ export class AuthService {
           username : data.username || null
         };
       } catch {
+        // En cas d'erreur de parsing, retourne des valeurs nulles.
         return { token: null, id: null, role: null, username :null };
       }
     }
+    // Si le cookie 'auth' n'existe pas, retourne des valeurs nulles.
     return { token: null, id: null, role: null, username : null };
   }
 
@@ -137,6 +138,7 @@ export class AuthService {
 
 
   static isConnected(): boolean {
+    // Vérifie si l'utilisateur est connecté en testant la présence d'un token valide dans le cookie.
     const auth = this.getAuthFromCookies();
     return !!auth.token && auth.token !== 'null' && auth.token !== '';
   }
@@ -144,12 +146,14 @@ export class AuthService {
 
 
   insertTokeninHeader() {
+    // Insère le token JWT dans l'en-tête Authorization pour les requêtes HTTP.
     const auth = AuthService.getAuthFromCookies();
     if (auth.token) {
       return {
         Authorization: `Bearer ${auth.token}`
       };
     }
+    // Si aucun token n'est présent, retourne un objet vide.
     return {};
   }
 

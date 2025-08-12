@@ -1,8 +1,6 @@
 
 import express from "express"
 import { findUser, findUserByUsernameOrMail, findUserOrCreate, getUserProfilPicture, getUserData, getUserByUsername, getByUsernameModel } from "../models/user.model.mjs";
-// import { findUserOrCreate } from "../models/user.model.mjs";
-// import { getUserToDestroy } from "../models/user.model.mjs";
 import nodemailer from 'nodemailer';
 import { emailSender } from "./smtp.controller.mjs";
 import { friendRequest, getUserFriend, getFriendRequest, getInverseFriendship, frienshipCreate, getFriendship, findAllFriendship, pendingSentFriendRequests, getUsernameById } from "../models/friend.model.mjs"
@@ -38,7 +36,6 @@ export class UserController {
             const ifUserExist = await findUserByUsernameOrMail(myNewUser)
 
             if (ifUserExist) {
-
                 console.log(`l'user ${myNewUser.username} existe deja, essayez un autre nom d'utilisateur. `)
                 return response.status(400).json(`l'user ${myNewUser.username} existe deja !`)
             }
@@ -46,7 +43,6 @@ export class UserController {
             if (myNewUser) {
                 if (myNewUser.password != myNewUser.confirmPassword) {
                     return response.status(400).json({ error: "Les mots de passe ne correspondent pas." });
-
                 } else {
 
                     const validUser = {
@@ -56,16 +52,14 @@ export class UserController {
                         language: myNewUser.language,
                         bio: myNewUser.bio,
                         password: myNewUser.password
-
                     }
-                    console.log("2", validUser)
+                    // console.log("2", validUser)
 
                     const insertNewUser = await findUserOrCreate(validUser)
 
                     if (insertNewUser) {
 
                         const userInstance = insertNewUser[0];
-
                         console.log("test file", request.files);
 
                         if (request.files || request.files == null) {
@@ -77,7 +71,6 @@ export class UserController {
                                 return response.status(400).json({
                                     message: "erreur la photo est trop grande"
                                 });
-
                             }
 
                             let picture = "null";
@@ -87,7 +80,6 @@ export class UserController {
                             }
 
                             const addPic = await getAndSaveProfilPicture(picture, userInstance.dataValues.id)
-
                             if (addPic) {
                                 response.status(200).json({
                                     message: 'votre user a bien été créer',
@@ -98,16 +90,12 @@ export class UserController {
                                         bio: userInstance.dataValues.bio,
                                         language: userInstance.dataValues.language
                                     }
-
                                 })
 
                                 const send = await emailSender(userInstance.dataValues.username, userInstance.dataValues.mail);
-
                                 if (send) {
                                     console.log(`Email envoyé avec success à ${userInstance.dataValues.username}`)
                                 }
-
-
                             }
                             else {
                                 const getUserToDestroy = await findUser(insertNewUser.id);
@@ -115,7 +103,6 @@ export class UserController {
                                 return response.status(400).json({ error: "Erreur lors de l'ajout de la photo de profil." });
                             }
                         }
-
                     }
                 }
             }
@@ -127,14 +114,10 @@ export class UserController {
             else if (error.message.includes("Le format de l'image n'est pas supporté")) {
                 response.status(400).json({ error: error.message });
             } else {
-
                 console.error(error); // pour le voir dans la console
                 response.status(500).json({ error: "Erreur serveur lors de l'inscription." });
             }
         }
-
-
-
     }
 
 
@@ -151,7 +134,6 @@ export class UserController {
             const userFriends = await getUserFriend(userId, { transaction: t });
             const userPic = await getUserProfilPicture(userId, { transaction: t });
             const getConversation = await getAllPrivateChatsForUser(userId, { transaction: t });
-
 
             if (!userToDelete || !userPic) {
                 await t.rollback();
@@ -189,8 +171,6 @@ export class UserController {
                 }
             }
 
-            // Suppression de la photo de profil en base
-
             // Suppression de l'utilisateur
             const imagePath = userPic.imagePath; // ex: http://localhost:4900/images/vscodedwwm_1752135614625.png
             const fileName = imagePath.split("/").pop();
@@ -211,7 +191,6 @@ export class UserController {
                 }
             }
 
-            // await getConversation.destroy({ transaction: t });
             if (getConversation && getConversation.length > 0) {
                 for (const conv of getConversation) {
                     await conv.destroy({ transaction: t });
@@ -252,7 +231,6 @@ export class UserController {
                 return response.status(404).json({ error: "Utilisateur introuvable." });
             }
 
-            // Vérifier si la relation existe déjà (à adapter selon votre modèle)
             const existingFriend = await user1.hasFriend(user2);
             if (existingFriend) {
                 return response.status(400).json({ error: "Demande déjà envoyée ou utilisateur déjà ami." });
@@ -355,9 +333,6 @@ export class UserController {
             console.error(error); // pour le voir dans la console
             response.status(500).json({ error: "Erreur serveur lors de l'envoie de la demande d'ami." });
         }
-
-
-
     }
 
 
@@ -384,7 +359,6 @@ export class UserController {
             return response.status(200).json({
                 message: "vous avez bien supprimé l'ami."
             })
-
         } catch (error) {
             console.error(error);
             response.status(500).json({ error: "Erreur serveur." });
@@ -423,22 +397,16 @@ export class UserController {
                     id: findDataUsers.dataValues.id,
                     username: findDataUsers.dataValues.username,
                     imagePath: profilPicture,
-                    // pp : findDataUsers.dataValues.pp
                 };
                 // console.log(user);
                 dataOfFriend.push(user);
-
             }
             // console.log(dataOfFriend)
             response.status(200).json(dataOfFriend);
-
         } catch (error) {
-
             console.error(error); // pour le voir dans la console
             response.status(500).json({ error: "Erreur serveur." });
-
         }
-
     }
 
 
@@ -455,13 +423,11 @@ export class UserController {
             console.log({ userId, search });
 
             const ifUserExist = await findUser(userId);
-
             if (!ifUserExist) {
                 return response.status(404).json({ error: "Utilisateur non trouvé." });
             }
 
             const users = await getUserByUsername(search);
-
             console.log(users);
 
             // On filtre les propriétés à retourner
@@ -473,8 +439,6 @@ export class UserController {
                 language: user.language
             }));
 
-            // console.log(filteredUsers)
-
             return response.status(200).json({ users: filteredUsers });
 
         } catch (error) {
@@ -485,8 +449,8 @@ export class UserController {
 
 
     /**
-         * recupere un utilisateur par son username
-         */
+    * recupere un utilisateur par son username
+    */
     static async getByUsername(request, response) {
         try {
             const userId = request.user.id;
@@ -500,7 +464,6 @@ export class UserController {
             }
 
             const user = await getByUsernameModel(search);
-
             console.log(user);
 
             if (!user) {
@@ -546,8 +509,6 @@ export class UserController {
 
             // Cherche la relation d'amitié dans la BDD
             const relation = await getFriendship(userId, friendId);
-
-
             if (!relation) {
                 // Pas de relation trouvée
                 return response.status(200).json(null);
@@ -601,7 +562,6 @@ export class UserController {
             return response.status(500).json({ error: "Erreur serveur lors de la récupération des demandes d'amis envoyées en attente" });
         }
     }
-
 
 }
 

@@ -39,5 +39,4 @@ router.post("/getAll-private-message", getClientTokenAndVerifAccess, PrivateChat
 
 
 
-
 export default router;
