@@ -321,21 +321,45 @@ export class ChatComponent implements OnInit {
       if (message.trim() !== "") {
         // Récupère le username de l'utilisateur courant
         const myUsername = this.selectedFriendUsername || this.myFriends.find(f => f.id === this.myUserId)?.username || 'Moi';
-        this.groupService.sendGroupMessage(this.openSection, this.myUserId, message, myUsername);
-        this.groupService.fetchSaveGroupMessage(message, Number(this.openSection)); // à remettre si besoin
-        this.cdr.detectChanges();
+
+        // Ajout optimiste pour les messages de groupe
+        const optimisticMsg = {
+          id: `temp-${Date.now()}`,
+          userId: this.myUserId,
+          groupId: Number(this.openSection),
+          message,
+          createdAt: new Date().toISOString(),
+        } as any;
+        this.messages = [...this.messages, optimisticMsg];
+        this.cdr.markForCheck();
         setTimeout(() => {
-          const list = document.querySelector('.messages-list');
+          const list = document.querySelector('.messages-list') as HTMLElement | null;
           if (list) list.scrollTop = list.scrollHeight;
         }, 0);
+
+        // Envoi réseau
+        this.groupService.sendGroupMessage(this.openSection, this.myUserId, message, myUsername);
+        this.groupService.fetchSaveGroupMessage(message, Number(this.openSection)); // à remettre si besoin
       }
     } else if (this.selectedFriendId && message.trim() !== "") {
-      this.socketPrivateService.sendMessage(this.myUserId, this.selectedFriendId, message);
-      this.socketPrivateService.saveMessageInBdd(message, this.selectedFriendId, this.conversationName);
+      // Ajout optimiste du message pour que l'UI (OnPush) l'affiche immédiatement
+      const optimisticMsg = {
+        id: `temp-${Date.now()}`,
+        userId: this.myUserId,
+        receiverId: this.selectedFriendId,
+        message,
+        createdAt: new Date().toISOString(),
+      } as any;
+      this.messages = [...this.messages, optimisticMsg];
+      this.cdr.markForCheck();
       setTimeout(() => {
         const list = document.querySelector('.messages-list');
-        if (list) list.scrollTop = list.scrollHeight;
+        if (list) (list as HTMLElement).scrollTop = (list as HTMLElement).scrollHeight;
       }, 0);
+
+      // Envoi au serveur (le message officiel reviendra via le socket)
+      this.socketPrivateService.sendMessage(this.myUserId, this.selectedFriendId, message);
+      this.socketPrivateService.saveMessageInBdd(message, this.selectedFriendId, this.conversationName);
     }
   }
 
@@ -358,7 +382,7 @@ export class ChatComponent implements OnInit {
 
 
   trackByMsgId(index: number, msg: any) {
-    return msg.id;
+    return msg?.id ?? msg?.createdAt ?? index;
   }
 
 
