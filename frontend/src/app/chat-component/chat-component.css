@@ -1,6 +1,9 @@
 body.hide-content-below-header .chat-main {
   display: none !important;
 }
+
+
+
 /* Highlight selected friend in group creation modal */
 .one-friend.selected {
   background: #8B5CF6;
@@ -449,62 +452,6 @@ h2 {
   position: absolute;
 }
 
-/* --- Responsive ---
-@media (max-width: 1100px) {
-  .chat-content {
-    flex-direction: column;
-    padding: 0 12px;
-    gap: 18px;
-  }
-
-  .chat-sidebar {
-    width: 100%;
-    min-width: 0;
-    flex-direction: column;
-    gap: 12px;
-    padding: 18px 8px;
-  }
-
-  .chat-messages {
-    width: 100%;
-    min-width: 0;
-    padding: 18px 8px;
-  }
-
-  .messages-list {
-    max-height: 50vh;
-  }
-}
-
-@media (max-width: 700px) {
-  .chat-search-bar {
-    padding: 16px 8px 10px 8px;
-  }
-
-  .chat-content {
-    padding: 0 4px;
-    gap: 8px;
-  }
-
-  .chat-sidebar,
-  .chat-messages {
-    padding: 10px 2px;
-    border-radius: 10px;
-  }
-
-  .sidebar-header {
-    padding: 10px 8px;
-    font-size: 1rem;
-  }
-
-  .sidebar-list-item {
-    padding: 8px 10px;
-  }
-
-  .messages-list {
-    max-height: 40vh;
-  }
-} */
 
 /* --- Boutons d'action --- */
 .btn-accept {
@@ -535,9 +482,6 @@ h2 {
 .btn-decline:hover {
   background-color: #b71c1c;
 }
-
-
-
 
 
 /* --- Modal création de groupe amélioré --- */
@@ -824,7 +768,7 @@ h2 {
     overflow-y: scroll;
   }
 
-  .messages-input-field{
+  .messages-input-field {
     width: 100px;
   }
 }
@@ -899,7 +843,7 @@ h2 {
     overflow-y: scroll;
   }
 
-   .messages-input-field{
+  .messages-input-field {
     width: 100px;
   }
 }

@@ -7,6 +7,11 @@ main {
   margin: 0;
 }
 
+/* Masque le main du profil users component quand le menu burger est ouvert */
+:host-context(.hide-content-below-header) {
+  display: none !important;
+}
+
 input {
   outline-style: solid;
   outline-color: #8B5CF6;
@@ -568,6 +573,7 @@ input {
   }
   .profil-actions{
     flex-direction: column;
+    width: 30%;
   }
   .chat-search-bar {
     width: 98vw;
@@ -616,6 +622,7 @@ input {
   }
   .profil-actions{
     flex-direction: column;
+    width: 30%;
   }
   .chat-search-bar {
     width: 98vw;
@@ -642,3 +649,6 @@ input {
     max-width: 98vw;
   }
 }
+
+
+
