@@ -1,7 +1,6 @@
 import nodemailer from 'nodemailer';
 
 
-
 /**
  * cette fonction prend les données d'un utilisateur qui vient de réussir la création de son compte et lui envoi ses identifiants
  * @param {string} username - Le nom d'utilisateur
@@ -142,32 +141,8 @@ L'équipe WorkComm`,
 
 
 
-
-
-
-// /**
-//  * cette fonction envoie une mail contenant les objets passés en param, à l'aide du protocol smtp
-//  * @param {string} email 
-//  * @param {string} subject 
-//  * @param {string} message 
-//  */
-// export async function contactMail(email, subject, message){
-
-
-
-
-
-
-// }
-
-
-
-
-
 /**
  * cette fonction prend le body de la requete et le transmet a contactMail
- * @param {*} request 
- * @param {*} response 
  * @returns 
  */
 export async function getMailContent(request, response) {
@@ -196,7 +171,13 @@ export async function getMailContent(request, response) {
 
 
 
-
+/**
+ * cette fonction gere l'envoie d'un mail de l'utilisateur vers workcomm pour un probleme, question ou autre
+ * @param {string} email 
+ * @param {string} subject 
+ * @param {string} message 
+ * @returns 
+ */
 export async function contactMail(email, subject, message) {
     const transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",

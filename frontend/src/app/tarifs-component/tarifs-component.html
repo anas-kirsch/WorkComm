@@ -1,0 +1,58 @@
+<main>
+  <section class="hero">
+    <h1>Nos offres</h1>
+    <p>Choisissez l'expérience qui vous correspond&nbsp;: profitez gratuitement des fonctionnalités essentielles ou
+      passez à la version Premium pour débloquer tout le potentiel de WorkComm.</p>
+  </section>
+
+  <section class="features">
+    <div class="feature">
+      <i class="fa fa-user"></i>
+      <h2>Gratuit</h2>
+      <p>0€ / mois</p>
+      <ul>
+        <li>Création de compte</li>
+        <li>Ajout d'amis</li>
+        <li>Conversations privées</li>
+        <li>Groupes de discussion</li>
+      </ul>
+      @if (authService.isConnected == false) {
+      <button class="cta secondary" (click)="goConnect()">Commencer gratuitement</button>
+      } @else {
+      <button class="cta disabled" disabled>Déjà activé</button>
+      }
+
+    </div>
+    <div class="feature">
+      <i class="fa fa-star"></i>
+      <h2>Premium</h2>
+      <p> 19.90€ / an</p>
+      <ul>
+        <li>Mode clair pour le style</li>
+        <li>Thèmes personnalisés (à venir)</li>
+        <li>Partage de fichiers, photos, etc.</li>
+        <li>Accès à une newsletter poussée et complète</li>
+        <li>Toutes les fonctionnalités de l'offre gratuite</li>
+      </ul>
+      @if (authService.isConnected=== true ) {
+      <!--ici @if pour que si premium dans cookie === false alors oui on affiche le button pour payer -->
+      @if (this.subscriptionStatus === false) {
+      <button (click)="paiementService.buyPremium()" class="cta">Passer Premium</button>
+      }@else {
+      <button class="cta disabled"> premium activé</button>
+      }
+      <!--mais ici @else si le premium est true dans cookie alors ici on affiche le boutton avec une classe css qui le met gris et sans clique pour dire deja active -->
+      }@else {
+      <button (click)="goConnect()" class="cta">Passer Premium</button>
+      }
+    </div>
+  </section>
+
+  <section class="about">
+    <h2>Pourquoi choisir WorkComm&nbsp;?</h2>
+    <p>Notre plateforme évolue constamment pour répondre à vos besoins. Passez à l'offre Premium pour soutenir le projet
+      et profiter d'encore plus de possibilités&nbsp;!</p>
+  </section>
+</main>
+
+<app-footer-component></app-footer-component>

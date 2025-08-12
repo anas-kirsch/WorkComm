@@ -10,10 +10,31 @@
       <div class="actions">
         <button (click)="connexion()" class="connection">Connexion</button>
         <button (click)="inscription()" class="inscription">Inscription</button>
-        <button  class="dark-mode-toggle" title="Activer/Désactiver le mode sombre">
+        <button class="dark-mode-toggle" title="Activer/Désactiver le mode sombre">
           <span class="icon-moon">&#9789;</span>
         </button>
       </div>
     </nav>
+    <!-- Burger button for mobile/tablet -->
+    <button class="burger-menu" (click)="toggleMenu()" aria-label="Ouvrir le menu" [class.open]="menuOpen">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <!-- Mobile menu -->
+    <div class="mobile-nav" [class.open]="menuOpen">
+      <ul>
+        <li (click)="accueil(); toggleMenu()">Accueil</li>
+        <li (click)="tarifs(); toggleMenu()">Tarifs</li>
+        <li (click)="contact(); toggleMenu()">Contact</li>
+      </ul>
+      <div class="actions">
+        <button (click)="connexion(); toggleMenu()" class="connection">Connexion</button>
+        <button (click)="inscription(); toggleMenu()" class="inscription">Inscription</button>
+        <button class="dark-mode-toggle" title="Activer/Désactiver le mode sombre">
+          <span class="icon-moon">&#9789;</span>
+        </button>
+      </div>
+    </div>
   </div>
 </header>

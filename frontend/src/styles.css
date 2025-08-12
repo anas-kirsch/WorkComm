@@ -1,3 +1,6 @@
+body.hide-content-below-header .chat-main {
+  display: none !important;
+}
 /* You can add global styles to this file, and also import other style files */
 
 html, body {

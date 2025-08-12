@@ -14,8 +14,15 @@ footer {
 }
 
 @keyframes footerGradientMove {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
 }
 
 .footer-content {
@@ -157,6 +164,7 @@ h4 {
     margin-top: 8px;
     min-width: 180px;
     text-align: center;
+
 }
 
 .mentions-legales h4 {
@@ -174,6 +182,7 @@ h4 {
 .mentions-legales li {
     margin-bottom: 4px;
     font-family: 'Inter', 'Roboto', sans-serif;
+
 }
 
 .mentions-legales a {
@@ -181,6 +190,8 @@ h4 {
     text-decoration: underline;
     opacity: 0.9;
     transition: opacity 0.2s, color 0.2s;
+    cursor: pointer;
+
 }
 
 .mentions-legales a:hover {
@@ -193,10 +204,35 @@ h4 {
     .footer-content {
         flex-direction: column;
         gap: 32px;
-        align-items: flex-start;
-        padding: 0 20px;
     }
+
     .footer-brand {
         margin-bottom: 12px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .footer-copyright {
+        padding: 20px 0px 0px 0px;
+    }
+}
+
+
+
+@media (min-width: 650px) and (max-width: 1000px) {
+    .footer-brand {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 649px) {
+    .footer-brand {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .footer-copyright {
+        padding: 20px 0px 10px 0px;
     }
 }

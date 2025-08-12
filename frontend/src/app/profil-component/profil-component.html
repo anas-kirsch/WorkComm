@@ -1,57 +1,58 @@
 <main class="profil-main">
-    <section class="profil-hero">
-        <div class="profil-avatar">
-            <img [src]="userService.getUserData()?.imagePath" alt="Avatar utilisateur">
-        </div>
-        <h1 class="profil-name">{{userService.getUserData()?.username}}</h1>
-        <!-- <p class="profil-role">Rôle</p> -->
-        <div class="profil-actions">
-            <button class="cta">Modifier le profil</button>
-            <button class="cta delete-account" (click)="showDeleteModal = true">Supprimer le compte</button>
-            <!-- <button class="cta secondary">Déconnexion</button> -->
-        </div>
-    </section>
+  <section class="profil-hero">
+    <div class="profil-avatar">
+      <img [src]="userService.getUserData()?.imagePath" alt="Avatar utilisateur">
+    </div>
+    <h1 class="profil-name">{{userService.getUserData()?.username}}</h1>
+    <!-- <p class="profil-role">Rôle</p> -->
+    <div class="profil-actions">
+      <button class="cta">Modifier le profil</button>
+      <button class="cta delete-account" (click)="showDeleteModal = true">Supprimer le compte</button>
+      <!-- <button class="cta secondary">Déconnexion</button> -->
+    </div>
+  </section>
 
-    <section class="profil-details">
-        <h2>Informations personnelles</h2>
-        <ul>
-            <li><strong>Email :</strong> {{userService.getUserData()?.mail}}</li>
-            <li><strong>langue :</strong> {{userService.getUserData()?.language}}</li>
+  <section class="profil-details">
+    <h2>Informations personnelles</h2>
+    <ul>
+      <li><strong>Email :</strong> {{userService.getUserData()?.mail}}</li>
+      <li><strong>langue :</strong> {{userService.getUserData()?.language}}</li>
 
-            @if (userService.getUserData()?.bio !== "..." && userService.getUserData()?.bio !== "null" && userService.getUserData()?.bio !== null) {
-              <li><strong>Bio :</strong> {{userService.getUserData()?.bio}}</li>
-            }
-            @else {
-              <li><strong>Bio :</strong> Aucune bio renseignée.</li>
-            }
-            
-            <li><strong>ID utilisateur :</strong> {{userService.getUserData()?.id}}</li>
-        </ul>
-    </section>
+      @if (userService.getUserData()?.bio !== "..." && userService.getUserData()?.bio !== "null" &&
+      userService.getUserData()?.bio !== null) {
+      <li><strong>Bio :</strong> {{userService.getUserData()?.bio}}</li>
+      }
+      @else {
+      <li><strong>Bio :</strong> Aucune bio renseignée.</li>
+      }
 
-    <section class="profil-about">
-        <h2>À propos</h2>
-        <p>
-            Bienvenue sur votre espace personnel WorkComm. Gérez vos informations, partagez votre parcours et
-            connectez-vous avec la communauté.
-        </p>
-    </section>
+      <li><strong>ID utilisateur :</strong> {{userService.getUserData()?.id}}</li>
+    </ul>
+  </section>
 
-    
+  <section class="profil-about">
+    <h2>À propos</h2>
+    <p>
+      Bienvenue sur votre espace personnel WorkComm. Gérez vos informations, partagez votre parcours et
+      connectez-vous avec la communauté.
+    </p>
+  </section>
+
+
 </main>
 
 <!-- Ajoute ceci à la fin de profil-component.html -->
 @if (showDeleteModal) {
-  <div class="delete-account-modal">
-    <div class="delete-account-modal-content">
-      <h2>Confirmer la suppression du compte</h2>
-      <p>Cette action est <span class="danger">irréversible</span>. Voulez-vous vraiment supprimer votre compte&nbsp;?</p>
-      <div class="modal-actions">
-        <button class="cta" (click)="showDeleteModal = false">Annuler</button>
-        <button class="cta delete-account" (click)="confirmDeleteAccount()">Confirmer</button>
-      </div>
+<div class="delete-account-modal">
+  <div class="delete-account-modal-content">
+    <h2>Confirmer la suppression du compte</h2>
+    <p>Cette action est <span class="danger">irréversible</span>. Voulez-vous vraiment supprimer votre compte&nbsp;?</p>
+    <div class="modal-actions">
+      <button class="cta" (click)="showDeleteModal = false">Annuler</button>
+      <button class="cta delete-account" (click)="confirmDeleteAccount()">Confirmer</button>
     </div>
   </div>
+</div>
 }
 
 <app-footer-component></app-footer-component>

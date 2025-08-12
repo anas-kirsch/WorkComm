@@ -1,0 +1,83 @@
+
+main {
+    min-height: 55.5vh;
+    background: linear-gradient(120deg, #18181b 0%, #23232a 60%, #0f0f0f 100%);
+    color: #e5e7eb;
+    padding: 0 0 32px 0;
+    overflow-y: auto;
+    font-family: 'Inter', 'Roboto', sans-serif;
+}
+.success-container {
+    background: linear-gradient(120deg, #18181b 0%, #23232a 60%, #0f0f0f 100%);
+    border: 2px solid #32ec3b;
+    border-radius: 12px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    margin: 3rem auto;
+    max-width: 420px;
+    box-shadow: 0 4px 24px rgba(244, 67, 54, 0.18), 0 2px 12px rgba(139, 92, 246, 0.12);
+    position: relative;
+    animation: gradientMove 8s ease-in-out infinite;
+    background-size: 200% 200%;
+    margin-top: 10vh;
+
+}
+
+.success-container h2 {
+    color: #32ec3b;
+    font-family: 'Inter', 'Roboto', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+    text-shadow: 0 0 30px rgba(244, 67, 54, 0.18);
+}
+
+.failure-container p {
+    color: #cfcfff;
+    font-size: 1.15rem;
+    margin-bottom: 0.8rem;
+}
+
+.success-container button {
+    margin-top: 1.5rem;
+    padding: 0.7rem 2rem;
+    background: linear-gradient(90deg, #32ec3b 0%, #077707 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 600;
+    box-shadow: 0 2px 12px rgba(244, 67, 54, 0.15);
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+
+.success-container button:hover {
+    background: linear-gradient(90deg, #077707 0%, #32ec3b 100%);
+    transform: scale(1.04);
+}
+
+@keyframes gradientMove {
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+@media (min-width: 650px) and (max-width: 1000px) {
+    .success-container {
+        margin: 10vh 5vh 10vh 5vh;
+    }
+}
+
+@media (max-width: 649px) {
+    .success-container {
+        margin: 10vh 5vh 10vh 5vh;
+    }
+    
+}

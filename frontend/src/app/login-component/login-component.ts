@@ -13,11 +13,21 @@ import { CommonModule } from '@angular/common';
   templateUrl: './login-component.html',
   styleUrl: './login-component.css'
 })
+
 export class LoginComponent {
+  /**
+   * Service d'authentification pour gérer la connexion
+   */
   authService = inject(AuthService)
 
+  /** Router Angular pour la navigation entre les pages */
   router: Router = new Router();
 
+  /**
+   * Formulaire de connexion avec validation des champs
+   * - mail : requis, format email
+   * - password : requis, min 8 caractères, 1 maj, 1 min, 1 chiffre
+   */
   form: FormGroup = new FormGroup({
     mail: new FormControl('', [
       Validators.required,
@@ -27,14 +37,19 @@ export class LoginComponent {
       Validators.required,
       Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$'),
     ])
-
   })
 
-
+  /** Navigue vers la page d'inscription */
   goInscription(){
     this.router.navigate(["inscription"])
   }
 
+  /**
+   * Soumet le formulaire de connexion si valide
+   * - Appelle le service de connexion
+   * - Stocke les infos dans le cookie
+   * - Réinitialise le formulaire et redirige vers l'accueil en cas de succès
+   */
   onSubmitConnexion() {
     if (this.form.invalid) {
       return;
@@ -51,7 +66,8 @@ export class LoginComponent {
           username: result.body.username,
           imagePath: result.body.imagePath?.imagePath || '', // si imagePath est un objet
           mail: result.body.mail,
-          language: result.body.language
+          language: result.body.language,
+          premium : result.body.premium
         };
         // Stocker dans le cookie
         AuthService.saveAuthToCookies(authData);

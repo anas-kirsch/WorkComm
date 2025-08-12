@@ -1,4 +1,3 @@
-
 import express from "express";
 import {UserController} from "../controllers/user.controller.mjs"
 import { getClientTokenAndVerifAccess } from "../middlewares/getClientTokenAndVerifAccess.mjs";
@@ -67,13 +66,10 @@ router.post("/getUser",getClientTokenAndVerifAccess, UserController.getUserFromU
 router.post('/getByUsername',getClientTokenAndVerifAccess, UserController.getByUsername)
 
 
-
 /**
  * cette router verifie l'etat d'une demande d'ami
  */
 router.post("/checkFriendRequestStatus", getClientTokenAndVerifAccess, UserController.checkFriendRequestStatus);
-
-
 
 
 /**
@@ -82,14 +78,10 @@ router.post("/checkFriendRequestStatus", getClientTokenAndVerifAccess, UserContr
 router.get("/getPendingSentFriendRequests", getClientTokenAndVerifAccess, UserController.getPendingSentFriendRequests);
 
 
-
-
 /**
  * cette route recupere le contenu d'un formulaire du frontend pour l'envoyer par mail à l'aide du protocol smtp
  */
 router.post("/contact", getMailContent);
-
-
 
 
 

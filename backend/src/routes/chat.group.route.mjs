@@ -1,4 +1,3 @@
-
 import express from "express";
 import { getClientTokenAndVerifAccess } from "../middlewares/getClientTokenAndVerifAccess.mjs";
 import { GroupChatController } from "../controllers/chat.group.controller.mjs";
@@ -57,7 +56,6 @@ router.delete("/delete-group-message/:messageId/:groupId",  upload.none(), getCl
  * cette route permet de recuperer tout les messages envoyés par les membres d'un groupe 
  */
 router.post("/getAll-group-message", getClientTokenAndVerifAccess, GroupChatController.getAllGroupMessages);
-
 
 
 

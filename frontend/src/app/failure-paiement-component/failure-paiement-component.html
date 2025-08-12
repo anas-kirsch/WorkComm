@@ -1,0 +1,15 @@
+<main>
+
+  <div class="failure-container">
+    <h2>Paiement échoué</h2>
+    <p>Votre paiement n'a pas pu être validé.</p>
+    <p>Veuillez vérifier vos informations ou réessayer.</p>
+    <button routerLink="/tarifs" (click)="paiementService.buyPremium()">Réessayer</button>
+    <div class="support">
+      <p>Besoin d'aide ? <a href="mailto:workcomm831@gmail.com">Contactez le support</a></p>
+    </div>
+  </div>
+
+</main>
+
+<app-footer-component></app-footer-component>

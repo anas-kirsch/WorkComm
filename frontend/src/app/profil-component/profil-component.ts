@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { UserService } from '../service/user/user-service';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../service/auth/auth-service';
-// import { HeaderConnectedComponent } from '../header-connected-component/header-connected-component';
 
 @Component({
   selector: 'app-profil-component',
@@ -15,11 +14,16 @@ import { AuthService } from '../service/auth/auth-service';
 export class ProfilComponent {
 
 
+  // Affiche la modale de suppression de compte
   showDeleteModal = false;
+  // Router Angular pour la navigation
   router: Router = new Router();
+  // Service utilisateur
   userService = inject(UserService)
+  // Permet de forcer la mise à jour de l'UI
   cdr = inject(ChangeDetectorRef);
 
+  // Confirme la suppression du compte utilisateur
   async confirmDeleteAccount() {
     this.showDeleteModal = false;
 
@@ -46,9 +50,11 @@ export class ProfilComponent {
     }
   }
 
+  // Service d'authentification
   authService = inject(AuthService);
 
 
+  // Appelle l'API backend pour supprimer le compte utilisateur
   fetchDeleteAccount() {
 
     const tokenHeader = this.authService.insertTokeninHeader();
@@ -74,13 +80,7 @@ export class ProfilComponent {
         .catch(error => reject(error))
     })
 
-
-
-
-
   }
-
-
 
 
 }

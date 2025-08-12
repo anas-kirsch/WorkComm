@@ -5,21 +5,19 @@
         <button class="chat-search-btn">Rechercher</button>
     </section>
 
-
-    @if (foundUsers.length >=0) {
-    <div class="search-results" *ngIf="foundUsers.length > 0">
-        @for (user of foundUsers; track $index) {
-        <p class="search-results-item" (click)="vide()" (click)="this.friendService.showUserProfil(user)">
-            {{user.username}}</p>
-        }
-    </div>
-    }@else {
-    <div class="search-results">
-        <p class="search-results-item">...</p>
-    </div>
+    @if (foundUsers.length > 0) {
+        <div class="search-results">
+            @for (user of foundUsers; track $index) {
+                <p class="search-results-item" (click)="vide()" (click)="this.friendService.showUserProfil(user)">
+                    {{user.username}}
+                </p>
+            }
+        </div>
+    } @else {
+        <div class="search-results">
+            <p class="search-results-item">...</p>
+        </div>
     }
-
-
 
     <section class="profil-other-user">
         <main class="profil-main">
@@ -27,20 +25,21 @@
                 <section>
                     <div class="profil-avatar">
                         <img [src]="dataOfUser?.imagePath" alt="Avatar utilisateur">
-                        <!-- <img [src]="" alt="Avatar utilisateur"> -->
                     </div>
-                    <!-- <h1 class="profil-name">atest</h1> -->
                     <h1 class="profil-name">{{ dataOfUser?.username }}</h1>
                 </section>
                 <div class="profil-actions">
-                    <button *ngIf="!isFriendRequestPending && !isIncomingFriendRequest && !isFriend"
-                        (click)="sendFriendRequest()" class="profil-btn">
-                        Ajouter
-                    </button>
-                    <button *ngIf="isFriendRequestPending" class="profil-btn pending" disabled>
-                        Demande d'ami en attente
-                    </button>
-                    <ng-container *ngIf="isIncomingFriendRequest">
+                    @if (!isFriendRequestPending && !isIncomingFriendRequest && !isFriend) {
+                        <button (click)="sendFriendRequest()" class="profil-btn">
+                            Ajouter
+                        </button>
+                    }
+                    @if (isFriendRequestPending) {
+                        <button class="profil-btn pending" disabled>
+                            Demande d'ami en attente
+                        </button>
+                    }
+                    @if (isIncomingFriendRequest) {
                         <section class="choice-request-friend">
                             <p>Vous avez recu une demande d'ami de {{ dataOfUser?.username }}</p>
                             <div id="container-choice">
@@ -48,18 +47,17 @@
                                 <button (click)="refuseRequest()" class="profil-btn refuse">Refuser</button>
                             </div>
                         </section>
-                    </ng-container>
-                    <ng-container *ngIf="isFriend">
+                    }
+                    @if (isFriend) {
                         <p class="profil-btn friend" style="pointer-events:none;cursor:default;">
                             Amis
                         </p>
                         <button (click)="deleteFriend()" class="profil-btn delete">
                             Supprimer l'ami
                         </button>
-                    </ng-container>
+                    }
                 </div>
             </section>
-
 
             <section class="profil-details">
                 <h2>Informations personnelles</h2>
@@ -75,11 +73,6 @@
                     <li><strong>ID utilisateur :</strong> {{dataOfUser?.id}}</li>
                 </ul>
             </section>
-
         </main>
     </section>
-
-
-
-
 </main>

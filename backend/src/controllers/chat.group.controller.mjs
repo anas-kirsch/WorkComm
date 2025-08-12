@@ -32,15 +32,11 @@ export class GroupChatController {
     static async groupChat(request, response) {
 
         try {
-
             const data = request.body;
             console.log(data);
             if (!data || !data.usersArray || !data.newGroupName) {
                 return response.status(400).json({ error: "Données manquantes." });
             } else {
-
-                // console.log(data.usersArray) // l'Array de tout les users invite au groupe ou y participant
-                // console.log(data.newGroupName)// le nom du groupe 
 
                 let usersArray = data.usersArray;
                 if (typeof usersArray === "string") {
@@ -54,21 +50,17 @@ export class GroupChatController {
                     return response.status(400).json({ error: "usersArray doit être un tableau non vide" });
                 }
 
-
-                // enregistre dans la table groupName le nom du groupe qui vient d'etre créer 
                 const newGroup = await createChatGroup(data.newGroupName);
 
-                // Si erreur dans l'ajout
                 if (!newGroup) {
                     return response.status(500).json({
                         message: "impossible d'ajouter le groupe name en bdd",
                         body: data.newGroupName
                     })
-                } else { //sinon
+                } else {
 
                     console.log("le groupe a bien été ajouter", data.newGroupName);
 
-                    // une fois le nom de groupe enregistrer on récupère son id 
                     const getGroup = await getGroupId(data.newGroupName);
 
                     if (!getGroup) {
@@ -78,8 +70,6 @@ export class GroupChatController {
 
                     console.log("ID du groupe :", getGroup.id);
 
-
-                    // insere le groupeId a chaque fois suivi des UserId qui sont dedans 
                     for (const oneUser of usersArray) {
                         const addUserToGroup = await addUserToGroupIfNotExists(getGroup.id, oneUser);
 
@@ -88,8 +78,6 @@ export class GroupChatController {
                             console.error(`impossible d'ajouter a les UserId au groupe : ${getGroup.id}`);
                         }
                     }
-
-                    // Récupère les membres du groupe pour la réponse
                     const members = await getAllGroupMember(getGroup.id);
 
                     response.status(201).json({
@@ -269,10 +257,6 @@ export class GroupChatController {
             response.status(500).json({ error: "Erreur serveur" });
         }
 
-
-
-
-
     }
 
 
@@ -301,7 +285,6 @@ export class GroupChatController {
                 }
 
                 const verif = await findGroupMessageLink(userId, groupId, messageId);
-
                 if (!verif) {
                     return response.status(403).json({ error: "Vous n'êtes pas autorisé à modifier ce message." });
                 } else {
@@ -345,7 +328,6 @@ export class GroupChatController {
             // Supprime le lien et le message dans une transaction si possible
             const groupMessageDeleted = await deleteGroupMessageLink(userId, groupId, messageId);
 
-
             const message = await findMessage(messageId);
             if (!message) {
                 return response.status(404).json({ error: "Message introuvable." });
@@ -368,60 +350,10 @@ export class GroupChatController {
     }
 
 
-
-    // /**
-    //  * cette methode static permet de recuperer tout les messages d'un groupe, renvoie un array[] vide si aucun message
-    //  */
-    // static async getAllGroupMessages(request, response) {
-    //     try {
-    //         const userId = request.user.id;
-    //         const { groupId } = request.body;
-
-    //         if (!userId || !groupId) {
-    //             return response.status(400).json({ error: "Erreur données manquantes." })
-    //         } else {
-    //             const isUserInGroupe = await isUserInGroup(groupId, userId);
-
-    //             if (!isUserInGroupe) {
-    //                 return response.status(400).json({
-    //                     error: `le user ${userId} n'est pas membre du groupe`
-    //                 })
-    //             }
-
-    //             if (isUserInGroupe) {
-    //                 const getAllReferenced = await findAllGroupMessagesByGroupId(groupId);
-
-    //                 if (!getAllReferenced || getAllReferenced.length === 0) {
-    //                     return response.status(200).json({
-    //                         message: "aucun message dans l'historique, commencez à chatter.",
-    //                         body: []
-    //                     });
-    //                 } else {
-    //                     // Récupère les IDs des messages
-    //                     const messageIds = getAllReferenced.map(ref => ref.MessageID);
-    //                     console.log("ID :", messageIds)
-
-    //                     // Récupère tous les messages d'un coup
-    //                     const getMessageContent = await getGroupMessages(messageIds);
-
-    //                     return response.status(200).json({
-    //                         message: "Voici votre historique",
-    //                         body: {
-    //                             getAllReferenced,
-    //                             getMessageContent,
-    //                         }
-    //                     })
-    //                 }
-    //             }
-    //         }
-    //     } catch (error) {
-    //         console.error(error);
-    //         response.status(500).json({ error: "Erreur serveur" });
-    //     }
-
-    // }
-
-
+    /**
+     * cette methode recupere l'historique des messages de groupes 
+     * @returns 
+     */
     static async getAllGroupMessages(request, response) {
         try {
             const userId = request.user.id;
@@ -440,6 +372,7 @@ export class GroupChatController {
             }
 
             const getAllReferenced = await findAllGroupMessagesByGroupId(groupId);
+            console.log("verification 1 : ", getAllReferenced)
 
             if (!getAllReferenced || getAllReferenced.length === 0) {
                 return response.status(200).json({
@@ -453,12 +386,28 @@ export class GroupChatController {
 
             // Récupère tous les messages d'un coup
             const getMessageContent = await getGroupMessages(messageIds);
+            // console.log("verification 2 : ", getMessageContent)
 
-            // Fusionne les références et le contenu des messages
+            // Extrait tous les UserId uniques
+            const userIds = [...new Set(getAllReferenced.map(ref => ref.UserId ?? ref.dataValues?.UserId))];
+            // Récupère les usernames pour ces UserId
+            let userIdToUsername = {};
+            try {
+                const usernames = await getUsernamesByIds(userIds);
+                usernames.forEach(u => {
+                    userIdToUsername[u.id] = u.username;
+                });
+            } catch (err) {
+                console.error('Erreur récupération usernames', err);
+            }
+
+            // Fusionne les références, le contenu des messages et le username
             const mergedMessages = getAllReferenced.map(ref => {
-                const msg = getMessageContent.find(m => m.id === ref.MessageID);
+                const userId = ref.UserId ?? ref.dataValues?.UserId;
+                const msg = getMessageContent.find(m => m.id === ref.MessageID ?? ref.dataValues?.MessageID);
                 return {
                     ...ref,
+                    username: userIdToUsername[userId] || null,
                     message: msg ? {
                         id: msg.id,
                         content: msg.content,
@@ -482,24 +431,14 @@ export class GroupChatController {
 
 
 
-
-
-
-
-
-
-
-
-
     /**
      * cette methode static permet de recuperer tout les groupes d'un utilisateur  
      */
     static async getUserGroups(request, response) {
         try {
             const userId = request.user.id;
-
+            
             const getAllGroupsForUsers = await getAllGroupsForUser(userId);
-
             if (!getAllGroupsForUsers) {
                 return response.status(500).json({ error: "erreur serveur impossible de récupérer les groupes de l'utilisateur " })
             }
@@ -545,8 +484,6 @@ export class GroupChatController {
             return response.status(500).json({ error: error.message });
         }
     }
-
-
 
 
 

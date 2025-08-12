@@ -8,11 +8,9 @@ import { Friends } from '../models/database.mjs';
  * @param {number} userId
  */
 export async function getUserFriend(userId) {
-
     return await Friends.findAll({
         where: { [Op.or]: { UserId: userId, friendId: userId } }
     })
-
 }
 
 
@@ -21,9 +19,7 @@ export async function getUserFriend(userId) {
  * @param {number} userId 
  */
 export async function friendRequest(userId) {
-
     return await Friends.findAll({ where: { friendId: userId, status: 'pending' } });
-
 }
 
 
@@ -34,7 +30,6 @@ export async function friendRequest(userId) {
  * @returns 
  */
 export async function getFriendRequest(userId, friendId) {
-
     return await Friends.findOne({
         where: { friendId: userId, UserId: friendId, status: 'pending' }
     });
@@ -48,11 +43,9 @@ export async function getFriendRequest(userId, friendId) {
  * @returns 
  */
 export async function getInverseFriendship(userId, friendId) {
-
     return await Friends.findOne({
         where: { friendId: friendId, UserId: userId }
     });
-
 }
 
 
@@ -62,13 +55,11 @@ export async function getInverseFriendship(userId, friendId) {
  * @param {number} friendId 
  */
 export async function frienshipCreate(userId, friendId) {
-
     return await Friends.create({
         UserId: userId,
         friendId: friendId,
         status: "accepted"
     });
-
 }
 
 
@@ -96,14 +87,10 @@ export async function getFriendship(userId, friendId) {
  * @returns 
  */
 export async function findAllFriendship(userId) {
-
     return await Friends.findAll({
         // where: { [Op.or]: [{ UserId: userId }, { friendId: userId }], status: 'accepted' }
         where: { UserId: userId, status: "accepted" },
     });
-
-
-
 }
 
 
@@ -125,11 +112,9 @@ export async function pendingSentFriendRequests(userId) {
  * @returns 
  */
 export async function getUsernameById(friendIds){
-
    return await User.findAll({
         where: { id: friendIds },
         attributes: ['id', 'username']
     });
-    
 }
 

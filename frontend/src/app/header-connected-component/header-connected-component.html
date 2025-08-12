@@ -1,34 +1,75 @@
 <!-- <p>header-connected-component works!</p> -->
 <header>
-    <div class="header-content">
-        <h1>WorkComm</h1>
-        <nav>
-            <ul>
-                <li (click)="accueil()" >Accueil</li>
-                <!-- <li (click)="accueil()">Accueil</li> -->
-                <li (click)="tarifs()">Tarifs</li>
-                <li (click)="contact()">Contact</li>
-                <li (click)="goChat()" class="chat-li">
-                    <!-- <li (click)="chat()" class="chat-li"> -->
-                    <span class="chat-dot"></span>
-                    Chat
-                </li>
-                <!-- <li class="dev-page">À venir (en développement)</li> -->
-            </ul>
-            <div class="actions">
-                <button (click)="showProfil()" class="profil-btn">
-                    <i class="fa fa-user"></i> Profil
-                </button>
-                <button (click)="deconnexion()" class="logout-btn">
-                    <i class="fa fa-sign-out-alt icon-logout"></i> Déconnexion
-                </button>
-                <div class="profile-photo">
-                    <img [src]="userService.getUserData()?.imagePath" alt="Photo de profil" />
-                </div>
-                <button class="dark-mode-toggle" title="Activer/Désactiver le mode sombre">
-                    <span class="icon-moon">&#9789;</span>
-                </button>
-            </div>
-        </nav>
+  <div class="header-content">
+    <h1>WorkComm</h1>
+    <nav>
+      <ul>
+        <li (click)="accueil()">Accueil</li>
+        <li (click)="tarifs()">Tarifs</li>
+        <li (click)="contact()">Contact</li>
+        <li (click)="goChat()" class="chat-li">
+          <span class="chat-dot"></span>
+          Chat
+        </li>
+      </ul>
+      <div class="actions">
+        @if (isPremium) {
+        <button (click)="showProfil()" class="profil-btn premium-gold">
+          <i class="fa fa-user"></i> Profil Premium
+        </button>
+        } @else {
+        <button (click)="showProfil()" class="profil-btn">
+          <i class="fa fa-user"></i> Profil
+        </button>
+        }
+        <button (click)="deconnexion()" class="logout-btn">
+          <i class="fa fa-sign-out-alt icon-logout"></i> Déconnexion
+        </button>
+        <div class="profile-photo">
+          <img [src]="userService.getUserData()?.imagePath" alt="Photo de profil" />
+        </div>
+        <button class="dark-mode-toggle" title="Activer/Désactiver le mode sombre">
+          <span class="icon-moon">&#9789;</span>
+        </button>
+      </div>
+    </nav>
+    <!-- Burger button for mobile/tablet -->
+    <button class="burger-menu" (click)="toggleMenu()" aria-label="Ouvrir le menu" [class.open]="menuOpen">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <!-- Mobile menu -->
+    <div class="mobile-nav" [class.open]="menuOpen">
+      <ul>
+        <li (click)="accueil(); toggleMenu()">Accueil</li>
+        <li (click)="tarifs(); toggleMenu()">Tarifs</li>
+        <li (click)="contact(); toggleMenu()">Contact</li>
+        <li (click)="goChat(); toggleMenu()" class="chat-li">
+          <span class="chat-dot"></span>
+          Chat
+        </li>
+      </ul>
+      <div class="actions">
+        @if (isPremium) {
+        <button (click)="showProfil(); toggleMenu()" class="profil-btn premium-gold">
+          <i class="fa fa-user"></i> Profil Premium
+        </button>
+        } @else {
+        <button (click)="showProfil(); toggleMenu()" class="profil-btn">
+          <i class="fa fa-user"></i> Profil
+        </button>
+        }
+        <button (click)="deconnexion(); toggleMenu()" class="logout-btn">
+          <i class="fa fa-sign-out-alt icon-logout"></i> Déconnexion
+        </button>
+        <div class="profile-photo">
+          <img [src]="userService.getUserData()?.imagePath" alt="Photo de profil" />
+        </div>
+        <button class="dark-mode-toggle" title="Activer/Désactiver le mode sombre">
+          <span class="icon-moon">&#9789;</span>
+        </button>
+      </div>
     </div>
+  </div>
 </header>

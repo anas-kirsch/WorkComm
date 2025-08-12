@@ -13,12 +13,26 @@ import { core } from '@angular/compiler';
   templateUrl: './inscription-component.html',
   styleUrl: './inscription-component.css'
 })
-export class InscriptionComponent {
 
+export class InscriptionComponent {
+  /**
+   * Router Angular pour la navigation entre les pages
+   */
   router : Router = new Router()
+
+  /** Fichier image sélectionné pour la photo de profil */
   selectedFile: File | null = null;
 
-
+  /**
+   * Formulaire d'inscription avec validation des champs
+   * - username : requis, min 3 caractères, lettres/chiffres/_
+   * - email : requis, format email
+   * - bio : facultatif
+   * - password : requis, min 8 caractères, 1 maj, 1 min, 1 chiffre
+   * - confirmpassword : requis
+   * - picture : facultatif (image)
+   * - validateur custom : mot de passe et confirmation identiques
+   */
   form: FormGroup = new FormGroup({
     username: new FormControl('', [
       Validators.required,
@@ -40,6 +54,10 @@ export class InscriptionComponent {
     picture: new FormControl(''),
   }, { validators: [InscriptionComponent.validateSamePassword] });
 
+
+  /**
+   * Valide que le mot de passe et la confirmation sont identiques
+   */
   static validateSamePassword(group: AbstractControl): ValidationErrors | null {
     const password = group.get('password')?.value;
     const confirmPassword = group.get('confirmpassword')?.value;
@@ -48,9 +66,19 @@ export class InscriptionComponent {
 
 
 
+  /** Navigue vers la page de connexion */
+  goConnexion(){
+    this.router.navigate(["connexion"]);
+  }
 
 
 
+
+  /**
+   * Gère la sélection d'un fichier image pour la photo de profil
+   * - Vérifie le type et la taille
+   * - Met à jour le formulaire si OK
+   */
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
@@ -79,6 +107,13 @@ export class InscriptionComponent {
     }
   }
 
+
+  /**
+   * Soumet le formulaire d'inscription si valide
+   * - Appelle le service d'inscription
+   * - Réinitialise le formulaire et le fichier sélectionné
+   * - Redirige vers la page d'information en cas de succès
+   */
   onSubmitInscription() {
     if (this.form.invalid) {
       return;
@@ -89,7 +124,6 @@ export class InscriptionComponent {
         this.form.reset();
         this.selectedFile = null;
         this.router.navigate(["information"]);
-
       })
       .catch(error => {
         console.error('Erreur inscription:', error);

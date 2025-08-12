@@ -29,8 +29,10 @@
           @for (friend of myFriends; track friend.id) {
           <!-- <li class="sidebar-list-item" (click)="startPrivateChat(friend.id)"> -->
           <li class="sidebar-list-item" (click)="startPrivateChat(friend.id)">
-            <img *ngIf="getFriendImage(friend)" [src]="getFriendImage(friend)" alt="Photo" width="32" height="32"
+            @if (getFriendImage(friend)) {
+            <img [src]="getFriendImage(friend)" alt="Photo" width="32" height="32"
               style="border-radius:50%;margin-right:8px;">
+            }
             {{ friend.username }}
           </li>
           }
@@ -68,10 +70,13 @@
           @for (request of friendRequests; track request.id) {
           <li class="sidebar-list-item" style="display: flex; align-items: center; justify-content: space-between;">
             <div style="display: flex; align-items: center; min-width:0;">
-              <img *ngIf="request.imagePath?.imagePath" [src]="request.imagePath.imagePath" alt="Photo de profil"
-                class="profile-picture" width="28" height="28"
-                style="border-radius:50%;margin-right:8px;vertical-align:middle;" />
-              <span style="max-width:110px; display:inline-block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; vertical-align:middle;">{{ request.username }}</span>
+              @if (request.imagePath?.imagePath) {
+              <img [src]="request.imagePath.imagePath" alt="Photo de profil" class="profile-picture" width="28"
+                height="28" style="border-radius:50%;margin-right:8px;vertical-align:middle;" />
+              }
+              <span
+                style="max-width:110px; display:inline-block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; vertical-align:middle;">{{
+                request.username }}</span>
             </div>
             <div>
               <button class="btn-accept" (click)="acceptRequest(request.id)">Accepter</button>
@@ -93,7 +98,9 @@
           @if (arrayOfSentFriendRequests.length > 0) {
           @for (user of arrayOfSentFriendRequests; track user.id) {
           <li class="sidebar-list-item">
-            <img *ngIf="user.profilePicture" [src]="user.profilePicture" alt="Photo de profil" class="avatar" />
+            @if (user.profilePicture) {
+            <img [src]="user.profilePicture" alt="Photo de profil" class="avatar" />
+            }
             <span>{{ user.username }}</span>
           </li>
           }
@@ -122,26 +129,29 @@
 
     </aside>
 
-    <section class="chat-messages" *ngIf="selectedFriendId !== null || isGroupChatActive">
+    @if (selectedFriendId !== null || isGroupChatActive) {
+    <section class="chat-messages">
       <div class="messages-header">
         <h2 class="messages-header-title" id="chat-text">
           {{ selectedFriendUsername }}
         </h2>
       </div>
-
       <div class="messages-list">
-        <div *ngIf="messages.length === 0" class="no-messages">
+        @if (messages.length === 0) {
+        <div class="no-messages">
           <p>Aucun message pour l’instant.<br>Commence la conversation !</p>
         </div>
-        <div *ngFor="let msg of messages; trackBy: trackByMsgId"
-             class="message"
-             [ngClass]="{'me': msg.userId === myUserId, 'friend': msg.userId !== myUserId, 'right': msg.userId === myUserId, 'left': msg.userId !== myUserId}">
+        }
+        @for (msg of messages; track msg.id) {
+        <div class="message"
+          [ngClass]="{'me': (msg.UserId ?? msg.userId) === myUserId, 'friend': (msg.UserId ?? msg.userId) !== myUserId, 'right': (msg.UserId ?? msg.userId) === myUserId, 'left': (msg.UserId ?? msg.userId) !== myUserId}">
           <div class="sender">{{ getSenderName(msg) }}</div>
           <div class="content">{{ msg.message }}</div>
         </div>
+        }
       </div>
-
-        <div *ngIf="showDeleteModal" class="modal-overlay">
+      @if (showDeleteModal) {
+      <div class="modal-overlay">
         <div class="modal-content">
           <p>Confirmer la suppression du message ?</p>
           <div class="modal-actions">
@@ -150,12 +160,14 @@
           </div>
         </div>
       </div>
+      }
       <div class="messages-input">
         <input class="messages-input-field" type="text" placeholder="Écrire un message..." [(ngModel)]="newMessage"
           (keyup.enter)="sendChatMessage(newMessage); newMessage=''" />
         <button class="send-btn" (click)="sendChatMessage(newMessage); newMessage=''">Envoyer</button>
       </div>
     </section>
+    }
     @if (selectedFriendId === null && !isGroupChatActive) {
     <section class="chat-messages">
       <div class="no-messages">
@@ -184,10 +196,11 @@
 
         <div class="container-button-choice">
           <button class="cancel-confirm" (click)="cancelGroupCreation()">Annuler</button>
-          <button class="cancel-confirm" (click)="confirmGroupCreation()" [disabled]="!groupName || groupName.trim().length === 0">Confirmer</button>
+          <button class="cancel-confirm" (click)="confirmGroupCreation()"
+            [disabled]="!groupName || groupName.trim().length === 0">Confirmer</button>
         </div>
 
-        
+
       </div>
     </div>
 

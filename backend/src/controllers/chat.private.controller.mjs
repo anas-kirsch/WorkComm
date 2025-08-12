@@ -26,11 +26,9 @@ export class PrivateChatController {
     static async privateChat(request, response) {
 
         try {
-
             const userId = request.user.id;
             // Récupère les id des deux utilisateurs qui vont chater ensemble
             const { friendUserId } = request.body;
-
 
             if (!userId || !friendUserId) {
                 return response.status(400).json({ error: "Données manquantes." });
@@ -52,14 +50,10 @@ export class PrivateChatController {
                 chat_name: chatName,
                 conversationId: conv.id
             });
-
         } catch (error) {
             console.error(error);
             response.status(500).json({ error: "Erreur serveur" });
         }
-
-
-
     }
 
 
@@ -125,7 +119,6 @@ export class PrivateChatController {
                     MessageID
                 }
             })
-
         } catch (error) {
             console.error(error);
             response.status(500).json({ error: "Erreur serveur" });
@@ -161,13 +154,11 @@ export class PrivateChatController {
             }
 
             const verifConversationExist = await findPrivateMessage(userId, conversationID.dataValues.id, messageId);
-
             if (!verifConversationExist) {
                 return response.status(404).json({ error: "message inexistante. " })
             } else {
 
                 console.log(conversationID)
-
                 const changeMessage = await updatePrivateMessageInDb(newMessage, messageId);
 
                 if (!changeMessage) {
@@ -220,7 +211,6 @@ export class PrivateChatController {
                 message: "Le message a bien été supprimé.",
                 body: { userId, conversationName }
             });
-
         } catch (error) {
             console.error(error);
             response.status(500).json({ error: "Erreur serveur" });
@@ -285,11 +275,6 @@ export class PrivateChatController {
             response.status(500).json({ error: "Erreur serveur" });
         }
     }
-
-
-
-
-
 
 
 }
