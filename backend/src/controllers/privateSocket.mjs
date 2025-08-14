@@ -8,43 +8,43 @@ const server = createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:4200","http://192.168.1.248:4200","http://192.168.10.125:4200"],
+    origin: [process.env.LOCALHOST_URL, process.env.PC_LOCAL_URL, process.env.FRONTEND_URL],
     methods: ["GET", "POST"],
     credentials: true
   }
 });
-const PORT = 10100;
+const PORT = Number(process.env.PRIVATE_SOCKET_PORT); //port private socket 
 
 app.use(cors({
-  origin: ["http://localhost:4200","http://192.168.10.125:4200", "http://192.168.1.248:4200"],
+  origin: [process.env.LOCALHOST_URL, process.env.PC_LOCAL_URL, process.env.FRONTEND_URL],
   credentials: true
 }));
 
 io.on('connection', (socket) => {
-    socket.on('join chat', ({ myUserId, friendUserId }) => {
-        const [id1, id2] = [myUserId, friendUserId].sort((a, b) => a - b);
-        const chatName = `${id1}/${id2}`;
-        socket.join(chatName);
-        socket.emit('joined', chatName);
-    });
+  socket.on('join chat', ({ myUserId, friendUserId }) => {
+    const [id1, id2] = [myUserId, friendUserId].sort((a, b) => a - b);
+    const chatName = `${id1}/${id2}`;
+    socket.join(chatName);
+    socket.emit('joined', chatName);
+  });
 
-    socket.on('chat message', ({ myUserId, friendUserId, message }) => {
-        const [id1, id2] = [myUserId, friendUserId].sort((a, b) => a - b);
-        const chatName = `${id1}/${id2}`;
-        io.to(chatName).emit('chat message', {
-            userId: myUserId,
-            message
-        });
+  socket.on('chat message', ({ myUserId, friendUserId, message }) => {
+    const [id1, id2] = [myUserId, friendUserId].sort((a, b) => a - b);
+    const chatName = `${id1}/${id2}`;
+    io.to(chatName).emit('chat message', {
+      userId: myUserId,
+      message
     });
+  });
 
-    socket.on('leave chat', ({ myUserId, friendUserId }) => {
-        const [id1, id2] = [myUserId, friendUserId].sort((a, b) => a - b);
-        const chatName = `${id1}/${id2}`;
-        socket.leave(chatName);
-        socket.emit('left', chatName);
-    });
+  socket.on('leave chat', ({ myUserId, friendUserId }) => {
+    const [id1, id2] = [myUserId, friendUserId].sort((a, b) => a - b);
+    const chatName = `${id1}/${id2}`;
+    socket.leave(chatName);
+    socket.emit('left', chatName);
+  });
 });
 
 server.listen(PORT, () => {
-    console.log(`Socket.io server running at http://0.0.0.0:${PORT}`);
+  console.log(`Socket.io server running at http://0.0.0.0:${PORT}`);
 });
