@@ -19,4 +19,11 @@ export class NavController {
         }
     }
 
+    /**
+     * Simple endpoint utilisé pour le healthcheck Docker (retour rapide sans dépendances externes)
+     */
+    static async ping(request, response) {
+        response.status(200).json({ status: "ok" });
+    }
+
 }

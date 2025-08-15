@@ -8,5 +8,8 @@ const router =  express.Router();
  */
 router.get("/home",NavController.home)
 
+// Endpoint de healthcheck léger
+router.get("/ping", NavController.ping)
+
 
 export default router;

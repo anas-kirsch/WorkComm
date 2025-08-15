@@ -6,18 +6,24 @@ import { group } from "console";
 
 dotenv.config();
 
-/**
- * 
- */
-export const sequelize = new Sequelize(process.env.DATABASE_URL, {
-    dialect: "postgres",
-    dialectOptions: {
-        ssl: {
-            require: true,
-            rejectUnauthorized: false // Nécessaire pour Supabase
-        }
-    }
-});
+if (!process.env.DATABASE_URL) {
+    console.error("[db] DATABASE_URL manquant dans l'environnement");
+}
+
+// Active SSL seulement si DATABASE_SSL=true (utile pour Supabase / hébergeur managé)
+const useSSL = (process.env.DATABASE_SSL || '').toLowerCase() === 'true';
+
+const sequelizeConfig = {
+    dialect: 'postgres'
+};
+
+if (useSSL) {
+    sequelizeConfig.dialectOptions = {
+        ssl: { require: true, rejectUnauthorized: false }
+    };
+}
+
+export const sequelize = new Sequelize(process.env.DATABASE_URL || '', sequelizeConfig);
 
 /**
  * permet de se connecter a la bdd supabase ici

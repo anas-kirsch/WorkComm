@@ -36,6 +36,25 @@ ng build
 
 This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
 
+## Docker (production build)
+
+1. Copy `.env.example` to `.env` and adjust values (API_URL, socket URLs, STRIPE_PUBLIC_KEY).
+2. Build the image:
+	- docker build -t workcomm-frontend .
+3. Run the container:
+	- docker run --rm -p 8080:80 --env-file .env workcomm-frontend
+4. Open http://localhost:8080
+
+Environment handling:
+- The build script reads `.env` and generates both `environment.ts` and `environment.development.ts` before compiling.
+- Rebuild the image if you change any value in `.env` (static files are produced at build time).
+
+Healthcheck:
+- Dockerfile defines a simple HTTP healthcheck on `/` (expects 200).
+
+Future improvement (optional):
+- Add runtime-config pattern (env.js) to avoid rebuilds for URL changes.
+
 ## Running unit tests
 
 To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:

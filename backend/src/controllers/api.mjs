@@ -21,7 +21,8 @@ import { fileURLToPath } from "url";
  */
 export function runServer(sequelize) {
     const app = express();
-    const port = Number(process.env.BACKEND_PORT); //port du backend 
+    // Port pris depuis les variables d'environnement (.env). Fallback 4900 si non défini.
+    const port = Number(process.env.BACKEND_PORT || 4900); // port du backend
     // Autorise l'accès CORS depuis l'IP du front
     app.use(cors({
         origin: [process.env.FRONTEND_URL, process.env.PC_LOCAL_URL, process.env.LOCALHOST_URL], //url du frontend
