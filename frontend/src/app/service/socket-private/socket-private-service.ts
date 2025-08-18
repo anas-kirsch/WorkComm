@@ -22,8 +22,7 @@ export class SocketPrivateService {
 
   connectSocket(myUserId: number, friendUserId: number) {
     // Initialise la connexion au serveur Socket.io pour le chat privé
-    this.socket = io('http://192.168.1.248:10100');
-    // this.socket = io('http://localhost:10000');
+    this.socket = io(`${environment.privateSocketURL}`);
     // Émet un événement pour rejoindre la conversation privée
     this.socket.emit('join chat', { myUserId, friendUserId });
   }

@@ -25,8 +25,8 @@ export async function getAndSaveProfilPicture(picture, userId) {
             // Enregistre le chemin par défaut vers default.jpg
             const saveDefaultPicturePathToBdd = await profilPicture.upsert({
                 UserId: userId,
-                // imagePath: `http://192.168.10.125:4900/images/default.jpg`
-                imagePath: `http://192.168.1.248:4900/images/default.jpg`
+                // imagePath: `http://192.168.1.248:4900/images/default.jpg`
+                imagePath: `http://46.202.159.146:4900/images/default.jpg`
             });
             return saveDefaultPicturePathToBdd;
 
@@ -57,7 +57,7 @@ export async function getAndSaveProfilPicture(picture, userId) {
 
             const savePicturePathToBdd = await profilPicture.upsert({
                 UserId: userId,
-                imagePath: `http://192.168.1.248:4900/images/${completeFileName}`
+                imagePath: `http://46.202.159.146:4900/images/${completeFileName}`
             })
             return savePicturePathToBdd
         }

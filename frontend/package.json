@@ -3,8 +3,10 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --port ${FRONTEND_PORT:-4200}",
     "build": "ng build",
+    "prebuild:env": "node scripts/prepare-env.mjs",
+    "build:docker": "npm run prebuild:env && ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -44,6 +46,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.8.2"
+  "typescript": "~5.8.2",
+  "dotenv": "^16.4.5"
   }
 }

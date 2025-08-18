@@ -1,0 +1,56 @@
+# Orchestration for WorkComm stack (backend API+Sockets + frontend Angular)
+
+services:
+  backend:
+    build: ./backend
+    container_name: workcomm-backend
+    env_file: ./backend/.env
+    depends_on:
+      - db
+    ports:
+      - "4900:4900"    # API
+      - "9000:9000"    # Group socket
+      - "10100:10100"  # Private socket
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        API_URL: http://backend:4900
+        GROUP_SOCKET_URL: http://backend:9000
+        PRIVATE_SOCKET_URL: http://backend:10100
+        STRIPE_PUBLIC_KEY: ${STRIPE_PUBLIC_KEY:-pk_test_xxxxxxxxxxxxxxxxxxxxxxxxx}
+    container_name: workcomm-frontend
+    depends_on:
+      - backend
+    ports:
+      - "4200:80"   # Host 4200 -> container 80 (nginx)
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    container_name: workcomm-db
+    environment:
+      POSTGRES_USER: workcomm
+      POSTGRES_PASSWORD: change_me
+      POSTGRES_DB: workcomm
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+networks:
+  default:
+    name: workcomm-net
+
+volumes:
+  postgres_data: {}
+
+# Usage:
+# 1. Ensure backend/.env is filled (ports, DB URL, Stripe secret, etc.).
+# 2. (Optional) export STRIPE_PUBLIC_KEY before build if you want a custom frontend key:
+#      export STRIPE_PUBLIC_KEY=pk_test_abcdef
+# 3. docker compose up -d --build
+# 4. Frontend: http://localhost:4200  | Backend API: http://localhost:4900/api/nav/ping

@@ -24,7 +24,7 @@ export class GroupeService {
   connectSocket() {
     // Initialise la connexion au serveur Socket.io pour les groupes
     // Mets ici l'URL de ton serveur Socket.io groupe
-    this.socket = io('http://192.168.1.248:9000', {
+    this.socket = io(`${environment.groupSocketURL}`, {
       withCredentials: true
     });
   }
