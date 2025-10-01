@@ -77,61 +77,59 @@ ng serve
 
 
 
+# WorkComm
 
-WorkComm/
-├── docker-compose.yml
-├── docker-compose.override.yml
-├── docker-compose.prod.yml
-├── scripts/
-│   └── build-and-push.sh
-├── backend/
-│   ├── Dockerfile
-│   ├── package.json
-│   └── src/
-│       ├── app.mjs
-│       ├── start-all.mjs
-│       ├── configs/
-│       ├── controllers/
-│       ├── middlewares/
-│       ├── models/
-│       └── routes/
-└── frontend/
-    ├── Dockerfile
-    ├── package.json
-    ├── angular.json
-    ├── public/
-    ├── scripts/
-    └── src/
-        ├── app/
-        │   ├── components/
-        │   │   ├── abonnement/
-        │   │   ├── chat/
-        │   │   ├── contact/
-        │   │   ├── cookie-banner/
-        │   │   ├── footer/
-        │   │   ├── header/
-        │   │   ├── home/
-        │   │   ├── info/
-        │   │   ├── inscription/
-        │   │   ├── login/
-        │   │   ├── profil/
-        │   │   ├── profil-users/
-        │   │   ├── success-paiement/
-        │   │   ├── failure-paiement/
-        │   │   ├── tarifs/
-        │   │   └── privacy-terms/
-        │   ├── service/
-        │   │   ├── auth/
-        │   │   ├── friends/
-        │   │   ├── groupe/
-        │   │   ├── paiement/
-        │   │   ├── socket-private/
-        │   │   ├── user/
-        │   │   └── premium-access/
-        │   └── interfaces/
-        ├── environments/
-        ├── index.html
-        ├── main.ts
-        └── styles.css
-
-
+- `docker-compose.yml`
+- `docker-compose.override.yml`
+- `docker-compose.prod.yml`
+- `scripts/`
+  - `build-and-push.sh`
+- `backend/`
+  - `Dockerfile`
+  - `package.json`
+  - `src/`
+    - `app.mjs`
+    - `start-all.mjs`
+    - `configs/`
+    - `controllers/`
+    - `middlewares/`
+    - `models/`
+    - `routes/`
+- `frontend/`
+  - `Dockerfile`
+  - `package.json`
+  - `angular.json`
+  - `public/`
+  - `scripts/`
+  - `src/`
+    - `app/`
+      - `components/`
+        - `abonnement/`
+        - `chat/`
+        - `contact/`
+        - `cookie-banner/`
+        - `footer/`
+        - `header/`
+        - `home/`
+        - `info/`
+        - `inscription/`
+        - `login/`
+        - `profil/`
+        - `profil-users/`
+        - `success-paiement/`
+        - `failure-paiement/`
+        - `tarifs/`
+        - `privacy-terms/`
+      - `service/`
+        - `auth/`
+        - `friends/`
+        - `groupe/`
+        - `paiement/`
+        - `socket-private/`
+        - `user/`
+        - `premium-access/`
+      - `interfaces/`
+    - `environments/`
+    - `index.html`
+    - `main.ts`
+    - `styles.css`
