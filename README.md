@@ -74,3 +74,64 @@ ng serve
 | 4  | Administration                   | - Routes et contrôleurs pour l’administration (ban, création admin, dashboard à venir) <br> - Middleware d’accès réservé aux admins                                           | - Accès restreint par rôle admin <br> - Middleware d’accès admin                                            | Dashboard admin (statistiques, gestion avancée)                  |
 | 5  | Navigation & UI                  | - Pages: accueil, inscription, connexion, profil, chat, tarifs, contact, politique de confidentialité, information, profil d’autres utilisateurs <br> - Header dynamique (connecté/déconnecté, premium) <br> - Footer commun <br> - Navigation sécurisée (guards Angular) | - Guards Angular pour navigation sécurisée                                                                 | - Personnalisation du thème <br> - Responsive design (mobile/tablette/desktop) |
 | 6  | Gestion des fichiers & images    | - Upload de photo de profil à l’inscription <br> - Stockage d’images dans le dossier public côté backend                                                                      | - Validation des fichiers uploadés <br> - Accès restreint aux fichiers                                      | Partage et téléchargement de documents                           |
+
+
+
+
+WorkComm/
+├── docker-compose.yml
+├── docker-compose.override.yml
+├── docker-compose.prod.yml
+├── scripts/
+│   └── build-and-push.sh
+├── backend/
+│   ├── Dockerfile
+│   ├── package.json
+│   └── src/
+│       ├── app.mjs
+│       ├── start-all.mjs
+│       ├── configs/
+│       ├── controllers/
+│       ├── middlewares/
+│       ├── models/
+│       └── routes/
+└── frontend/
+    ├── Dockerfile
+    ├── package.json
+    ├── angular.json
+    ├── public/
+    ├── scripts/
+    └── src/
+        ├── app/
+        │   ├── components/
+        │   │   ├── abonnement/
+        │   │   ├── chat/
+        │   │   ├── contact/
+        │   │   ├── cookie-banner/
+        │   │   ├── footer/
+        │   │   ├── header/
+        │   │   ├── home/
+        │   │   ├── info/
+        │   │   ├── inscription/
+        │   │   ├── login/
+        │   │   ├── profil/
+        │   │   ├── profil-users/
+        │   │   ├── success-paiement/
+        │   │   ├── failure-paiement/
+        │   │   ├── tarifs/
+        │   │   └── privacy-terms/
+        │   ├── service/
+        │   │   ├── auth/
+        │   │   ├── friends/
+        │   │   ├── groupe/
+        │   │   ├── paiement/
+        │   │   ├── socket-private/
+        │   │   ├── user/
+        │   │   └── premium-access/
+        │   └── interfaces/
+        ├── environments/
+        ├── index.html
+        ├── main.ts
+        └── styles.css
+
+
