@@ -28,7 +28,7 @@
     <!-- Champ honeypot invisible pour détecter les bots -->
     <div class="form-group" style="display:none;">
       <label for="honeypot">Ne pas remplir</label>
-      <input type="text" id="honeypot" name="honeypot" [(ngModel)]="honeypot" autocomplete="off" />
+  <input type="text" id="honeypot" name="honeypot" [(ngModel)]="honeypot" [ngModelOptions]="{standalone: true}" autocomplete="off" />
     </div>
 
 
