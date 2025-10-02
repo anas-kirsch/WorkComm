@@ -5,8 +5,6 @@ services:
     build: ./backend
     container_name: workcomm-backend
     env_file: ./backend/.env
-    depends_on:
-      - db
     ports:
       - "4900:4900"    # API
       - "9000:9000"    # Group socket
@@ -28,18 +26,19 @@ services:
       - "4200:80"   # Host 4200 -> container 80 (nginx)
     restart: unless-stopped
 
-  db:
-    image: postgres:16-alpine
-    container_name: workcomm-db
-    environment:
-      POSTGRES_USER: workcomm
-      POSTGRES_PASSWORD: change_me
-      POSTGRES_DB: workcomm
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    restart: unless-stopped
+  # Optional PostgreSQL example (uncomment and adjust DATABASE_URL in backend/.env)
+  # db:
+  #   image: postgres:16-alpine
+  #   container_name: workcomm-db
+  #   environment:
+  #     POSTGRES_USER: workcomm
+  #     POSTGRES_PASSWORD: change_me
+  #     POSTGRES_DB: workcomm
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+  #   restart: unless-stopped
 
 networks:
   default:

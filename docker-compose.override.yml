@@ -1,0 +1,11 @@
+# Dev override: utilise le réseau host pour permettre l'accès IPv6 au backend
+# Lancer avec: docker compose up -d --build backend
+services:
+  backend:
+    network_mode: host
+    # Les ports ne sont plus nécessaires en mode host
+    ports: []
+    # Conserve le même env_file
+    env_file: ./backend/.env
+    # Redémarrage automatique
+    restart: unless-stopped

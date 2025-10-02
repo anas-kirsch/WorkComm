@@ -88,6 +88,7 @@ export const Friends = sequelize.define("Friends", {
     }
 );
 
+
 /**
  * cette table permet de stocker la route de chaque photo de profil appartenant aux utilisateurs 
  */

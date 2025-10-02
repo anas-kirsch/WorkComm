@@ -17,9 +17,9 @@ router.post("/register",UserController.register);
 
 
 /**
- * Cette router permet à un client du site de se créer un compte utilisateur
+ * Cette router permet à un client du site de supprimer son compte utilisateur 
  */
-router.delete("/delete/user",getClientTokenAndVerifAccess,UserController.deleteUser);
+router.delete("/delete/user", getClientTokenAndVerifAccess, UserController.deleteUser);
 
 
 /**
