@@ -2,6 +2,11 @@
     <section class="inscription-form-container">
         <h2>Inscription</h2>
         <form [formGroup]="form" (ngSubmit)="onSubmitInscription()" class="inscription-form">
+      <!-- Champ honeypot invisible pour détecter les bots -->
+      <div class="form-group" style="display:none;">
+        <label for="honeypot">Ne pas remplir</label>
+        <input type="text" id="honeypot" name="honeypot" [(ngModel)]="honeypot" autocomplete="off" />
+      </div>
 
             <div class="form-group">
                 <label for="username">Nom d'utilisateur</label>

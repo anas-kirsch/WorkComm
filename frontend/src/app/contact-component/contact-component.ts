@@ -15,6 +15,8 @@ import { FooterComponent } from '../footer-component/footer-component';
 })
 
 export class ContactComponent {
+  /** Champ honeypot pour détection de bots */
+  honeypot = '';
   /** Adresse email saisie par l'utilisateur */
   email = '';
   /** Sujet du message */
@@ -61,6 +63,13 @@ export class ContactComponent {
    * Soumet le formulaire de contact après validation côté client
    */
   async onSubmitContact() {
+    // Vérification anti-bot : si le champ honeypot est rempli, on bloque l'envoi
+    if (this.honeypot && this.honeypot.trim() !== '') {
+      this.errorMsg = "Erreur : comportement suspect détecté.";
+      this.showError = true;
+      setTimeout(() => { this.showError = false; }, 2000);
+      return;
+    }
     // Validation JS côté client
     if (!this.email || !this.subject || !this.message) {
       this.errorMsg = 'Tous les champs sont obligatoires.';

@@ -2,6 +2,11 @@
   <div class="login-container">
     <h1>Connexion</h1>
     <form [formGroup]="form" (ngSubmit)="onSubmitConnexion()">
+      <!-- Champ honeypot invisible pour détecter les bots -->
+      <div class="form-group" style="display:none;">
+        <label for="honeypot">Ne pas remplir</label>
+        <input type="text" id="honeypot" name="honeypot" [(ngModel)]="honeypot" autocomplete="off" />
+      </div>
       <div class="form-group">
         <label for="email">Email</label>
         <input

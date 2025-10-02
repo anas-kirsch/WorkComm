@@ -1,3 +1,4 @@
+import { FormsModule } from '@angular/forms';
 import { Component } from '@angular/core';
 import { FooterComponent } from '../footer-component/footer-component';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
@@ -9,12 +10,14 @@ import { core } from '@angular/compiler';
 
 @Component({
   selector: 'app-inscription-component',
-  imports: [FooterComponent, ReactiveFormsModule, CommonModule],
+  imports: [FooterComponent, ReactiveFormsModule, CommonModule, FormsModule],
   templateUrl: './inscription-component.html',
   styleUrl: './inscription-component.css'
 })
 
 export class InscriptionComponent {
+  /** Champ honeypot pour détection de bots */
+  honeypot = '';
   /** Nettoie une chaîne pour éviter les injections simples et traversée de répertoire */
   sanitizeInput(input: string): string {
     return input.replace(/\.\./g, '')
@@ -121,6 +124,11 @@ export class InscriptionComponent {
    * - Redirige vers la page d'information en cas de succès
    */
   onSubmitInscription() {
+    // Vérification anti-bot : si le champ honeypot est rempli, on bloque l'envoi
+    if (this.honeypot && this.honeypot.trim() !== '') {
+      alert("Erreur : comportement suspect détecté.");
+      return;
+    }
     if (this.form.invalid) {
       return;
     }

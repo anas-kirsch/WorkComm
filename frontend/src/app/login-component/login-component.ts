@@ -5,16 +5,19 @@ import { Router } from '@angular/router';
 import { AuthService } from '../service/auth/auth-service';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 
 @Component({
   selector: 'app-login-component',
-  imports: [FooterComponent, ReactiveFormsModule, CommonModule],
+  imports: [FooterComponent, ReactiveFormsModule, CommonModule, FormsModule],
   templateUrl: './login-component.html',
   styleUrl: './login-component.css'
 })
 
 export class LoginComponent {
+  /** Champ honeypot pour détection de bots */
+  honeypot = '';
   /** Nettoie une chaîne pour éviter les injections simples et traversée de répertoire */
   sanitizeInput(input: string): string {
     return input.replace(/\.\./g, '')
@@ -57,6 +60,11 @@ export class LoginComponent {
    * - Réinitialise le formulaire et redirige vers l'accueil en cas de succès
    */
   onSubmitConnexion() {
+    // Vérification anti-bot : si le champ honeypot est rempli, on bloque l'envoi
+    if (this.honeypot && this.honeypot.trim() !== '') {
+      alert("Erreur : comportement suspect détecté.");
+      return;
+    }
     if (this.form.invalid) {
       return;
     }
