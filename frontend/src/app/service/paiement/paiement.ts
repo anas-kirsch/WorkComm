@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { TarifsComponent } from '../../tarifs-component/tarifs-component';
 import { environment } from '../../../environments/environment.development';
-import { loadStripe } from '@stripe/stripe-js';
+// import { loadStripe } from '@stripe/stripe-js';
 import { AuthService } from '../auth/auth-service';
 
 @Injectable({
@@ -12,7 +12,7 @@ export class Paiement {
   // URL de l'API backend
   static apiURL = environment.apiURL;
   // Clé publique Stripe pour l'intégration du paiement
-  static stripePublicKey = environment.stripePublicKey;
+  // static stripePublicKey = environment.stripePublicKey;
 
   // Service d'authentification pour récupérer le token utilisateur
   authService = inject(AuthService);
@@ -41,10 +41,7 @@ export class Paiement {
     });
     const data = await response.json();
 
-    // Redirection vers Stripe Checkout avec la session reçue du backend
-    const stripe = await loadStripe(environment.stripePublicKey);
-    if (stripe && data.sessionId) {
-      stripe.redirectToCheckout({ sessionId: data.sessionId });
-    }
+      // Stripe désactivé en production
+      // Code Stripe supprimé
   }
 }

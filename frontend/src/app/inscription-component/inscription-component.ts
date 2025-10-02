@@ -1,4 +1,5 @@
 import { FormsModule } from '@angular/forms';
+declare var grecaptcha: any;
 import { Component } from '@angular/core';
 import { FooterComponent } from '../footer-component/footer-component';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
@@ -16,6 +17,9 @@ import { core } from '@angular/compiler';
 })
 
 export class InscriptionComponent {
+  errorMessage: string = '';
+  /** Token reCAPTCHA */
+  recaptchaToken: string = '';
   /** Champ honeypot pour détection de bots */
   honeypot = '';
   /** Nettoie une chaîne pour éviter les injections simples et traversée de répertoire */
@@ -126,23 +130,39 @@ export class InscriptionComponent {
   onSubmitInscription() {
     // Vérification anti-bot : si le champ honeypot est rempli, on bloque l'envoi
     if (this.honeypot && this.honeypot.trim() !== '') {
-      alert("Erreur : comportement suspect détecté.");
+      this.errorMessage = "Erreur : comportement suspect détecté.";
       return;
     }
     if (this.form.invalid) {
       return;
     }
+      // Récupération du token reCAPTCHA
+      if (typeof grecaptcha !== 'undefined') {
+        this.recaptchaToken = grecaptcha.getResponse();
+      }
+      if (!this.recaptchaToken) {
+        this.errorMessage = 'Veuillez valider le reCAPTCHA.';
+        return;
+      }
     // Nettoyage des champs username et bio dans le formulaire
     this.form.get('username')?.setValue(this.sanitizeInput(this.form.get('username')?.value));
     this.form.get('bio')?.setValue(this.sanitizeInput(this.form.get('bio')?.value));
-    AuthService.fetchInscription(this.form)
+      // Envoi du formulaire + token reCAPTCHA au backend
+      AuthService.fetchInscription({ ...this.form.value, recaptchaToken: this.recaptchaToken })
       .then(result => {
-        console.log('Inscription réussie:', result);
+        if (result.error) {
+          this.errorMessage = result.error;
+          grecaptcha.reset();
+          return;
+        }
+        this.errorMessage = '';
         this.form.reset();
         this.selectedFile = null;
+        this.recaptchaToken = '';
         this.router.navigate(["information"]);
       })
       .catch(error => {
+        this.errorMessage = 'Erreur lors de l\'inscription. Veuillez réessayer.';
         console.error('Erreur inscription:', error);
       });
   }

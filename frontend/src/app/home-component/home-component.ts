@@ -42,7 +42,7 @@ export class HomeComponent {
    */
   cookieState() {
     let CookieAccepted = localStorage.getItem("cookie-choice")
-    console.log(CookieAccepted) 
+    // console.log(CookieAccepted)  
     
     if(CookieAccepted === "true"){
       this.cookieAccepted = true

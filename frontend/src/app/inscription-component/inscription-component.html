@@ -1,4 +1,7 @@
 <main>
+    <section *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </section>
     <section class="inscription-form-container">
         <h2>Inscription</h2>
         <form [formGroup]="form" (ngSubmit)="onSubmitInscription()" class="inscription-form">
@@ -84,6 +87,11 @@
                 <!-- <input type="file" id="picture" formControlName="picture" accept="image/*"> -->
                 <input type="file" (change)="onFileSelected($event)" />
             </div>
+
+        <!-- reCAPTCHA widget -->
+        <div class="form-group">
+          <div class="g-recaptcha" data-sitekey="6Le_htwrAAAAAAQLEcd9laRkD2sbkwPMPpV5h4bE"></div>
+        </div>
 
             <button type="submit" class="cta" [disabled]="form.invalid">S'inscrire</button>
         </form>

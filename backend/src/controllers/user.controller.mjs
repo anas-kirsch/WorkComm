@@ -29,7 +29,21 @@ export class UserController {
             console.log("route : register")
             const myNewUser = request.body;
 
-            // console.log("1", myNewUser);
+            // Vérification du token reCAPTCHA
+            const recaptchaToken = myNewUser.recaptchaToken;
+            if (!recaptchaToken) {
+                return response.status(400).json({ error: "Token reCAPTCHA manquant." });
+            }
+            const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+            const fetch = (await import('node-fetch')).default;
+            const verificationUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`;
+            const recaptchaRes = await fetch(verificationUrl, { method: 'POST' });
+            const recaptchaData = await recaptchaRes.json();
+            if (!recaptchaData.success) {
+                return response.status(400).json({ error: "Échec de la vérification reCAPTCHA." });
+            }
+
+            // ...suite logique existante...
             if (!myNewUser) {
                 return response.status(400).json({ error: "Données manquantes." });
             }

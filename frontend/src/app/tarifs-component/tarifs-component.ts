@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 // import { FooterComponent } from './app/footer-component/footer-component';
 import { Router } from '@angular/router';
-import { loadStripe, Stripe } from '@stripe/stripe-js';
+// import { loadStripe, Stripe } from '@stripe/stripe-js';
 import { FooterComponent } from '../footer-component/footer-component';
 import { AuthService } from '../service/auth/auth-service';
 import { environment } from '../../environments/environment.development';
@@ -35,7 +35,7 @@ export class TarifsComponent {
   ngOnInit() {
     // Vérifie le statut premium au chargement du composant
     const premiumState = this.getPremiumFromCookie();
-    console.log(premiumState)
+    // console.log(premiumState)
     if (premiumState === true) {
       this.subscriptionStatus = true;
     }
