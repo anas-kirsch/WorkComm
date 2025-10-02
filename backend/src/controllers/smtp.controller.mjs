@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import 'dotenv/config';
 
 
 /**
@@ -14,7 +15,7 @@ export async function emailSender(username, mail) {
         secure: false,
         auth: {
             user: "workcomm831@gmail.com",
-            pass: "khbb kbfs qwou srjk "
+            pass: process.env.SMTP_PASS_MAIL_TRANSPORT
         }
     });
 
@@ -97,7 +98,7 @@ export async function emailResetPassword(username, mail, resetLink) {
         secure: false,
         auth: {
             user: "workcomm831@gmail.com",
-            pass: "khbb kbfs qwou srjk "
+            pass: process.env.SMTP_PASS_MAIL_TRANSPORT
         }
     });
 
@@ -185,7 +186,7 @@ export async function contactMail(email, subject, message) {
         secure: false,
         auth: {
             user: "workcomm831@gmail.com",
-            pass: "khbb kbfs qwou srjk "
+            pass: process.env.SMTP_PASS_MAIL_TRANSPORT
         }
     });
 
