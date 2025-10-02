@@ -21,8 +21,23 @@ export class ContactComponent {
   subject = '';
   /** Contenu du message */
   message = '';
+    /** Sujet nettoyé */
+    get sanitizedSubject() {
+      return this.sanitizeInput(this.subject);
+    }
+    /** Message nettoyé */
+    get sanitizedMessage() {
+      return this.sanitizeInput(this.message);
+    }
   /** Affiche le message de succès après envoi */
   showSuccess = false;
+  /** Nettoie une chaîne pour éviter les injections simples et traversée de répertoire */
+  sanitizeInput(input: string): string {
+    // Supprime ../ et encode < >
+    return input.replace(/\.\./g, '')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+  }
   /** Affiche le message d'erreur en cas de problème */
   showError = false;
   /** Message d'erreur à afficher */
@@ -59,7 +74,8 @@ export class ContactComponent {
       setTimeout(() => { this.showError = false; }, 2000);
       return;
     }
-    await this.fetchMailContact(this.email, this.subject, this.message);
+  // Utilise les champs nettoyés
+  await this.fetchMailContact(this.email, this.sanitizedSubject, this.sanitizedMessage);
     this.showSuccess = true;
     this.email = '';
     this.subject = '';

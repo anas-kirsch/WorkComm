@@ -15,6 +15,12 @@ import { core } from '@angular/compiler';
 })
 
 export class InscriptionComponent {
+  /** Nettoie une chaîne pour éviter les injections simples et traversée de répertoire */
+  sanitizeInput(input: string): string {
+    return input.replace(/\.\./g, '')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+  }
   /**
    * Router Angular pour la navigation entre les pages
    */
@@ -118,6 +124,9 @@ export class InscriptionComponent {
     if (this.form.invalid) {
       return;
     }
+    // Nettoyage des champs username et bio dans le formulaire
+    this.form.get('username')?.setValue(this.sanitizeInput(this.form.get('username')?.value));
+    this.form.get('bio')?.setValue(this.sanitizeInput(this.form.get('bio')?.value));
     AuthService.fetchInscription(this.form)
       .then(result => {
         console.log('Inscription réussie:', result);

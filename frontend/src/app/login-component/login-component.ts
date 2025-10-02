@@ -15,6 +15,12 @@ import { CommonModule } from '@angular/common';
 })
 
 export class LoginComponent {
+  /** Nettoie une chaîne pour éviter les injections simples et traversée de répertoire */
+  sanitizeInput(input: string): string {
+    return input.replace(/\.\./g, '')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+  }
   /**
    * Service d'authentification pour gérer la connexion
    */
@@ -54,6 +60,9 @@ export class LoginComponent {
     if (this.form.invalid) {
       return;
     }
+    // Nettoyage des champs mail et password dans le formulaire
+    this.form.get('mail')?.setValue(this.sanitizeInput(this.form.get('mail')?.value));
+    this.form.get('password')?.setValue(this.sanitizeInput(this.form.get('password')?.value));
     AuthService.fetchConnexion(this.form)
       .then(result => {
         console.log('connexion réussie:', result);
